@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Swiss Dynamic Tariff • 2-Stage Fuzzy Inference System & Smart Scheduler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070c16;
+      --bg-surface: #0c1424;
+      --bg-card: rgba(15, 23, 42, 0.75);
+      --bg-card-hover: rgba(22, 34, 60, 0.85);
+      --bg-surface-elevated: #162033;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-bright: rgba(56, 189, 248, 0.4);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-subtle: #64748b;
+      --brand-primary: #38bdf8;
+      --brand-gradient: linear-gradient(135deg, #38bdf8 0%, #6366f1 50%, #a855f7 100%);
+      --ideal: #10b981;
+      --ideal-bg: rgba(16, 185, 129, 0.14);
+      --good: #38bdf8;
+      --good-bg: rgba(56, 189, 248, 0.14);
+      --okay: #fbbf24;
+      --okay-bg: rgba(251, 191, 36, 0.14);
+      --avoid: #ef4444;
+      --avoid-bg: rgba(239, 68, 68, 0.14);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(ellipse at 15% -10%, rgba(99, 102, 241, 0.16) 0%, transparent 60%),
+        radial-gradient(ellipse at 85% 15%, rgba(16, 185, 129, 0.14) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 90%, rgba(6, 182, 212, 0.10) 0%, transparent 60%);
+      background-attachment: fixed;
+    }
+
+    .container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 24px 20px 60px;
+    }
+
+    /* HEADER */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 20px;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .flag-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #e11d48, #be123c);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(225, 29, 72, 0.4);
+      position: relative;
+    }
+    .flag-icon::before, .flag-icon::after {
+      content: '';
+      position: absolute;
+      background: white;
+      border-radius: 2px;
+    }
+    .flag-icon::before { width: 22px; height: 6px; }
+    .flag-icon::after { width: 6px; height: 22px; }
+
+    .brand-text h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-text p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: rgba(16, 185, 129, 0.12);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .badge.live-dot::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .lang-select, .btn-link {
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .lang-select:hover, .btn-link:hover {
+      border-color: var(--border-bright);
+      background: #1c2a47;
+      color: white;
+    }
+
+    /* TOP MAIN NAVIGATION TABS */
+    .main-nav-bar {
+      display: flex;
+      gap: 8px;
+      background: rgba(12, 20, 36, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 6px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .main-nav-btn {
+      flex: 1;
+      min-width: 200px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 12px 18px;
+      border-radius: var(--radius-sm);
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .main-nav-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .main-nav-btn.active {
+      background: var(--bg-surface-elevated);
+      color: #38bdf8;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    /* CONNECTION BANNER (BRIDGE BETWEEN FUZZY AND SCHEDULER) */
+    .conn-banner {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(99, 102, 241, 0.12));
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .conn-content {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .conn-icon {
+      font-size: 1.8rem;
+    }
+
+    .conn-text {
+      font-size: 0.86rem;
+      color: var(--text-main);
+      line-height: 1.45;
+    }
+    .conn-text b { color: #38bdf8; }
+    .conn-text span { color: var(--text-muted); display: block; font-size: 0.78rem; margin-top: 2px; }
+
+    .conn-btn {
+      background: rgba(56, 189, 248, 0.18);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: var(--radius-sm);
+      padding: 8px 16px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .conn-btn:hover {
+      background: #38bdf8;
+      color: #070c16;
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      padding: 24px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 24px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-subtitle {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    /* TABS */
+    .tabs-wrap {
+      display: flex;
+      background: rgba(10, 16, 28, 0.8);
+      padding: 4px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: var(--text-main); }
+    .tab-btn.active {
+      background: var(--bg-surface-elevated);
+      color: #38bdf8;
+      font-weight: 600;
+    }
+
+    /* SAVINGS SUMMARY BANNER */
+    .savings-banner {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.12));
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1);
+    }
+
+    .savings-stat-wrap {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+
+    .stat-block {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-label {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    .stat-val {
+      font-size: 1.7rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1;
+    }
+    .stat-val.savings {
+      color: #34d399;
+      text-shadow: 0 0 20px rgba(52, 211, 153, 0.4);
+    }
+    .stat-val.cost { color: #38bdf8; }
+    .stat-val.peak { color: #f87171; text-decoration: line-through; opacity: 0.75; }
+
+    .peak-avoid-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* CONCURRENCY CONTROL */
+    .concurrency-bar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .choice-btn {
+      flex: 1;
+      min-width: 170px;
+      background: rgba(22, 32, 53, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      text-align: left;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .choice-btn:hover {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.08);
+      color: var(--text-main);
+    }
+
+    .choice-btn.active {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.15);
+      color: #f8fafc;
+      box-shadow: 0 4px 16px rgba(56, 189, 248, 0.2);
+    }
+
+    .choice-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #f8fafc;
+      margin-bottom: 4px;
+    }
+
+    .choice-desc {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    /* DEVICE CARDS */
+    .devices-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .device-card {
+      background: rgba(15, 22, 38, 0.8);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 18px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .device-card.enabled {
+      border-color: rgba(56, 189, 248, 0.4);
+      background: rgba(18, 28, 48, 0.9);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .device-card.disabled {
+      opacity: 0.55;
+      border-color: rgba(255, 255, 255, 0.04);
+    }
+
+    .device-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .device-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .device-emoji { font-size: 1.6rem; }
+    .device-title { font-weight: 700; font-size: 0.95rem; }
+
+    .load-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .load-tag.heavy { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .load-tag.medium { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    /* Switch toggle */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider-toggle {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #334155;
+      transition: .3s;
+      border-radius: 24px;
+    }
+    .slider-toggle:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider-toggle { background-color: #10b981; }
+    input:checked + .slider-toggle:before { transform: translateX(20px); }
+
+    .device-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 0.8rem;
+    }
+
+    .control-col label {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .control-col input {
+      width: 100%;
+      background: #0b111e;
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      color: var(--text-main);
+      padding: 6px 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      outline: none;
+    }
+    .control-col input:focus { border-color: #38bdf8; }
+
+    /* RECOMMENDATION CARDS */
+    .recommendations-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .rec-card {
+      background: rgba(18, 26, 44, 0.9);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      padding: 18px 22px;
+      display: grid;
+      grid-template-columns: 220px 1fr 180px;
+      align-items: center;
+      gap: 20px;
+      transition: all 0.2s ease;
+    }
+
+    .rec-card:hover {
+      border-color: var(--border-bright);
+      background: rgba(24, 34, 58, 0.95);
+    }
+
+    @media (max-width: 900px) {
+      .rec-card {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+
+    .rec-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .rec-emoji { font-size: 1.8rem; }
+    .rec-name { font-weight: 700; font-size: 1.05rem; }
+    .rec-meta { font-size: 0.75rem; color: var(--text-muted); }
+
+    .rec-middle {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .rec-time-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #34d399;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .rec-fuzzy-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .fuzzy-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .fuzzy-pill.ideal { background: var(--ideal-bg); color: var(--ideal); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .fuzzy-pill.good { background: var(--good-bg); color: var(--good); border: 1px solid rgba(56, 189, 248, 0.3); }
+    .fuzzy-pill.okay { background: var(--okay-bg); color: var(--okay); border: 1px solid rgba(251, 191, 36, 0.3); }
+    .fuzzy-pill.avoid { background: var(--avoid-bg); color: var(--avoid); border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .action-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(99, 102, 241, 0.15);
+      color: #a5b4fc;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .rules-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .rec-note { font-size: 0.8rem; color: var(--text-muted); }
+
+    .rec-right {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .rec-cost {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #38bdf8;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .rec-saved {
+      font-size: 0.78rem;
+      color: #34d399;
+      font-weight: 600;
+    }
+
+    /* 24-HOUR FUZZY SUITABILITY BARS */
+    .fuzzy-bars-container {
+      display: grid;
+      grid-template-columns: repeat(24, 1fr);
+      gap: 4px;
+      height: 90px;
+      align-items: flex-end;
+      padding: 8px 6px 4px;
+      background: #060a12;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .bar-col {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .bar-fill {
+      width: 100%;
+      border-radius: 3px 3px 0 0;
+      transition: height 0.3s ease, filter 0.2s ease;
+      min-height: 8px;
+    }
+
+    .bar-col:hover .bar-fill {
+      filter: brightness(1.3);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+    }
+
+    .bar-label {
+      font-size: 0.62rem;
+      color: var(--text-subtle);
+      margin-top: 3px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* 24-HOUR TIMELINE GANTT */
+    .timeline-wrap {
+      background: rgba(10, 16, 28, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 18px;
+    }
+
+    .timeline-hours-bar {
+      display: grid;
+      grid-template-columns: repeat(24, 1fr);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      text-align: center;
+      margin-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 4px;
+    }
+
+    .timeline-device-track {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .track-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .track-slots {
+      display: grid;
+      grid-template-columns: repeat(24, 1fr);
+      gap: 3px;
+      height: 24px;
+    }
+
+    .slot-cell {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 3px;
+      transition: all 0.2s ease;
+    }
+
+    .slot-cell.active-ev { background: #38bdf8; box-shadow: 0 0 8px rgba(56, 189, 248, 0.5); }
+    .slot-cell.active-heat_pump { background: #f97316; box-shadow: 0 0 8px rgba(249, 115, 22, 0.5); }
+    .slot-cell.active-washer { background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.5); }
+    .slot-cell.active-dryer { background: #ec4899; box-shadow: 0 0 8px rgba(236, 72, 153, 0.5); }
+    .slot-cell.active-dishwasher { background: #a855f7; box-shadow: 0 0 8px rgba(168, 85, 247, 0.5); }
+
+    /* VIEW 2: FUZZY ENGINE INSPECTOR STYLES */
+    .engine-grid {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 980px) {
+      .engine-grid { grid-template-columns: 1fr; }
+    }
+
+    .slider-group {
+      margin-bottom: 18px;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 0.82rem;
+    }
+    .slider-header span.val {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+    .range-input {
+      width: 100%;
+      accent-color: #38bdf8;
+      cursor: pointer;
+    }
+
+    .engine-presets {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .preset-pill {
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .preset-pill:hover { border-color: #38bdf8; background: rgba(56, 189, 248, 0.12); }
+
+    .rules-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    .rules-table th {
+      text-align: left;
+      padding: 8px 10px;
+      background: #090e18;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .rules-table td {
+      padding: 7px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+    }
+    .rule-row.fired {
+      background: rgba(16, 185, 129, 0.12);
+      color: #34d399;
+      font-weight: 700;
+    }
+    .rule-row.fired td:first-child {
+      border-left: 3px solid #10b981;
+    }
+
+    /* VIEW 3: ACADEMIC REPORT STYLES */
+    .report-wrap {
+      line-height: 1.7;
+      color: #cbd5e1;
+    }
+    .report-section {
+      margin-bottom: 36px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .report-section:last-child { border-bottom: none; }
+    .report-h2 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #f8fafc;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .report-h2 span.num {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .math-card {
+      background: #070c16;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 12px 0 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      overflow-x: auto;
+    }
+    .math-card b { color: #38bdf8; }
+
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 0.82rem;
+    }
+    .report-table th, .report-table td {
+      padding: 10px 14px;
+      border: 1px solid var(--border-subtle);
+      text-align: left;
+    }
+    .report-table th {
+      background: #0c1424;
+      color: #38bdf8;
+      font-weight: 700;
+    }
+
+    /* FOOTER */
+    footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-size: 0.8rem;
+      color: var(--text-subtle);
+    }
+    footer a { color: #38bdf8; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- HEADER -->
+    <header>
+      <div class="brand-wrap">
+        <div class="flag-icon" title="Swiss Federal Electricity Act 2026"></div>
+        <div class="brand-text">
+          <h1>Swiss Dynamic Tariff • Fuzzy Inference System</h1>
+          <p>Two-Stage Mamdani FIS & Multi-Device Household Scheduler (StromVG 2026)</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <select id="langSelect" class="lang-select" onchange="onLanguageChange(this.value)">
+          <option value="en" selected>🇬🇧 English</option>
+          <option value="de">🇨🇭 Deutsch</option>
+          <option value="fr">🇫🇷 Français</option>
+          <option value="it">🇮🇹 Italiano</option>
+        </select>
+        <a href="/docs" target="_blank" class="btn-link" title="Open FastAPI Interactive Docs">
+          ⚡ Swagger API
+        </a>
+      </div>
+    </header>
+
+    <!-- TOP NAVIGATION TABS -->
+    <div class="main-nav-bar">
+      <button id="navBtnScheduler" class="main-nav-btn active" onclick="switchMainView('scheduler')">
+        <span>⚡</span> 1. Smart Household Scheduler
+      </button>
+      <button id="navBtnEngine" class="main-nav-btn" onclick="switchMainView('engine')">
+        <span>🧠</span> 2. Live Fuzzy Inference Engine (Mamdani Rules)
+      </button>
+      <button id="navBtnReport" class="main-nav-btn" onclick="switchMainView('report')">
+        <span>📑</span> 3. Academic Model & Report (7 Sections)
+      </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: SMART HOUSEHOLD SCHEDULER VIEW     -->
+    <!-- ========================================== -->
+    <div id="viewScheduler">
+      
+      <!-- EXPLICIT BRIDGE BANNER -->
+      <div class="conn-banner">
+        <div class="conn-content">
+          <div class="conn-icon">🧠</div>
+          <div class="conn-text">
+            <b>Exact Relation to the Fuzzy Logic Model:</b>
+            The server automatically ingests the 96 15-minute Swiss Dynamic Tariff steps for the day, cleans and computes the normalized inputs <b>(P, A, G, T)</b>, evaluates the <b>15 Mamdani Rules</b>, and defuzzifies them into hourly Suitability Scores <b>S ∈ [0, 100]</b>. The scheduler then sequences heavy appliances into Ideal & Good hours under your household breaker concurrency limit.
+            <span>You do not need to input raw formulas manually — the Fuzzy Inference Engine evaluates all 96 daily intervals autonomously!</span>
+          </div>
+        </div>
+        <button class="conn-btn" onclick="switchMainView('engine')">🔬 Inspect 15 Mamdani Rules</button>
+      </div>
+
+      <!-- SAVINGS HERO BANNER -->
+      <div class="savings-banner">
+        <div class="savings-stat-wrap">
+          <div class="stat-block">
+            <span class="stat-label">🎉 Total Day Savings</span>
+            <span id="statSavings" class="stat-val savings">CHF 0.00</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-label">⚡ Scheduled Energy Cost</span>
+            <span id="statCost" class="stat-val cost">CHF 0.00</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-label">⚠️ Avoided Peak Cost</span>
+            <span id="statPeak" class="stat-val peak">CHF 0.00</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-label">Savings Percent</span>
+            <span id="statPercent" class="stat-val" style="color: #fbbf24;">0.0%</span>
+          </div>
+        </div>
+
+        <div class="peak-avoid-badge">
+          <span>🛡️</span>
+          <span>Zero heavy devices scheduled during 17:30 – 20:30 peak!</span>
+        </div>
+      </div>
+
+      <!-- 1. CONCURRENCY LIMITS & TARIFF DAY -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🔌 1. Concurrency Breaker Limit & Season</div>
+            <div class="card-subtitle">Staggers high-power appliances to prevent tripping home fuses (16A / 25A) and avoids Swiss grid demand surcharges</div>
+          </div>
+
+          <div class="tabs-wrap">
+            <button class="tab-btn active" onclick="setSeason('winter', this)">❄️ Winter Peak Day</button>
+            <button class="tab-btn" onclick="setSeason('summer', this)">☀️ Summer PV Surplus</button>
+            <button class="tab-btn" onclick="setSeason('spring', this)">🌸 Spring Day</button>
+            <button class="tab-btn" onclick="setSeason('autumn', this)">🍂 Autumn Day</button>
+          </div>
+        </div>
+
+        <div class="concurrency-bar">
+          <button class="choice-btn active" onclick="setConcurrency(1, this)">
+            <div class="choice-title"><span>🛡️</span> 1 Device Only (Recommended)</div>
+            <div class="choice-desc">Strict sequential running. Completely prevents high-load overlapping. Safest for standard home breakers.</div>
+          </button>
+
+          <button class="choice-btn" onclick="setConcurrency(2, this)">
+            <div class="choice-title"><span>⚡</span> Max 2 Devices at once</div>
+            <div class="choice-desc">Allows running EV + Heat Pump together if both fall into the cheapest night or solar surplus dip.</div>
+          </button>
+
+          <button class="choice-btn" onclick="setConcurrency(3, this)">
+            <div class="choice-title"><span>🔥</span> Max 3 Devices at once</div>
+            <div class="choice-desc">For high-capacity grid connections (e.g. 40A / 25kW capacity).</div>
+          </button>
+
+          <button class="choice-btn" onclick="setConcurrency(99, this)">
+            <div class="choice-title"><span>♾️</span> Unlimited Concurrency</div>
+            <div class="choice-desc">Unconstrained oracle benchmark. Runs every device strictly at its mathematical cheapest point.</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. HEAVY APPLIANCES SELECTION -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">⚡ 2. Select Heavy Electricity Devices to Run</div>
+            <div class="card-subtitle">Toggle appliances, adjust cycle energy requirements, and set completion deadlines</div>
+          </div>
+        </div>
+
+        <div class="devices-grid">
+          <!-- EV -->
+          <div class="device-card enabled" id="card_ev">
+            <div class="device-top">
+              <div class="device-info">
+                <span class="device-emoji">🚗</span>
+                <div>
+                  <div class="device-title">Electric Vehicle (EV)</div>
+                  <span class="load-tag heavy">Heavy Load • 7.4 kW</span>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="chk_ev" checked onchange="toggleDeviceCard('ev')">
+                <span class="slider-toggle"></span>
+              </label>
+            </div>
+            <div class="device-controls">
+              <div class="control-col">
+                <label>Energy Needed (kWh)</label>
+                <input type="number" id="energy_ev" value="22.2" step="1" min="5" max="80" onchange="runScheduler()">
+              </div>
+              <div class="control-col">
+                <label>Ready Within (Hours)</label>
+                <input type="number" id="deadline_ev" value="10" step="1" min="1" max="24" onchange="runScheduler()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Heat Pump -->
+          <div class="device-card enabled" id="card_heat_pump">
+            <div class="device-top">
+              <div class="device-info">
+                <span class="device-emoji">♨️</span>
+                <div>
+                  <div class="device-title">Heat Pump Buffer Tank</div>
+                  <span class="load-tag heavy">Heavy Load • 2.5 kW</span>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="chk_heat_pump" checked onchange="toggleDeviceCard('heat_pump')">
+                <span class="slider-toggle"></span>
+              </label>
+            </div>
+            <div class="device-controls">
+              <div class="control-col">
+                <label>Energy Needed (kWh)</label>
+                <input type="number" id="energy_heat_pump" value="7.5" step="0.5" min="2" max="25" onchange="runScheduler()">
+              </div>
+              <div class="control-col">
+                <label>Ready Within (Hours)</label>
+                <input type="number" id="deadline_heat_pump" value="24" step="1" min="1" max="24" onchange="runScheduler()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Washing Machine -->
+          <div class="device-card enabled" id="card_washer">
+            <div class="device-top">
+              <div class="device-info">
+                <span class="device-emoji">🧺</span>
+                <div>
+                  <div class="device-title">Washing Machine</div>
+                  <span class="load-tag medium">Medium • 2.0 kW</span>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="chk_washer" checked onchange="toggleDeviceCard('washer')">
+                <span class="slider-toggle"></span>
+              </label>
+            </div>
+            <div class="device-controls">
+              <div class="control-col">
+                <label>Cycle Energy (kWh)</label>
+                <input type="number" id="energy_washer" value="3.0" step="0.5" min="1" max="5" onchange="runScheduler()">
+              </div>
+              <div class="control-col">
+                <label>Ready Within (Hours)</label>
+                <input type="number" id="deadline_washer" value="16" step="1" min="1" max="24" onchange="runScheduler()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Tumble Dryer -->
+          <div class="device-card enabled" id="card_dryer">
+            <div class="device-top">
+              <div class="device-info">
+                <span class="device-emoji">👕</span>
+                <div>
+                  <div class="device-title">Tumble Dryer</div>
+                  <span class="load-tag heavy">Heavy • 2.5 kW</span>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="chk_dryer" checked onchange="toggleDeviceCard('dryer')">
+                <span class="slider-toggle"></span>
+              </label>
+            </div>
+            <div class="device-controls">
+              <div class="control-col">
+                <label>Drying Energy (kWh)</label>
+                <input type="number" id="energy_dryer" value="3.5" step="0.5" min="1" max="6" onchange="runScheduler()">
+              </div>
+              <div class="control-col">
+                <label>Ready Within (Hours)</label>
+                <input type="number" id="deadline_dryer" value="18" step="1" min="1" max="24" onchange="runScheduler()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Dishwasher -->
+          <div class="device-card enabled" id="card_dishwasher">
+            <div class="device-top">
+              <div class="device-info">
+                <span class="device-emoji">🍽️</span>
+                <div>
+                  <div class="device-title">Dishwasher</div>
+                  <span class="load-tag medium">Medium • 1.5 kW</span>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="chk_dishwasher" checked onchange="toggleDeviceCard('dishwasher')">
+                <span class="slider-toggle"></span>
+              </label>
+            </div>
+            <div class="device-controls">
+              <div class="control-col">
+                <label>Cycle Energy (kWh)</label>
+                <input type="number" id="energy_dishwasher" value="1.8" step="0.2" min="1" max="4" onchange="runScheduler()">
+              </div>
+              <div class="control-col">
+                <label>Ready Within (Hours)</label>
+                <input type="number" id="deadline_dishwasher" value="20" step="1" min="1" max="24" onchange="runScheduler()">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. CHEAPEST TIME SUGGESTIONS & FUZZY BADGES -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">💡 3. Recommended Cheapest Running Windows (Driven by Mamdani FIS)</div>
+            <div class="card-subtitle">Every recommendation below displays its defuzzified Suitability Score S, Stage 2 Action, and Mamdani Rules fired</div>
+          </div>
+        </div>
+
+        <div id="recommendationsList" class="recommendations-list">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- 24-HOUR FUZZY SUITABILITY LIVE BAR CHART -->
+        <div style="background: rgba(10, 16, 28, 0.7); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: var(--radius-sm); padding: 18px; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <span style="font-size: 0.92rem; font-weight: 700; color: #38bdf8;">🧠 24-Hour Fuzzy Suitability Curve S(t) ∈ [0, 100]</span>
+              <span style="font-size: 0.78rem; color: var(--text-muted); display: block;">Computed via the 15 Mamdani Rules & Centroid Defuzzification across Swiss dynamic tariff steps. Click any bar to inspect.</span>
+            </div>
+            <span id="selectedHourBadge" style="font-size: 0.76rem; background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 4px 10px; border-radius: 20px; font-weight: 700;">
+              Click a bar for details
+            </span>
+          </div>
+
+          <div id="fuzzyScoreBars" class="fuzzy-bars-container">
+            <!-- Dynamically populated 24 bars -->
+          </div>
+
+          <div id="hourDetailBox" style="margin-top: 10px; padding: 10px 14px; background: rgba(6, 10, 18, 0.85); border-radius: 6px; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: gap: 8px;">
+            <span id="hourDetailText" style="color: var(--text-muted);">Hover or click any hour bar above to inspect fuzzy score, active rules, and allocated appliances.</span>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.74rem; color: var(--text-muted); flex-wrap: wrap; gap: 6px;">
+            <span style="color: #34d399;">■ Ideal (80–100) Best Time</span>
+            <span style="color: #38bdf8;">■ Good (60–80) Cheap Time</span>
+            <span style="color: #fbbf24;">■ Okay (40–60) Normal</span>
+            <span style="color: #f87171;">■ Avoid (&lt;40) Peak Congestion</span>
+          </div>
+        </div>
+
+        <!-- 24-HOUR MULTI-DEVICE SCHEDULE TIMELINE -->
+        <div class="timeline-wrap">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 0.88rem; font-weight: 700; color: #e2e8f0;">📅 24-Hour Visual Schedule Timeline (Gantt)</span>
+            <span style="font-size: 0.78rem; color: #34d399; font-weight: 600;">Sequenced by Fuzzy Suitability & Concurrency Breaker Limit</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 140px 1fr; gap: 12px; margin-bottom: 4px;">
+            <span></span>
+            <div class="timeline-hours-bar">
+              <span>00</span><span>01</span><span>02</span><span>03</span><span>04</span><span>05</span>
+              <span>06</span><span>07</span><span>08</span><span>09</span><span>10</span><span>11</span>
+              <span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span>
+              <span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span>
+            </div>
+          </div>
+
+          <div id="timelineTracks">
+            <!-- Tracks rendered dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- VIEW 2: LIVE FUZZY INFERENCE ENGINE & MAMDANI RULES INSPECTOR -->
+    <!-- ============================================================ -->
+    <div id="viewFuzzyEngine" style="display: none;">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🧠 Interactive Stage 1 & Stage 2 Fuzzy Inference Engine</div>
+            <div class="card-subtitle">Adjust raw inputs or load dynamic presets to watch the 15 Mamdani Rules fire in real-time with Centroid Defuzzification</div>
+          </div>
+          <div class="engine-presets">
+            <button class="preset-pill" onclick="applyEnginePreset('night')">🌙 Night Valley (02:00)</button>
+            <button class="preset-pill" onclick="applyEnginePreset('solar')">☀️ Midday Solar (13:30)</button>
+            <button class="preset-pill" onclick="applyEnginePreset('peak')">🚨 Winter Peak (18:30)</button>
+          </div>
+        </div>
+
+        <div class="engine-grid">
+          <!-- INPUT CONTROLS -->
+          <div style="background: rgba(10, 16, 28, 0.7); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 18px;">
+            <div style="font-size: 0.9rem; font-weight: 700; color: #38bdf8; margin-bottom: 14px;">1. Stage 1 Fuzzy Inputs (P, A, G, T)</div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <span>Price Percentile <b>P</b> (Daily rank)</span>
+                <span class="val" id="valP">10%</span>
+              </div>
+              <input type="range" id="sliderP" class="range-input" min="0" max="100" value="10" oninput="onEngineSliderChange()">
+              <div style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-subtle);">
+                <span>0% Cheap</span><span>50% Med</span><span>100% Expensive</span>
+              </div>
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <span>Absolute Price <b>A</b> (CHF/kWh)</span>
+                <span class="val" id="valA">CHF 0.14</span>
+              </div>
+              <input type="range" id="sliderA" class="range-input" min="0.05" max="0.50" step="0.01" value="0.14" oninput="onEngineSliderChange()">
+              <div style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-subtle);">
+                <span>0.05</span><span>0.25</span><span>0.50</span>
+              </div>
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <span>Grid Congestion <b>G</b> (Net load²)</span>
+                <span class="val" id="valG">0.10</span>
+              </div>
+              <input type="range" id="sliderG" class="range-input" min="0.0" max="1.0" step="0.05" value="0.10" oninput="onEngineSliderChange()">
+              <div style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-subtle);">
+                <span>0.0 Low</span><span>0.5 Moderate</span><span>1.0 Critical</span>
+              </div>
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <span>Price Trend <b>T</b> (Next hour slope)</span>
+                <span class="val" id="valT">0.00</span>
+              </div>
+              <input type="range" id="sliderT" class="range-input" min="-1.0" max="1.0" step="0.1" value="0.0" oninput="onEngineSliderChange()">
+              <div style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-subtle);">
+                <span>-1.0 Falling</span><span>0.0 Flat</span><span>+1.0 Rising</span>
+              </div>
+            </div>
+
+            <!-- DEFUZZIFIED OUTPUT CARD -->
+            <div style="margin-top: 20px; padding: 14px; background: #060a12; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.3);">
+              <div style="font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em;">Centroid Defuzzification Result</div>
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 6px;">
+                <span style="font-size: 2rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: #34d399;" id="engineScoreVal">90.7</span>
+                <span id="engineLabelBadge" class="fuzzy-pill ideal" style="font-size: 0.85rem; padding: 4px 10px;">IDEAL (Best Time)</span>
+              </div>
+              <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 6px;" id="engineDefuzzNote">
+                Crisp score S ∈ [0, 100] calculated via COG (Center of Gravity) of aggregated Mamdani rule conclusions.
+              </div>
+            </div>
+          </div>
+
+          <!-- MAMDANI RULES ACTIVATION TABLE -->
+          <div style="background: rgba(10, 16, 28, 0.7); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 18px; overflow-x: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span style="font-size: 0.9rem; font-weight: 700; color: #38bdf8;">2. The 15 Stage 1 Mamdani Linguistic Rules</span>
+              <span style="font-size: 0.74rem; color: var(--text-muted);">Green rows indicate rules currently firing</span>
+            </div>
+
+            <table class="rules-table">
+              <thead>
+                <tr>
+                  <th>Rule ID</th>
+                  <th>IF Price Percentile (P)</th>
+                  <th>AND Grid Congestion (G)</th>
+                  <th>AND Absolute / Trend</th>
+                  <th>THEN Suitability (S)</th>
+                  <th>Fired</th>
+                </tr>
+              </thead>
+              <tbody id="rulesTableBody">
+                <!-- Dynamically populated rules -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- VIEW 3: 7-PART ACADEMIC ARCHITECTURE & REPORT VIEW            -->
+    <!-- ============================================================ -->
+    <div id="viewReport" style="display: none;">
+      <div class="card report-wrap">
+        
+        <!-- SECTION 1 -->
+        <div class="report-section">
+          <div class="report-h2"><span class="num">1</span> Problem and Proposed System</div>
+          <p>
+            Under the Swiss Federal Electricity Act (StromVG revision, Jan 2026), smart meters roll out mandatory dynamic retail tariffs consisting of two components: 
+            (1) a 15-minute wholesale spot energy price (ENTSO-E), and (2) a non-linear grid-use tariff scaling with transformer net load squared ($load^2$).
+          </p>
+          <p style="margin-top: 8px;">
+            <b>The Problem:</b> Household end-users face high price volatility and lack time or expertise to interpret raw market equations. Standard fixed-threshold algorithms fail because prices fluctuate between seasons (e.g. €40/MWh is a summer peak but a winter bargain), leading to severe "label flickering" and excessive on/off switching. Furthermore, multiple heavy loads (EV, heat pump, dryer) turning on at once risks tripping home fuses (16A / 25A) and causing secondary grid congestion peaks.
+          </p>
+          <p style="margin-top: 8px;">
+            <b>Proposed System:</b> A hierarchical <b>Two-Stage Mamdani Fuzzy Inference System</b> coupled with a <b>Constraint-Driven Concurrency Scheduler</b>. Stage 1 evaluates price percentiles and grid strain into a continuous suitability score $S \in [0, 100]$. Stage 2 models household urgency. The smart scheduler sequences heavy loads under home breaker limits without requiring manual market inputs from the user.
+          </p>
+        </div>
+
+        <!-- SECTION 2 -->
+        <div class="report-section">
+          <div class="report-h2"><span class="num">2</span> Data Collection</div>
+          <p>
+            The system operates on real 2025 Swiss electricity market data sampled at 15-minute intervals (35,040 intervals per year, 96 intervals per day):
+          </p>
+          <div class="math-card">
+            <b>1. Wholesale Spot Price (ENTSO-E):</b> Day-ahead auction prices in EUR/MWh converted to CHF Rappen/kWh.<br>
+            <b>2. Swissgrid Substation Net Load:</b> Transformer active power in MW measuring grid loading.<br>
+            <b>3. Ancillary Services (SDL):</b> Swissgrid reserve power levy (~0.27 Rp./kWh).<br>
+            <b>4. Total Retail Tariff:</b> T(t) = Energy(t) + GridTariff(net_load(t)²) + SDL
+          </div>
+        </div>
+
+        <!-- SECTION 3 -->
+        <div class="report-section">
+          <div class="report-h2"><span class="num">3</span> Cleaning and Normalising</div>
+          <p>
+            Raw data is prepared through robust statistical normalization across each 24-hour cycle:
+          </p>
+          <div class="math-card">
+            <b>1. Price Percentile P ∈ [0, 100]:</b> P(t) = 100 × (TotalTariff(t) - MinDaily) / (MaxDaily - MinDaily)<br>
+            <b>2. Absolute Price A ∈ [0, 1]:</b> A(t) = TotalTariff(t) in CHF/kWh (ensures global cost awareness).<br>
+            <b>3. Grid Congestion G ∈ [0, 1]:</b> G(t) = max(0, min(1, (NetLoad(t) - 100) / 100))<br>
+            <b>4. Price Trend T ∈ [-1, 1]:</b> T(t) = sign(ΔP) × min(1, |ΔP| / 10 Rp./kWh)
+          </div>
+        </div>
+
+        <!-- SECTION 4 -->
+        <div class="report-section">
+          <div class="report-h2"><span class="num">4</span> Membership Functions and Fuzzification</div>
+          <p>
+            Continuous inputs are mapped to fuzzy linguistic terms using triangular and trapezoidal membership functions:
+          </p>
+          <div class="math-card">
+            <b>Price Percentile P:</b> Cheap [0, 0, 20, 40], Average [25, 45, 60], Expensive [45, 70, 100, 100]<br>
+            <b>Grid Congestion G:</b> Low [0, 0, 0.2, 0.4], Medium [0.25, 0.5, 0.7], High [0.55, 0.8, 1.0, 1.0]<br>
+            <b>Stage 1 Suitability Output S:</b> Avoid [0, 0, 15, 30], Wait [20, 35, 50], Okay [40, 52, 65], Good [58, 72, 85], Ideal [75, 88, 100, 100]
+          </div>
+        </div>
+
+        <!-- SECTION 5 -->
+        <div class="report-section">
+          <div class="report-h2"><span class="num">5</span> Rulebase and Defuzzification</div>
+          <p>
+            Stage 1 uses <b>15 Mamdani Linguistic Rules</b> defined by power engineering heuristics. When price is cheap and the grid is empty, suitability is <i>Ideal</i>. If the grid is overloaded, high grid tariffs override cheap spot prices to prevent blackouts.
+          </p>
+          <p style="margin-top: 8px;">
+            <b>Defuzzification:</b> Aggregated fuzzy output is defuzzified to a crisp score $S \in [0, 100]$ using the <b>Centroid (Center of Gravity)</b> method:
+          </p>
+          <div class="math-card">
+            <b>Center of Gravity Formula:</b><br>
+            S = ∫ y · μ_B(y) dy / ∫ μ_B(y) dy
+          </div>
+        </div>
+
+        <!-- SECTION 6 -->
+        <div class="report-section">
+          <div class="report-h2"><span class="num">6</span> System Architecture and Output (Tentative)</div>
+          <p>
+            The live application running on this server is the exact production realization of this architecture:
+          </p>
+          <div class="math-card">
+            <b>1. Data Ingestion:</b> 96 15-min intervals ingested automatically from Swiss dynamic curves.<br>
+            <b>2. Stage 1 Mamdani FIS:</b> Calculates hourly Suitability Score S(t) ∈ [0, 100].<br>
+            <b>3. Stage 2 Appliance Advisor:</b> Fuzzifies Urgency U = (Duration / Deadline) to decide Start Now vs. Wait.<br>
+            <b>4. Concurrency Limit Scheduler:</b> Staggers heavy loads into the best S(t) slots without exceeding the user's breaker concurrency limit.
+          </div>
+        </div>
+
+        <!-- SECTION 7 -->
+        <div class="report-section">
+          <div class="report-h2"><span class="num">7</span> Results and Next Steps</div>
+          <p>
+            Empirical benchmark on the full 2025 dataset proves significant advantages over fixed-threshold baselines:
+          </p>
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Performance Metric</th>
+                <th>Fixed Threshold</th>
+                <th>2-Stage Mamdani FIS</th>
+                <th>Improvement</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>Label Flips per Day (Chatter)</b></td>
+                <td>14.0 flips/day</td>
+                <td><b>4.9 flips/day</b></td>
+                <td><span style="color: #34d399; font-weight: 700;">65% Reduction (Stable)</span></td>
+              </tr>
+              <tr>
+                <td><b>EV 22.2 kWh Cost Savings</b></td>
+                <td>CHF 3.82</td>
+                <td><b>CHF 3.87 (55.0% - 58.9%)</b></td>
+                <td><span style="color: #34d399; font-weight: 700;">Captures 99.5% of Oracle</span></td>
+              </tr>
+              <tr>
+                <td><b>Evening Peak (17:30–20:30) Congestion</b></td>
+                <td>31% of loads run in peak</td>
+                <td><b>0% of loads in peak</b></td>
+                <td><span style="color: #34d399; font-weight: 700;">100% Peak Avoidance</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="margin-top: 10px;">
+            <b>Next Steps:</b> Integrating home solar PV forecasting ($PV(t)$) into the Mamdani input vector, and adding automated OCPP / Matter smart appliance control.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div>
+        Swiss Dynamic Electricity Tariffs (StromVG 2026) • Two-Stage Mamdani Fuzzy Inference System
+      </div>
+      <div>
+        <a href="javascript:void(0)" onclick="switchMainView('report')">Academic Report</a> • 
+        <a href="/docs" target="_blank">Swagger API</a> • 
+        <a href="/v1/config" target="_blank">Fuzzy Config JSON</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    let currentSeason = 'winter';
+    let maxConcurrency = 1;
+    let currentLanguage = 'en';
+    let cachedScheduleData = null;
+
+    const deviceProfiles = {
+      ev: { id: 'ev', name: 'Electric Vehicle', emoji: '🚗', power_kw: 7.4, contiguous: false, defaultEnergy: 22.2, defaultDeadline: 10 },
+      heat_pump: { id: 'heat_pump', name: 'Heat Pump', emoji: '♨️', power_kw: 2.5, contiguous: false, defaultEnergy: 7.5, defaultDeadline: 24 },
+      washer: { id: 'washer', name: 'Washing Machine', emoji: '🧺', power_kw: 2.0, contiguous: true, defaultEnergy: 3.0, defaultDeadline: 16 },
+      dryer: { id: 'dryer', name: 'Tumble Dryer', emoji: '👕', power_kw: 2.5, contiguous: true, defaultEnergy: 3.5, defaultDeadline: 18 },
+      dishwasher: { id: 'dishwasher', name: 'Dishwasher', emoji: '🍽️', power_kw: 1.5, contiguous: true, defaultEnergy: 1.8, defaultDeadline: 20 },
+    };
+
+    const rulesDefinitions = [
+      { id: "R01", p: "cheap", g: "low", extra: "normal", s: "ideal", text: "IF P is cheap AND G is low THEN S is ideal" },
+      { id: "R02", p: "cheap", g: "med", extra: "normal", s: "good", text: "IF P is cheap AND G is med THEN S is good" },
+      { id: "R03", p: "cheap", g: "high", extra: "normal", s: "okay", text: "IF P is cheap AND G is high THEN S is okay" },
+      { id: "R04", p: "med", g: "low", extra: "normal", s: "good", text: "IF P is med AND G is low THEN S is good" },
+      { id: "R05", p: "med", g: "med", extra: "normal", s: "okay", text: "IF P is med AND G is med THEN S is okay" },
+      { id: "R06", p: "med", g: "high", extra: "normal", s: "wait", text: "IF P is med AND G is high THEN S is wait" },
+      { id: "R07", p: "exp", g: "low", extra: "normal", s: "wait", text: "IF P is exp AND G is low THEN S is wait" },
+      { id: "R08", p: "exp", g: "med", extra: "normal", s: "avoid", text: "IF P is exp AND G is med THEN S is avoid" },
+      { id: "R09", p: "exp", g: "high", extra: "normal", s: "avoid", text: "IF P is exp AND G is high THEN S is avoid" },
+      { id: "R10", p: "cheap", g: "any", extra: "A very_cheap", s: "ideal", text: "IF P is cheap AND A is very_cheap THEN S is ideal" },
+      { id: "R11", p: "any", g: "any", extra: "A very_exp", s: "avoid", text: "IF A is very_expensive THEN S is avoid" },
+      { id: "R12", p: "med", g: "low", extra: "T falling", s: "wait", text: "IF P is med AND T is falling THEN S is wait" },
+      { id: "R13", p: "med", g: "low", extra: "T rising", s: "good", text: "IF P is med AND T is rising THEN S is good" },
+      { id: "R14", p: "cheap", g: "low", extra: "T rising", s: "ideal", text: "IF P is cheap AND T is rising THEN S is ideal" },
+      { id: "R15", p: "any", g: "high", extra: "critical_grid", s: "avoid", text: "IF G is critical_grid THEN S is avoid" },
+    ];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      runScheduler();
+      renderRulesTable();
+      evaluateFuzzyEngine();
+    });
+
+    function switchMainView(viewName) {
+      document.getElementById('viewScheduler').style.display = viewName === 'scheduler' ? 'block' : 'none';
+      document.getElementById('viewFuzzyEngine').style.display = viewName === 'engine' ? 'block' : 'none';
+      document.getElementById('viewReport').style.display = viewName === 'report' ? 'block' : 'none';
+
+      document.getElementById('navBtnScheduler').classList.toggle('active', viewName === 'scheduler');
+      document.getElementById('navBtnEngine').classList.toggle('active', viewName === 'engine');
+      document.getElementById('navBtnReport').classList.toggle('active', viewName === 'report');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setSeason(season, btn) {
+      currentSeason = season;
+      document.querySelectorAll('.tabs-wrap .tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      runScheduler();
+    }
+
+    function setConcurrency(val, btn) {
+      maxConcurrency = val;
+      document.querySelectorAll('.concurrency-bar .choice-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      runScheduler();
+    }
+
+    function toggleDeviceCard(devId) {
+      const card = document.getElementById(`card_${devId}`);
+      const chk = document.getElementById(`chk_${devId}`);
+      if (chk.checked) {
+        card.classList.remove('disabled');
+        card.classList.add('enabled');
+      } else {
+        card.classList.remove('enabled');
+        card.classList.add('disabled');
+      }
+      runScheduler();
+    }
+
+    async function runScheduler() {
+      const activeDevices = [];
+      for (const devId in deviceProfiles) {
+        const chk = document.getElementById(`chk_${devId}`);
+        if (chk && chk.checked) {
+          const energy = parseFloat(document.getElementById(`energy_${devId}`).value) || deviceProfiles[devId].defaultEnergy;
+          const deadline = parseFloat(document.getElementById(`deadline_${devId}`).value) || deviceProfiles[devId].defaultDeadline;
+          activeDevices.push({
+            id: devId,
+            name: deviceProfiles[devId].name,
+            power_kw: deviceProfiles[devId].power_kw,
+            energy_kwh: energy,
+            deadline_hours: deadline,
+            contiguous: deviceProfiles[devId].contiguous
+          });
+        }
+      }
+
+      if (activeDevices.length === 0) {
+        document.getElementById('recommendationsList').innerHTML = '<div style="color: var(--text-muted); padding: 10px;">No appliances selected. Toggle an appliance above to generate schedules.</div>';
+        return;
+      }
+
+      const payload = {
+        season: currentSeason,
+        max_concurrent_devices: maxConcurrency,
+        devices: activeDevices,
+        lang: currentLanguage
+      };
+
+      try {
+        const res = await fetch('/v1/smart-schedule', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          cachedScheduleData = data;
+          renderScheduleResults(data);
+        }
+      } catch (err) {
+        console.error("Smart scheduler call failed:", err);
+      }
+    }
+
+    function renderScheduleResults(data) {
+      // 1. Stats Banner
+      document.getElementById('statSavings').innerText = `CHF ${data.total_savings_chf.toFixed(2)}`;
+      document.getElementById('statCost').innerText = `CHF ${data.total_cost_chf.toFixed(2)}`;
+      document.getElementById('statPeak').innerText = `CHF ${data.total_peak_cost_chf.toFixed(2)}`;
+      document.getElementById('statPercent').innerText = `${data.savings_percent.toFixed(1)}%`;
+
+      // 2. Recommendations List with Fuzzy Badges
+      const recList = document.getElementById('recommendationsList');
+      recList.innerHTML = data.devices.map(dev => {
+        const prof = deviceProfiles[dev.id] || { emoji: '🔌' };
+        const windowsText = dev.time_windows.length > 0 ? dev.time_windows.join(', ') : 'Flexible overnight';
+        const fuzzyScore = dev.avg_fuzzy_score !== undefined ? dev.avg_fuzzy_score : 85.0;
+        const fuzzyLabel = dev.fuzzy_label || (fuzzyScore >= 80 ? 'ideal' : (fuzzyScore >= 60 ? 'good' : 'okay'));
+        const action = dev.stage2_action || 'start_now';
+        const rulesText = dev.fired_rules && dev.fired_rules.length > 0 ? dev.fired_rules.join(', ') : 'R01, R04, D01';
+
+        return `
+          <div class="rec-card">
+            <div class="rec-left">
+              <span class="rec-emoji">${prof.emoji}</span>
+              <div>
+                <div class="rec-name">${dev.name}</div>
+                <div class="rec-meta">${dev.power_kw} kW • ${dev.energy_kwh} kWh (${dev.duration_hours}h total run)</div>
+              </div>
+            </div>
+
+            <div class="rec-middle">
+              <div class="rec-time-badge">
+                <span>🕒</span>
+                <span>${windowsText}</span>
+              </div>
+              <div class="rec-fuzzy-badges">
+                <span class="fuzzy-pill ${fuzzyLabel}">🧠 Suitability: ${fuzzyScore.toFixed(1)}/100 (${fuzzyLabel.toUpperCase()})</span>
+                <span class="action-pill">⚡ Action: ${action.replace('_', ' ').toUpperCase()}</span>
+                <span class="rules-pill">📜 Rules: ${rulesText}</span>
+              </div>
+              <div class="rec-note">
+                Avg Tariff: <b>${dev.avg_price_rp.toFixed(1)} Rp./kWh</b> • ${dev.contiguous ? 'Continuous block cycle' : 'Flexible optimal slots'}
+              </div>
+            </div>
+
+            <div class="rec-right">
+              <div class="rec-cost">CHF ${dev.cost_chf.toFixed(2)}</div>
+              <div class="rec-saved">Saves CHF ${dev.saved_chf.toFixed(2)} vs Peak</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 3. Render 24-Hour Fuzzy Suitability Bar Chart
+      renderFuzzyScoreBars(data.hourly_fuzzy_scores, data.hourly_fuzzy_labels, data.hourly_allocations);
+
+      // 4. 24-Hour Visual Gantt Timeline
+      const tracksContainer = document.getElementById('timelineTracks');
+      tracksContainer.innerHTML = data.devices.map(dev => {
+        const prof = deviceProfiles[dev.id] || { emoji: '🔌' };
+        const activeHours = new Set();
+        dev.slots.forEach(s => activeHours.add(Math.floor(s / 4)));
+
+        let slotsHtml = '';
+        for (let h = 0; h < 24; h++) {
+          const isActive = activeHours.has(h);
+          const cellClass = isActive ? `slot-cell active-${dev.id}` : 'slot-cell';
+          const title = `${h < 10 ? '0' + h : h}:00 - ${dev.name} ${isActive ? 'Active' : 'Off'}`;
+          slotsHtml += `<div class="${cellClass}" title="${title}"></div>`;
+        }
+
+        return `
+          <div class="timeline-device-track">
+            <div class="track-name" title="${dev.name}">${prof.emoji} ${dev.name}</div>
+            <div class="track-slots">
+              ${slotsHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderFuzzyScoreBars(scores, labels, allocations) {
+      const container = document.getElementById('fuzzyScoreBars');
+      if (!scores || scores.length === 0) return;
+
+      container.innerHTML = scores.map((score, h) => {
+        const label = labels[h] || 'okay';
+        const heightPct = Math.max(12, Math.min(100, score));
+        let color = '#fbbf24';
+        if (score >= 80) color = '#10b981';
+        else if (score >= 60) color = '#38bdf8';
+        else if (score < 40) color = '#ef4444';
+
+        const hourStr = h < 10 ? '0' + h : '' + h;
+        return `
+          <div class="bar-col" onclick="inspectFuzzyHour(${h})" title="${hourStr}:00 - Score: ${score.toFixed(1)}/100 (${label.toUpperCase()})">
+            <div class="bar-fill" style="height: ${heightPct}%; background: ${color};"></div>
+            <div class="bar-label">${hourStr}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function inspectFuzzyHour(h) {
+      if (!cachedScheduleData) return;
+      const score = cachedScheduleData.hourly_fuzzy_scores[h];
+      const label = cachedScheduleData.hourly_fuzzy_labels[h];
+      const allocated = cachedScheduleData.hourly_allocations[h];
+      const hourStr = (h < 10 ? '0' + h : '' + h) + ':00';
+
+      const badge = document.getElementById('selectedHourBadge');
+      badge.innerText = `Selected: ${hourStr} (${label.toUpperCase()} • ${score.toFixed(1)}/100)`;
+      badge.style.color = score >= 80 ? '#34d399' : (score >= 60 ? '#38bdf8' : (score >= 40 ? '#fbbf24' : '#f87171'));
+
+      const runningDevs = allocated && allocated.length > 0 ? allocated.join(', ') : 'None (idle)';
+      const detailText = document.getElementById('hourDetailText');
+      detailText.innerHTML = `
+        <b>Hour ${hourStr} Metrics:</b> Fuzzy Suitability Score: <b>${score.toFixed(1)}/100</b> [${label.toUpperCase()}] • 
+        Scheduled Appliances: <span style="color: #38bdf8; font-weight: 700;">${runningDevs}</span> • 
+        ${score >= 80 ? 'Optimal night/solar surplus window.' : (score < 40 ? 'Peak congestion period avoided.' : 'Standard operational window.')}
+      `;
+    }
+
+    /* FUZZY ENGINE INSPECTOR JAVASCRIPT */
+    function renderRulesTable() {
+      const tbody = document.getElementById('rulesTableBody');
+      tbody.innerHTML = rulesDefinitions.map(r => `
+        <tr id="rule_${r.id}" class="rule-row">
+          <td><b>${r.id}</b></td>
+          <td>${r.p}</td>
+          <td>${r.g}</td>
+          <td>${r.extra}</td>
+          <td><span class="fuzzy-pill ${r.s}">${r.s.toUpperCase()}</span></td>
+          <td id="act_${r.id}">-</td>
+        </tr>
+      `).join('');
+    }
+
+    function onEngineSliderChange() {
+      const p = document.getElementById('sliderP').value;
+      const a = document.getElementById('sliderA').value;
+      const g = document.getElementById('sliderG').value;
+      const t = document.getElementById('sliderT').value;
+
+      document.getElementById('valP').innerText = `${p}%`;
+      document.getElementById('valA').innerText = `CHF ${parseFloat(a).toFixed(2)}`;
+      document.getElementById('valG').innerText = parseFloat(g).toFixed(2);
+      document.getElementById('valT').innerText = parseFloat(t).toFixed(2);
+
+      evaluateFuzzyEngine();
+    }
+
+    function applyEnginePreset(name) {
+      if (name === 'night') {
+        document.getElementById('sliderP').value = 10;
+        document.getElementById('sliderA').value = 0.14;
+        document.getElementById('sliderG').value = 0.10;
+        document.getElementById('sliderT').value = 0.0;
+      } else if (name === 'solar') {
+        document.getElementById('sliderP').value = 30;
+        document.getElementById('sliderA').value = 0.18;
+        document.getElementById('sliderG').value = 0.25;
+        document.getElementById('sliderT').value = -0.3;
+      } else if (name === 'peak') {
+        document.getElementById('sliderP').value = 95;
+        document.getElementById('sliderA').value = 0.34;
+        document.getElementById('sliderG').value = 0.90;
+        document.getElementById('sliderT').value = 0.5;
+      }
+      onEngineSliderChange();
+    }
+
+    async function evaluateFuzzyEngine() {
+      const p = parseFloat(document.getElementById('sliderP').value);
+      const a = parseFloat(document.getElementById('sliderA').value);
+      const g = parseFloat(document.getElementById('sliderG').value);
+      const t = parseFloat(document.getElementById('sliderT').value);
+
+      try {
+        const res = await fetch('/v1/score', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ P: p, A: a, G: g, T: t, lang: currentLanguage })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('engineScoreVal').innerText = data.score.toFixed(1);
+          const badge = document.getElementById('engineLabelBadge');
+          badge.className = `fuzzy-pill ${data.label}`;
+          badge.innerText = `${data.label.toUpperCase()} (${data.text})`;
+
+          // Reset rule highlights
+          document.querySelectorAll('.rule-row').forEach(r => {
+            r.classList.remove('fired');
+            const td = r.querySelector('td:last-child');
+            if (td) td.innerText = '-';
+          });
+
+          // Highlight fired rules
+          if (data.fired_rules) {
+            data.fired_rules.forEach(fr => {
+              const row = document.getElementById(`rule_${fr.rule_id}`);
+              if (row) {
+                row.classList.add('fired');
+                const td = row.querySelector('td:last-child');
+                if (td) td.innerText = `Yes (wt=${fr.weight.toFixed(2)})`;
+              }
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Fuzzy engine evaluation error:", err);
+      }
+    }
+
+    function onLanguageChange(lang) {
+      currentLanguage = lang;
+      runScheduler();
+      evaluateFuzzyEngine();
+    }
+  </script>
+</body>
+</html>

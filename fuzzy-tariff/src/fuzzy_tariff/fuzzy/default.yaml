@@ -1,0 +1,97 @@
+# Default fuzzy configuration. This file is the single source of truth for membership
+# functions and rules. Changing it changes product behaviour: update tests and docs too.
+# Membership parameters are STARTING VALUES, to be calibrated on data (see docs/adr/0002).
+version: 1
+
+# ---------------------------------------------------------------------------------------
+# Stage 1: how suitable is this hour for flexible consumption?
+# ---------------------------------------------------------------------------------------
+stage1:
+  name: suitability
+  defaults: {G: 0.5, T: 0.0}   # neutral values when grid stress / trend are unavailable
+  inputs:
+    P:  # relative price: percentile (0-100) of the hour's price in its reference window
+      universe: [0, 100]
+      sets:
+        very_low:  {shape: trap, params: [0, 0, 10, 25]}
+        low:       {shape: tri,  params: [10, 25, 45]}
+        medium:    {shape: tri,  params: [35, 50, 65]}
+        high:      {shape: tri,  params: [55, 75, 90]}
+        very_high: {shape: trap, params: [75, 90, 100, 100]}
+    A:  # absolute price, normalised to the tariff's annual min-max range (0-1)
+      universe: [0, 1]
+      sets:
+        low:    {shape: trap, params: [0, 0, 0.25, 0.5]}
+        medium: {shape: tri,  params: [0.25, 0.5, 0.75]}
+        high:   {shape: trap, params: [0.5, 0.75, 1, 1]}
+    G:  # grid stress, normalised residual load (0-1)
+      universe: [0, 1]
+      sets:
+        low:    {shape: trap, params: [0, 0, 0.25, 0.5]}
+        medium: {shape: tri,  params: [0.25, 0.5, 0.75]}
+        high:   {shape: trap, params: [0.5, 0.75, 1, 1]}
+    T:  # price trend over the next ~2 h, normalised (-1 falling ... +1 rising)
+      universe: [-1, 1]
+      sets:
+        falling: {shape: trap, params: [-1, -1, -0.4, -0.05]}
+        stable:  {shape: tri,  params: [-0.3, 0, 0.3]}
+        rising:  {shape: trap, params: [0.05, 0.4, 1, 1]}
+  output:
+    name: S
+    universe: [0, 100]
+    sets:
+      avoid: {shape: trap, params: [0, 0, 10, 25]}
+      wait:  {shape: tri,  params: [10, 30, 50]}
+      okay:  {shape: tri,  params: [40, 55, 70]}
+      good:  {shape: tri,  params: [60, 75, 90]}
+      ideal: {shape: trap, params: [75, 90, 100, 100]}
+  rules:
+    - {id: R01, if: {P: very_low, A: low},     then: ideal, description: "Very cheap relative to context and cheap in absolute terms"}
+    - {id: R02, if: {P: very_low, A: medium},  then: good,  description: "Very cheap relative to context, moderate absolute level"}
+    - {id: R03, if: {P: very_low, A: high},    then: okay,  description: "Guardrail: relatively cheap but absolutely expensive"}
+    - {id: R04, if: {P: very_low, T: rising},  then: ideal, description: "Cheap and about to get more expensive: use it now"}
+    - {id: R05, if: {P: low, G: low},          then: good,  description: "Cheap and grid relaxed"}
+    - {id: R06, if: {P: low, G: medium},       then: good,  description: "Cheap and grid moderately loaded"}
+    - {id: R07, if: {P: low, G: high},         then: okay,  description: "Cheap but grid stressed"}
+    - {id: R08, if: {P: medium},               then: okay,  description: "Typical price"}
+    - {id: R09, if: {P: medium, T: falling},   then: wait,  description: "Typical price but getting cheaper soon"}
+    - {id: R10, if: {P: medium, A: high},      then: wait,  description: "Typical relative price but high absolute level"}
+    - {id: R11, if: {P: high, T: falling},     then: wait,  description: "Expensive now, cheaper soon"}
+    - {id: R12, if: {P: high, G: low},         then: wait,  description: "Expensive, grid relaxed: moderate pain"}
+    - {id: R13, if: {P: high, G: high},        then: avoid, description: "Expensive and grid stressed"}
+    - {id: R14, if: {P: very_high},            then: avoid, description: "Among the most expensive hours"}
+    - {id: R15, if: {P: high, G: medium},      then: wait,  description: "Expensive, grid moderately loaded"}
+
+# ---------------------------------------------------------------------------------------
+# Stage 2: should this device start now? (suitability from stage 1 + user urgency)
+# ---------------------------------------------------------------------------------------
+stage2:
+  name: device_advisor
+  defaults: {}
+  inputs:
+    S:  # suitability score from stage 1
+      universe: [0, 100]
+      sets:
+        low:  {shape: trap, params: [0, 0, 25, 50]}
+        mid:  {shape: tri,  params: [25, 50, 75]}
+        high: {shape: trap, params: [50, 75, 100, 100]}
+    U:  # urgency: hours of charging/heating still needed / hours until deadline (0-1)
+      universe: [0, 1]
+      sets:
+        low:    {shape: trap, params: [0, 0, 0.2, 0.5]}
+        medium: {shape: tri,  params: [0.2, 0.5, 0.8]}
+        high:   {shape: trap, params: [0.5, 0.8, 1, 1]}
+  output:
+    name: Action
+    universe: [0, 100]
+    sets:
+      wait:       {shape: trap, params: [0, 0, 15, 40]}
+      start_now:  {shape: tri,  params: [30, 55, 80]}
+      must_start: {shape: trap, params: [65, 85, 100, 100]}
+  rules:
+    - {id: D01, if: {S: high},             then: start_now,  description: "Good price: start"}
+    - {id: D02, if: {S: mid, U: low},      then: wait,       description: "Normal price, no rush"}
+    - {id: D03, if: {S: mid, U: medium},   then: start_now,  description: "Normal price, getting tight"}
+    - {id: D04, if: {S: low, U: low},      then: wait,       description: "Poor price, no rush"}
+    - {id: D05, if: {S: low, U: medium},   then: wait,       description: "Poor price, still some slack"}
+    - {id: D06, if: {U: high},             then: must_start, description: "Deadline overrides price"}

@@ -1,0 +1,23 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.env
+.DS_Store
+.ipynb_checkpoints/
+# data: keep folder structure, never commit raw/processed data or secrets
+data/raw/*
+data/processed/*
+data/synthetic/*
+!data/*/.gitkeep
+reports/*
+!reports/.gitkeep
+.hypothesis/

@@ -1,0 +1,77 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fuzzy-tariff"
+version = "0.1.0"
+description = "Fuzzy-logic guidance for Swiss dynamic electricity tariffs"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=1.26",
+  "pandas>=2.1",
+  "pydantic>=2.5",
+  "pyyaml>=6.0",
+  "fastapi>=0.110",
+  "uvicorn>=0.27",
+  "httpx>=0.26",
+]
+
+[project.optional-dependencies]
+viz = ["matplotlib>=3.8"]
+dev = [
+  "pytest>=8.0",
+  "pytest-cov>=4.1",
+  "hypothesis>=6.100",
+  "ruff>=0.4",
+  "mypy>=1.9",
+  "types-PyYAML",
+  "matplotlib>=3.8",
+]
+
+[project.scripts]
+fuzzy-tariff = "fuzzy_tariff.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+fuzzy_tariff = ["py.typed", "fuzzy/*.yaml"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "N", "RUF"]
+ignore = ["N803", "N806"]  # P, A, G, T, U, S are the documented variable names
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+filterwarnings = ["error::DeprecationWarning:fuzzy_tariff.*"]
+
+[tool.coverage.run]
+source = ["src/fuzzy_tariff"]
+
+[tool.coverage.report]
+fail_under = 85
+show_missing = true
+
+[tool.mypy]
+python_version = "3.11"
+files = ["src"]
+warn_unused_ignores = true
+warn_redundant_casts = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["pandas.*", "matplotlib.*", "yaml.*"]
+ignore_missing_imports = true
