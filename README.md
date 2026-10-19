@@ -250,7 +250,3 @@ Urban_Computing-2026/
 
 ---
 
-## 👥 Authors & Acknowledgments
-* **Author:** Sharan Karanam
-* **Course:** Urban Computing 2026
-* **Data Sources:** ENTSO-E Transparency Platform & Swissgrid Substation Net Load Archive
