@@ -108,3 +108,39 @@ def test_smart_schedule_practising_dataset():
     assert res["total_savings_chf"] >= 0.0
 
 
+def test_translate_endpoint():
+    # Identity test
+    res_id = client.post("/v1/translate", json={"text": "Hello", "source_lang": "en", "target_lang": "en"}).json()
+    assert res_id["translated_text"] == "Hello"
+    assert res_id["provider"] == "identity"
+
+    # Translation test with live or fallback
+    res_de = client.post("/v1/translate", json={"text": "Savings", "source_lang": "en", "target_lang": "de"}).json()
+    assert res_de["translated_text"] != ""
+    assert res_de["target_lang"] == "de"
+
+
+def test_smart_schedule_multilingual_support():
+    for lang in ["de", "fr", "it"]:
+        payload = {
+            "season": "winter",
+            "max_concurrent_devices": 1,
+            "lang": lang,
+            "devices": [
+                {
+                    "id": "ev",
+                    "name": "Electric Vehicle",
+                    "power_kw": 7.4,
+                    "energy_kwh": 22.2,
+                    "deadline_hours": 10.0,
+                    "contiguous": False,
+                }
+            ],
+        }
+        res = client.post("/v1/smart-schedule", json=payload).json()
+        device_res = res["devices"][0]
+        assert "advice_text" in device_res
+        assert len(device_res["advice_text"]) > 0
+
+
+

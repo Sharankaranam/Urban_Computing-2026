@@ -130,4 +130,15 @@ class SmartScheduleResponse(BaseModel):
     hourly_fuzzy_labels: list[str]
 
 
+class TranslateRequest(BaseModel):
+    text: str = Field(..., description="Text to translate")
+    source_lang: str = Field(default="en", description="Source ISO language code (en, de, fr, it)")
+    target_lang: str = Field(default="de", description="Target ISO language code (en, de, fr, it)")
 
+
+class TranslateResponse(BaseModel):
+    original_text: str
+    translated_text: str
+    source_lang: str
+    target_lang: str
+    provider: str

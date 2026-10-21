@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+import httpx
 import pandas as pd
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -27,6 +28,8 @@ from fuzzy_tariff.api.schemas import (
     SmartScheduleResponse,
     TariffPreviewResponse,
     TariffStepOut,
+    TranslateRequest,
+    TranslateResponse,
 )
 from fuzzy_tariff.ingest.ekz import EkzTariffSource
 from fuzzy_tariff.labels import Lang, action_text, label_text
@@ -35,6 +38,7 @@ from fuzzy_tariff.services import Services, get_services
 _STATIC_DIR = Path(__file__).resolve().parent / "static"
 _BENCHMARK_CACHE: pd.DataFrame | None = None
 _PRACTISING_CACHE: pd.DataFrame | None = None
+_TRANSLATION_CACHE: dict[str, str] = {}
 
 PRACTISING_SCENARIOS: dict[str, str] = {
     "autumn_dst": "2026-10-25",
@@ -303,10 +307,9 @@ def _run_smart_schedule(
             else ("wait" if avg_score >= 25 else "avoid")))
         )
 
-        advice = (
-            f"Fuzzy Suitability: {avg_score:.1f}/100 ({fuzzy_label.upper()}) • "
-            f"Optimal time: {windows_str} (Avg tariff: {avg_rp:.1f} Rp./kWh)"
-        )
+        loc_label = label_text(fuzzy_label, req.lang)
+        loc_action = action_text(stage2_action, req.lang)
+        advice = f"{loc_label} • {loc_action} ({windows_str})"
 
         scheduled_devices.append(
             ScheduledDeviceResult(
@@ -508,6 +511,59 @@ def create_app() -> FastAPI:
     @app.get("/v1/config")
     def config(svc: Services = Depends(get_services)) -> dict[str, Any]:
         return svc.config.model_dump(by_alias=True)
+
+    @app.post("/v1/translate", response_model=TranslateResponse)
+    async def translate(req: TranslateRequest) -> TranslateResponse:
+        s_lang = req.source_lang.lower().strip()
+        t_lang = req.target_lang.lower().strip()
+        text = req.text.strip()
+
+        if s_lang == t_lang or not text:
+            return TranslateResponse(
+                original_text=req.text,
+                translated_text=req.text,
+                source_lang=s_lang,
+                target_lang=t_lang,
+                provider="identity",
+            )
+
+        cache_key = f"{s_lang}:{t_lang}:{text.lower()}"
+        if cache_key in _TRANSLATION_CACHE:
+            return TranslateResponse(
+                original_text=req.text,
+                translated_text=_TRANSLATION_CACHE[cache_key],
+                source_lang=s_lang,
+                target_lang=t_lang,
+                provider="cache",
+            )
+
+        # Call free MyMemory API
+        url = f"https://api.mymemory.translated.net/get?q={text}&langpair={s_lang}|{t_lang}"
+        try:
+            async with httpx.AsyncClient(timeout=3.5) as client:
+                res = await client.get(url)
+                if res.status_code == 200:
+                    data = res.json()
+                    translated = data.get("responseData", {}).get("translatedText")
+                    if translated and "MYMEMORY WARNING" not in translated.upper():
+                        _TRANSLATION_CACHE[cache_key] = translated
+                        return TranslateResponse(
+                            original_text=req.text,
+                            translated_text=translated,
+                            source_lang=s_lang,
+                            target_lang=t_lang,
+                            provider="mymemory_free_api",
+                        )
+        except Exception:
+            pass
+
+        return TranslateResponse(
+            original_text=req.text,
+            translated_text=req.text,
+            source_lang=s_lang,
+            target_lang=t_lang,
+            provider="fallback",
+        )
 
     return app
 

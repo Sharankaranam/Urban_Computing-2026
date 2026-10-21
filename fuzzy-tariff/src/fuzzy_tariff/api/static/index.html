@@ -935,8 +935,8 @@
       <div class="brand-wrap">
         <div class="flag-icon" title="Swiss Federal Electricity Act 2026"></div>
         <div class="brand-text">
-          <h1>Swiss Dynamic Tariff • Fuzzy Inference System</h1>
-          <p>Two-Stage Mamdani FIS & Multi-Device Household Scheduler (StromVG 2026)</p>
+          <h1 id="brandTitle">Swiss Dynamic Tariff • Fuzzy Inference System</h1>
+          <p id="brandSubtitle">Two-Stage Mamdani FIS & Multi-Device Household Scheduler (StromVG 2026)</p>
         </div>
       </div>
 
@@ -956,13 +956,13 @@
     <!-- TOP NAVIGATION TABS -->
     <div class="main-nav-bar">
       <button id="navBtnScheduler" class="main-nav-btn active" onclick="switchMainView('scheduler')">
-        <span>⚡</span> 1. Smart Household Scheduler
+        <span id="navTextScheduler">⚡ 1. Smart Household Scheduler</span>
       </button>
       <button id="navBtnEngine" class="main-nav-btn" onclick="switchMainView('engine')">
-        <span>🧠</span> 2. Live Fuzzy Inference Engine (Mamdani Rules)
+        <span id="navTextEngine">🧠 2. Live Fuzzy Inference Engine (Mamdani Rules)</span>
       </button>
       <button id="navBtnReport" class="main-nav-btn" onclick="switchMainView('report')">
-        <span>📑</span> 3. Academic Model & Report (7 Sections)
+        <span id="navTextReport">📑 3. Academic Model & Report (7 Sections)</span>
       </button>
     </div>
 
@@ -976,38 +976,37 @@
         <div class="conn-content">
           <div class="conn-icon">🧠</div>
           <div class="conn-text">
-            <b>Exact Relation to the Fuzzy Logic Model:</b>
-            The server automatically ingests the 96 15-minute Swiss Dynamic Tariff steps for the day, cleans and computes the normalized inputs <b>(P, A, G, T)</b>, evaluates the <b>15 Mamdani Rules</b>, and defuzzifies them into hourly Suitability Scores <b>S ∈ [0, 100]</b>. The scheduler then sequences heavy appliances into Ideal & Good hours under your household breaker concurrency limit.
-            <span>You do not need to input raw formulas manually — the Fuzzy Inference Engine evaluates all 96 daily intervals autonomously!</span>
+            <b id="connTitle">Exact Relation to the Fuzzy Logic Model:</b>
+            <span id="connText">The server automatically ingests the 96 15-minute Swiss Dynamic Tariff steps for the day, cleans and computes the normalized inputs <b>(P, A, G, T)</b>, evaluates the <b>19 Mamdani Rules</b>, and defuzzifies them into hourly Suitability Scores <b>S ∈ [0, 100]</b>. The scheduler then sequences heavy appliances into Ideal & Good hours under your household breaker concurrency limit.</span>
           </div>
         </div>
-        <button class="conn-btn" onclick="switchMainView('engine')">🔬 Inspect 15 Mamdani Rules</button>
+        <button id="connBtn" class="conn-btn" onclick="switchMainView('engine')">🔬 Inspect 19 Mamdani Rules</button>
       </div>
 
       <!-- SAVINGS HERO BANNER -->
       <div class="savings-banner">
         <div class="savings-stat-wrap">
           <div class="stat-block">
-            <span class="stat-label">🎉 Total Day Savings</span>
+            <span id="statSavingsLabel" class="stat-label">🎉 Total Day Savings</span>
             <span id="statSavings" class="stat-val savings">CHF 0.00</span>
           </div>
           <div class="stat-block">
-            <span class="stat-label">⚡ Scheduled Energy Cost</span>
+            <span id="statCostLabel" class="stat-label">⚡ Scheduled Energy Cost</span>
             <span id="statCost" class="stat-val cost">CHF 0.00</span>
           </div>
           <div class="stat-block">
-            <span class="stat-label">⚠️ Avoided Peak Cost</span>
+            <span id="statPeakLabel" class="stat-label">⚠️ Avoided Peak Cost</span>
             <span id="statPeak" class="stat-val peak">CHF 0.00</span>
           </div>
           <div class="stat-block">
-            <span class="stat-label">Savings Percent</span>
+            <span id="statPercentLabel" class="stat-label">Savings Percent</span>
             <span id="statPercent" class="stat-val" style="color: #fbbf24;">0.0%</span>
           </div>
         </div>
 
         <div class="peak-avoid-badge">
           <span>🛡️</span>
-          <span>Zero heavy devices scheduled during 17:30 – 20:30 peak!</span>
+          <span id="peakBadgeText">Zero heavy devices scheduled during 17:30 – 20:30 peak!</span>
         </div>
       </div>
 
@@ -1015,40 +1014,40 @@
       <div class="card">
         <div class="card-header">
           <div>
-            <div class="card-title">🔌 1. Concurrency Breaker Limit & Season</div>
-            <div class="card-subtitle">Staggers high-power appliances to prevent tripping home fuses (16A / 25A) and avoids Swiss grid demand surcharges</div>
+            <div id="sec1Title" class="card-title">🔌 1. Concurrency Breaker Limit & Season</div>
+            <div id="sec1Subtitle" class="card-subtitle">Staggers high-power appliances to prevent tripping home fuses (16A / 25A) and avoids Swiss grid demand surcharges</div>
           </div>
 
           <div class="tabs-wrap" style="flex-wrap: wrap; gap: 6px;">
-            <button class="tab-btn active" onclick="setSeason('winter', this)">❄️ Winter 2025</button>
-            <button class="tab-btn" onclick="setSeason('summer', this)">☀️ Summer PV</button>
-            <button class="tab-btn" onclick="setSeason('autumn_dst', this)">🕒 Practising: Autumn DST</button>
-            <button class="tab-btn" onclick="setSeason('winter_cold_snap', this)">❄️ Practising: Cold Snap</button>
-            <button class="tab-btn" onclick="setSeason('january_spike', this)">⚡ Practising: Jan Peak</button>
-            <button class="tab-btn" onclick="setSeason('february_solar', this)">🔋 Practising: Feb Solar</button>
-            <button class="tab-btn" onclick="setSeason('live_ekz', this)">🔴 Live EKZ API</button>
+            <button id="tab_winter" class="tab-btn active" onclick="setSeason('winter', this)">❄️ Winter 2025</button>
+            <button id="tab_summer" class="tab-btn" onclick="setSeason('summer', this)">☀️ Summer PV</button>
+            <button id="tab_autumn_dst" class="tab-btn" onclick="setSeason('autumn_dst', this)">🕒 Practising: Autumn DST</button>
+            <button id="tab_winter_cold_snap" class="tab-btn" onclick="setSeason('winter_cold_snap', this)">❄️ Practising: Cold Snap</button>
+            <button id="tab_january_spike" class="tab-btn" onclick="setSeason('january_spike', this)">⚡ Practising: Jan Peak</button>
+            <button id="tab_february_solar" class="tab-btn" onclick="setSeason('february_solar', this)">🔋 Practising: Feb Solar</button>
+            <button id="tab_live_ekz" class="tab-btn" onclick="setSeason('live_ekz', this)">🔴 Live EKZ API</button>
           </div>
         </div>
 
         <div class="concurrency-bar">
           <button class="choice-btn active" onclick="setConcurrency(1, this)">
-            <div class="choice-title"><span>🛡️</span> 1 Device Only (Recommended)</div>
-            <div class="choice-desc">Strict sequential running. Completely prevents high-load overlapping. Safest for standard home breakers.</div>
+            <div id="conc_1_title" class="choice-title"><span>🛡️</span> 1 Device Only (Recommended)</div>
+            <div id="conc_1_desc" class="choice-desc">Strict sequential running. Completely prevents high-load overlapping. Safest for standard home breakers.</div>
           </button>
 
           <button class="choice-btn" onclick="setConcurrency(2, this)">
-            <div class="choice-title"><span>⚡</span> Max 2 Devices at once</div>
-            <div class="choice-desc">Allows running EV + Heat Pump together if both fall into the cheapest night or solar surplus dip.</div>
+            <div id="conc_2_title" class="choice-title"><span>⚡</span> Max 2 Devices at once</div>
+            <div id="conc_2_desc" class="choice-desc">Allows running EV + Heat Pump together if both fall into the cheapest night or solar surplus dip.</div>
           </button>
 
           <button class="choice-btn" onclick="setConcurrency(3, this)">
-            <div class="choice-title"><span>🔥</span> Max 3 Devices at once</div>
-            <div class="choice-desc">For high-capacity grid connections (e.g. 40A / 25kW capacity).</div>
+            <div id="conc_3_title" class="choice-title"><span>🔥</span> Max 3 Devices at once</div>
+            <div id="conc_3_desc" class="choice-desc">For high-capacity grid connections (e.g. 40A / 25kW capacity).</div>
           </button>
 
           <button class="choice-btn" onclick="setConcurrency(99, this)">
-            <div class="choice-title"><span>♾️</span> Unlimited Concurrency</div>
-            <div class="choice-desc">Unconstrained oracle benchmark. Runs every device strictly at its mathematical cheapest point.</div>
+            <div id="conc_99_title" class="choice-title"><span>♾️</span> Unlimited Concurrency</div>
+            <div id="conc_99_desc" class="choice-desc">Unconstrained oracle benchmark. Runs every device strictly at its mathematical cheapest point.</div>
           </button>
         </div>
       </div>
@@ -1057,8 +1056,8 @@
       <div class="card">
         <div class="card-header">
           <div>
-            <div class="card-title">⚡ 2. Select Heavy Electricity Devices to Run</div>
-            <div class="card-subtitle">Toggle appliances, adjust cycle energy requirements, and set completion deadlines</div>
+            <div id="sec2Title" class="card-title">⚡ 2. Select Heavy Electricity Devices to Run</div>
+            <div id="sec2Subtitle" class="card-subtitle">Toggle appliances, adjust cycle energy requirements, and set completion deadlines</div>
           </div>
         </div>
 
@@ -1069,8 +1068,8 @@
               <div class="device-info">
                 <span class="device-emoji">🚗</span>
                 <div>
-                  <div class="device-title">Electric Vehicle (EV)</div>
-                  <span class="load-tag heavy">Heavy Load • 7.4 kW</span>
+                  <div id="title_ev" class="device-title">Electric Vehicle (EV)</div>
+                  <span id="tag_ev" class="load-tag heavy">Heavy Load • 7.4 kW</span>
                 </div>
               </div>
               <label class="switch">
@@ -1080,11 +1079,11 @@
             </div>
             <div class="device-controls">
               <div class="control-col">
-                <label>Energy Needed (kWh)</label>
+                <label id="lbl_energy_ev">Energy Needed (kWh)</label>
                 <input type="number" id="energy_ev" value="22.2" step="1" min="5" max="80" onchange="runScheduler()">
               </div>
               <div class="control-col">
-                <label>Ready Within (Hours)</label>
+                <label id="lbl_deadline_ev">Ready Within (Hours)</label>
                 <input type="number" id="deadline_ev" value="10" step="1" min="1" max="24" onchange="runScheduler()">
               </div>
             </div>
@@ -1096,8 +1095,8 @@
               <div class="device-info">
                 <span class="device-emoji">♨️</span>
                 <div>
-                  <div class="device-title">Heat Pump Buffer Tank</div>
-                  <span class="load-tag heavy">Heavy Load • 2.5 kW</span>
+                  <div id="title_heat_pump" class="device-title">Heat Pump Buffer Tank</div>
+                  <span id="tag_heat_pump" class="load-tag heavy">Heavy Load • 2.5 kW</span>
                 </div>
               </div>
               <label class="switch">
@@ -1107,11 +1106,11 @@
             </div>
             <div class="device-controls">
               <div class="control-col">
-                <label>Energy Needed (kWh)</label>
+                <label id="lbl_energy_heat_pump">Energy Needed (kWh)</label>
                 <input type="number" id="energy_heat_pump" value="7.5" step="0.5" min="2" max="25" onchange="runScheduler()">
               </div>
               <div class="control-col">
-                <label>Ready Within (Hours)</label>
+                <label id="lbl_deadline_heat_pump">Ready Within (Hours)</label>
                 <input type="number" id="deadline_heat_pump" value="24" step="1" min="1" max="24" onchange="runScheduler()">
               </div>
             </div>
@@ -1123,8 +1122,8 @@
               <div class="device-info">
                 <span class="device-emoji">🧺</span>
                 <div>
-                  <div class="device-title">Washing Machine</div>
-                  <span class="load-tag medium">Medium • 2.0 kW</span>
+                  <div id="title_washer" class="device-title">Washing Machine</div>
+                  <span id="tag_washer" class="load-tag medium">Medium • 2.0 kW</span>
                 </div>
               </div>
               <label class="switch">
@@ -1134,11 +1133,11 @@
             </div>
             <div class="device-controls">
               <div class="control-col">
-                <label>Cycle Energy (kWh)</label>
+                <label id="lbl_energy_washer">Cycle Energy (kWh)</label>
                 <input type="number" id="energy_washer" value="3.0" step="0.5" min="1" max="5" onchange="runScheduler()">
               </div>
               <div class="control-col">
-                <label>Ready Within (Hours)</label>
+                <label id="lbl_deadline_washer">Ready Within (Hours)</label>
                 <input type="number" id="deadline_washer" value="16" step="1" min="1" max="24" onchange="runScheduler()">
               </div>
             </div>
@@ -1150,8 +1149,8 @@
               <div class="device-info">
                 <span class="device-emoji">👕</span>
                 <div>
-                  <div class="device-title">Tumble Dryer</div>
-                  <span class="load-tag heavy">Heavy • 2.5 kW</span>
+                  <div id="title_dryer" class="device-title">Tumble Dryer</div>
+                  <span id="tag_dryer" class="load-tag heavy">Heavy • 2.5 kW</span>
                 </div>
               </div>
               <label class="switch">
@@ -1161,11 +1160,11 @@
             </div>
             <div class="device-controls">
               <div class="control-col">
-                <label>Drying Energy (kWh)</label>
+                <label id="lbl_energy_dryer">Drying Energy (kWh)</label>
                 <input type="number" id="energy_dryer" value="3.5" step="0.5" min="1" max="6" onchange="runScheduler()">
               </div>
               <div class="control-col">
-                <label>Ready Within (Hours)</label>
+                <label id="lbl_deadline_dryer">Ready Within (Hours)</label>
                 <input type="number" id="deadline_dryer" value="18" step="1" min="1" max="24" onchange="runScheduler()">
               </div>
             </div>
@@ -1177,8 +1176,8 @@
               <div class="device-info">
                 <span class="device-emoji">🍽️</span>
                 <div>
-                  <div class="device-title">Dishwasher</div>
-                  <span class="load-tag medium">Medium • 1.5 kW</span>
+                  <div id="title_dishwasher" class="device-title">Dishwasher</div>
+                  <span id="tag_dishwasher" class="load-tag medium">Medium • 1.5 kW</span>
                 </div>
               </div>
               <label class="switch">
@@ -1188,11 +1187,11 @@
             </div>
             <div class="device-controls">
               <div class="control-col">
-                <label>Cycle Energy (kWh)</label>
+                <label id="lbl_energy_dishwasher">Cycle Energy (kWh)</label>
                 <input type="number" id="energy_dishwasher" value="1.8" step="0.2" min="1" max="4" onchange="runScheduler()">
               </div>
               <div class="control-col">
-                <label>Ready Within (Hours)</label>
+                <label id="lbl_deadline_dishwasher">Ready Within (Hours)</label>
                 <input type="number" id="deadline_dishwasher" value="20" step="1" min="1" max="24" onchange="runScheduler()">
               </div>
             </div>
@@ -1204,8 +1203,8 @@
       <div class="card">
         <div class="card-header">
           <div>
-            <div class="card-title">💡 3. Recommended Cheapest Running Windows (Driven by Mamdani FIS)</div>
-            <div class="card-subtitle">Every recommendation below displays its defuzzified Suitability Score S, Stage 2 Action, and Mamdani Rules fired</div>
+            <div id="sec3Title" class="card-title">💡 3. Recommended Cheapest Running Windows (Driven by Mamdani FIS)</div>
+            <div id="sec3Subtitle" class="card-subtitle">Every recommendation below displays its defuzzified Suitability Score S, Stage 2 Action, and Mamdani Rules fired</div>
           </div>
         </div>
 
@@ -1217,8 +1216,8 @@
         <div style="background: rgba(10, 16, 28, 0.7); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: var(--radius-sm); padding: 18px; margin-bottom: 20px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
             <div>
-              <span style="font-size: 0.92rem; font-weight: 700; color: #38bdf8;">🧠 24-Hour Fuzzy Suitability Curve S(t) ∈ [0, 100]</span>
-              <span style="font-size: 0.78rem; color: var(--text-muted); display: block;">Computed via the 15 Mamdani Rules & Centroid Defuzzification across Swiss dynamic tariff steps. Click any bar to inspect.</span>
+              <span id="chartTitle" style="font-size: 0.92rem; font-weight: 700; color: #38bdf8;">🧠 24-Hour Fuzzy Suitability Curve S(t) ∈ [0, 100]</span>
+              <span id="chartSubtitle" style="font-size: 0.78rem; color: var(--text-muted); display: block;">Computed via the 19 Mamdani Rules & Centroid Defuzzification across Swiss dynamic tariff steps. Click any bar to inspect.</span>
             </div>
             <span id="selectedHourBadge" style="font-size: 0.76rem; background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 4px 10px; border-radius: 20px; font-weight: 700;">
               Click a bar for details
@@ -1234,18 +1233,18 @@
           </div>
 
           <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.74rem; color: var(--text-muted); flex-wrap: wrap; gap: 6px;">
-            <span style="color: #34d399;">■ Ideal (80–100) Best Time</span>
-            <span style="color: #38bdf8;">■ Good (60–80) Cheap Time</span>
-            <span style="color: #fbbf24;">■ Okay (40–60) Normal</span>
-            <span style="color: #f87171;">■ Avoid (&lt;40) Peak Congestion</span>
+            <span id="legendIdeal" style="color: #34d399;">■ Ideal (80–100) Best Time</span>
+            <span id="legendGood" style="color: #38bdf8;">■ Good (60–80) Cheap Time</span>
+            <span id="legendOkay" style="color: #fbbf24;">■ Okay (40–60) Normal</span>
+            <span id="legendAvoid" style="color: #f87171;">■ Avoid (&lt;40) Peak Congestion</span>
           </div>
         </div>
 
         <!-- 24-HOUR MULTI-DEVICE SCHEDULE TIMELINE -->
         <div class="timeline-wrap">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-size: 0.88rem; font-weight: 700; color: #e2e8f0;">📅 24-Hour Visual Schedule Timeline (Gantt)</span>
-            <span style="font-size: 0.78rem; color: #34d399; font-weight: 600;">Sequenced by Fuzzy Suitability & Concurrency Breaker Limit</span>
+            <span id="timelineTitle" style="font-size: 0.88rem; font-weight: 700; color: #e2e8f0;">📅 24-Hour Visual Schedule Timeline (Gantt)</span>
+            <span id="timelineSubtitle" style="font-size: 0.78rem; color: #34d399; font-weight: 600;">Sequenced by Fuzzy Suitability & Concurrency Breaker Limit</span>
           </div>
 
           <div style="display: grid; grid-template-columns: 140px 1fr; gap: 12px; margin-bottom: 4px;">
@@ -1272,35 +1271,35 @@
       <div class="card">
         <div class="card-header">
           <div>
-            <div class="card-title">🧠 Interactive Stage 1 & Stage 2 Fuzzy Inference Engine</div>
-            <div class="card-subtitle">Adjust raw inputs or load dynamic presets to watch the 15 Mamdani Rules fire in real-time with Centroid Defuzzification</div>
+            <div id="engineTitle" class="card-title">🧠 Interactive Stage 1 & Stage 2 Fuzzy Inference Engine</div>
+            <div id="engineSubtitle" class="card-subtitle">Adjust raw inputs or load dynamic presets to watch the 19 Mamdani Rules fire in real-time with Centroid Defuzzification</div>
           </div>
           <div class="engine-presets">
-            <button class="preset-pill" onclick="applyEnginePreset('night')">🌙 Night Valley (02:00)</button>
-            <button class="preset-pill" onclick="applyEnginePreset('solar')">☀️ Midday Solar (13:30)</button>
-            <button class="preset-pill" onclick="applyEnginePreset('peak')">🚨 Winter Peak (18:30)</button>
+            <button id="presetNight" class="preset-pill" onclick="applyEnginePreset('night')">🌙 Night Valley (02:00)</button>
+            <button id="presetSolar" class="preset-pill" onclick="applyEnginePreset('solar')">☀️ Midday Solar (13:30)</button>
+            <button id="presetPeak" class="preset-pill" onclick="applyEnginePreset('peak')">🚨 Winter Peak (18:30)</button>
           </div>
         </div>
 
         <div class="engine-grid">
           <!-- INPUT CONTROLS -->
           <div style="background: rgba(10, 16, 28, 0.7); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 18px;">
-            <div style="font-size: 0.9rem; font-weight: 700; color: #38bdf8; margin-bottom: 14px;">1. Stage 1 Fuzzy Inputs (P, A, G, T)</div>
+            <div id="engineInputTitle" style="font-size: 0.9rem; font-weight: 700; color: #38bdf8; margin-bottom: 14px;">1. Stage 1 Fuzzy Inputs (P, A, G, T)</div>
 
             <div class="slider-group">
               <div class="slider-header">
-                <span>Price Percentile <b>P</b> (Daily rank)</span>
+                <span id="lblSliderP">Price Percentile <b>P</b> (Daily rank)</span>
                 <span class="val" id="valP">10%</span>
               </div>
               <input type="range" id="sliderP" class="range-input" min="0" max="100" value="10" oninput="onEngineSliderChange()">
               <div style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-subtle);">
-                <span>0% Cheap</span><span>50% Med</span><span>100% Expensive</span>
+                <span id="pRangeCheap">0% Cheap</span><span id="pRangeMed">50% Med</span><span id="pRangeExp">100% Expensive</span>
               </div>
             </div>
 
             <div class="slider-group">
               <div class="slider-header">
-                <span>Absolute Price <b>A</b> (CHF/kWh)</span>
+                <span id="lblSliderA">Absolute Price <b>A</b> (CHF/kWh)</span>
                 <span class="val" id="valA">CHF 0.14</span>
               </div>
               <input type="range" id="sliderA" class="range-input" min="0.05" max="0.50" step="0.01" value="0.14" oninput="onEngineSliderChange()">
@@ -1311,29 +1310,29 @@
 
             <div class="slider-group">
               <div class="slider-header">
-                <span>Grid Congestion <b>G</b> (Net load²)</span>
+                <span id="lblSliderG">Grid Congestion <b>G</b> (Net load²)</span>
                 <span class="val" id="valG">0.10</span>
               </div>
               <input type="range" id="sliderG" class="range-input" min="0.0" max="1.0" step="0.05" value="0.10" oninput="onEngineSliderChange()">
               <div style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-subtle);">
-                <span>0.0 Low</span><span>0.5 Moderate</span><span>1.0 Critical</span>
+                <span id="gRangeLow">0.0 Low</span><span id="gRangeMed">0.5 Moderate</span><span id="gRangeCrit">1.0 Critical</span>
               </div>
             </div>
 
             <div class="slider-group">
               <div class="slider-header">
-                <span>Price Trend <b>T</b> (Next hour slope)</span>
+                <span id="lblSliderT">Price Trend <b>T</b> (Next hour slope)</span>
                 <span class="val" id="valT">0.00</span>
               </div>
               <input type="range" id="sliderT" class="range-input" min="-1.0" max="1.0" step="0.1" value="0.0" oninput="onEngineSliderChange()">
               <div style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-subtle);">
-                <span>-1.0 Falling</span><span>0.0 Flat</span><span>+1.0 Rising</span>
+                <span id="tRangeFall">-1.0 Falling</span><span id="tRangeFlat">0.0 Flat</span><span id="tRangeRise">+1.0 Rising</span>
               </div>
             </div>
 
             <!-- DEFUZZIFIED OUTPUT CARD -->
             <div style="margin-top: 20px; padding: 14px; background: #060a12; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.3);">
-              <div style="font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em;">Centroid Defuzzification Result</div>
+              <div id="engineDefuzzTitle" style="font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em;">Centroid Defuzzification Result</div>
               <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 6px;">
                 <span style="font-size: 2rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: #34d399;" id="engineScoreVal">90.7</span>
                 <span id="engineLabelBadge" class="fuzzy-pill ideal" style="font-size: 0.85rem; padding: 4px 10px;">IDEAL (Best Time)</span>
@@ -1347,19 +1346,19 @@
           <!-- MAMDANI RULES ACTIVATION TABLE -->
           <div style="background: rgba(10, 16, 28, 0.7); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 18px; overflow-x: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span style="font-size: 0.9rem; font-weight: 700; color: #38bdf8;">2. Stage 1 Mamdani Linguistic Rules (19 Rules with Edge Cases)</span>
-              <span style="font-size: 0.74rem; color: var(--text-muted);">Green rows indicate rules currently firing</span>
+              <span id="engineRulesTitle" style="font-size: 0.9rem; font-weight: 700; color: #38bdf8;">2. Stage 1 Mamdani Linguistic Rules (19 Rules with Edge Cases)</span>
+              <span id="engineRulesSubtitle" style="font-size: 0.74rem; color: var(--text-muted);">Green rows indicate rules currently firing</span>
             </div>
 
             <table class="rules-table">
               <thead>
                 <tr>
-                  <th>Rule ID</th>
-                  <th>IF Price Percentile (P)</th>
-                  <th>AND Grid Congestion (G)</th>
-                  <th>AND Absolute / Trend</th>
-                  <th>THEN Suitability (S)</th>
-                  <th>Fired</th>
+                  <th id="thRuleId">Rule ID</th>
+                  <th id="thRuleP">IF Price Percentile (P)</th>
+                  <th id="thRuleG">AND Grid Congestion (G)</th>
+                  <th id="thRuleExtra">AND Absolute / Trend</th>
+                  <th id="thRuleS">THEN Suitability (S)</th>
+                  <th id="thRuleFired">Fired</th>
                 </tr>
               </thead>
               <tbody id="rulesTableBody">
@@ -1379,7 +1378,7 @@
         
         <!-- SECTION 1 -->
         <div class="report-section">
-          <div class="report-h2"><span class="num">1</span> Problem and Proposed System</div>
+          <div id="repSec1H2" class="report-h2"><span class="num">1</span> Problem and Proposed System</div>
           <p>
             Under the Swiss Federal Electricity Act (StromVG revision, Jan 2026), smart meters roll out mandatory dynamic retail tariffs consisting of two components: 
             (1) a 15-minute wholesale spot energy price (ENTSO-E), and (2) a non-linear grid-use tariff scaling with transformer net load squared ($load^2$).
@@ -1394,7 +1393,7 @@
 
         <!-- SECTION 2 -->
         <div class="report-section">
-          <div class="report-h2"><span class="num">2</span> Data Collection</div>
+          <div id="repSec2H2" class="report-h2"><span class="num">2</span> Data Collection</div>
           <p>
             The system operates on real 2025 Swiss electricity market data sampled at 15-minute intervals (35,040 intervals per year, 96 intervals per day):
           </p>
@@ -1408,7 +1407,7 @@
 
         <!-- SECTION 3 -->
         <div class="report-section">
-          <div class="report-h2"><span class="num">3</span> Cleaning and Normalising</div>
+          <div id="repSec3H2" class="report-h2"><span class="num">3</span> Cleaning and Normalising</div>
           <p>
             Raw data is prepared through robust statistical normalization across each 24-hour cycle:
           </p>
@@ -1422,7 +1421,7 @@
 
         <!-- SECTION 4 -->
         <div class="report-section">
-          <div class="report-h2"><span class="num">4</span> Membership Functions and Fuzzification</div>
+          <div id="repSec4H2" class="report-h2"><span class="num">4</span> Membership Functions and Fuzzification</div>
           <p>
             Continuous inputs are mapped to fuzzy linguistic terms using triangular and trapezoidal membership functions:
           </p>
@@ -1435,9 +1434,9 @@
 
         <!-- SECTION 5 -->
         <div class="report-section">
-          <div class="report-h2"><span class="num">5</span> Rulebase and Defuzzification</div>
+          <div id="repSec5H2" class="report-h2"><span class="num">5</span> Rulebase and Defuzzification</div>
           <p>
-            Stage 1 uses <b>15 Mamdani Linguistic Rules</b> defined by power engineering heuristics. When price is cheap and the grid is empty, suitability is <i>Ideal</i>. If the grid is overloaded, high grid tariffs override cheap spot prices to prevent blackouts.
+            Stage 1 uses <b>19 Mamdani Linguistic Rules</b> defined by power engineering heuristics. When price is cheap and the grid is empty, suitability is <i>Ideal</i>. If the grid is overloaded, high grid tariffs override cheap spot prices to prevent blackouts.
           </p>
           <p style="margin-top: 8px;">
             <b>Defuzzification:</b> Aggregated fuzzy output is defuzzified to a crisp score $S \in [0, 100]$ using the <b>Centroid (Center of Gravity)</b> method:
@@ -1450,7 +1449,7 @@
 
         <!-- SECTION 6 -->
         <div class="report-section">
-          <div class="report-h2"><span class="num">6</span> System Architecture and Output (Tentative)</div>
+          <div id="repSec6H2" class="report-h2"><span class="num">6</span> System Architecture and Output (Tentative)</div>
           <p>
             The live application running on this server is the exact production realization of this architecture:
           </p>
@@ -1464,7 +1463,7 @@
 
         <!-- SECTION 7 -->
         <div class="report-section">
-          <div class="report-h2"><span class="num">7</span> Results and Next Steps</div>
+          <div id="repSec7H2" class="report-h2"><span class="num">7</span> Results and Next Steps</div>
           <p>
             Empirical benchmark on the full 2025 dataset proves significant advantages over fixed-threshold baselines:
           </p>
@@ -1508,11 +1507,11 @@
 
     <!-- FOOTER -->
     <footer>
-      <div>
+      <div id="footerBrand">
         Swiss Dynamic Electricity Tariffs (StromVG 2026) • Two-Stage Mamdani Fuzzy Inference System
       </div>
       <div>
-        <a href="javascript:void(0)" onclick="switchMainView('report')">Academic Report</a> • 
+        <a id="footerReportLink" href="javascript:void(0)" onclick="switchMainView('report')">Academic Report</a> • 
         <a href="/docs" target="_blank">Swagger API</a> • 
         <a href="/v1/config" target="_blank">Fuzzy Config JSON</a>
       </div>
@@ -1556,11 +1555,566 @@
       { id: "R19", p: "high", g: "any", extra: "A high", s: "avoid", text: "EDGE CASE: IF P is high AND A is high THEN S is avoid (Double peak avoidance)" },
     ];
 
+    const I18N = {
+      en: {
+        brandTitle: "Swiss Dynamic Tariff • Fuzzy Inference System",
+        brandSubtitle: "Two-Stage Mamdani FIS & Multi-Device Household Scheduler (StromVG 2026)",
+        navTextScheduler: "⚡ 1. Smart Household Scheduler",
+        navTextEngine: "🧠 2. Live Fuzzy Inference Engine (Mamdani Rules)",
+        navTextReport: "📑 3. Academic Model & Report (7 Sections)",
+        connTitle: "Exact Relation to the Fuzzy Logic Model:",
+        connText: "The server automatically ingests the 96 15-minute Swiss Dynamic Tariff steps for the day, cleans and computes the normalized inputs <b>(P, A, G, T)</b>, evaluates the <b>19 Mamdani Rules</b>, and defuzzifies them into hourly Suitability Scores <b>S ∈ [0, 100]</b>. The scheduler then sequences heavy appliances into Ideal & Good hours under your household breaker concurrency limit.",
+        connBtn: "🔬 Inspect 19 Mamdani Rules",
+        statSavingsLabel: "🎉 Total Day Savings",
+        statCostLabel: "⚡ Scheduled Energy Cost",
+        statPeakLabel: "⚠️ Avoided Peak Cost",
+        statPercentLabel: "Savings Percent",
+        peakBadgeText: "Zero heavy devices scheduled during 17:30 – 20:30 peak!",
+        sec1Title: "🔌 1. Concurrency Breaker Limit & Season",
+        sec1Subtitle: "Staggers high-power appliances to prevent tripping home fuses (16A / 25A) and avoids Swiss grid demand surcharges",
+        tab_winter: "❄️ Winter 2025",
+        tab_summer: "☀️ Summer PV",
+        tab_autumn_dst: "🕒 Practising: Autumn DST",
+        tab_winter_cold_snap: "❄️ Practising: Cold Snap",
+        tab_january_spike: "⚡ Practising: Jan Peak",
+        tab_february_solar: "🔋 Practising: Feb Solar",
+        tab_live_ekz: "🔴 Live EKZ API",
+        conc_1_title: "<span>🛡️</span> 1 Device Only (Recommended)",
+        conc_1_desc: "Strict sequential running. Completely prevents high-load overlapping. Safest for standard home breakers.",
+        conc_2_title: "<span>⚡</span> Max 2 Devices at once",
+        conc_2_desc: "Allows running EV + Heat Pump together if both fall into the cheapest night or solar surplus dip.",
+        conc_3_title: "<span>🔥</span> Max 3 Devices at once",
+        conc_3_desc: "For high-capacity grid connections (e.g. 40A / 25kW capacity).",
+        conc_99_title: "<span>♾️</span> Unlimited Concurrency",
+        conc_99_desc: "Unconstrained oracle benchmark. Runs every device strictly at its mathematical cheapest point.",
+        sec2Title: "⚡ 2. Select Heavy Electricity Devices to Run",
+        sec2Subtitle: "Toggle appliances, adjust cycle energy requirements, and set completion deadlines",
+        devNames: {
+          ev: "Electric Vehicle (EV)",
+          heat_pump: "Heat Pump Buffer Tank",
+          washer: "Washing Machine",
+          dryer: "Tumble Dryer",
+          dishwasher: "Dishwasher"
+        },
+        devTags: {
+          ev: "Heavy Load • 7.4 kW",
+          heat_pump: "Heavy Load • 2.5 kW",
+          washer: "Medium • 2.0 kW",
+          dryer: "Heavy • 2.5 kW",
+          dishwasher: "Medium • 1.5 kW"
+        },
+        lbl_energy_ev: "Energy Needed (kWh)",
+        lbl_deadline_ev: "Ready Within (Hours)",
+        lbl_energy_heat_pump: "Energy Needed (kWh)",
+        lbl_deadline_heat_pump: "Ready Within (Hours)",
+        lbl_energy_washer: "Cycle Energy (kWh)",
+        lbl_deadline_washer: "Ready Within (Hours)",
+        lbl_energy_dryer: "Drying Energy (kWh)",
+        lbl_deadline_dryer: "Ready Within (Hours)",
+        lbl_energy_dishwasher: "Cycle Energy (kWh)",
+        lbl_deadline_dishwasher: "Ready Within (Hours)",
+        sec3Title: "💡 3. Recommended Cheapest Running Windows (Driven by Mamdani FIS)",
+        sec3Subtitle: "Every recommendation below displays its defuzzified Suitability Score S, Stage 2 Action, and Mamdani Rules fired",
+        chartTitle: "🧠 24-Hour Fuzzy Suitability Curve S(t) ∈ [0, 100]",
+        chartSubtitle: "Computed via the 19 Mamdani Rules & Centroid Defuzzification across Swiss dynamic tariff steps. Click any bar to inspect.",
+        selectedHourBadge: "Click a bar for details",
+        hourDetailDefault: "Hover or click any hour bar above to inspect fuzzy score, active rules, and allocated appliances.",
+        legendIdeal: "■ Ideal (80–100) Best Time",
+        legendGood: "■ Good (60–80) Cheap Time",
+        legendOkay: "■ Okay (40–60) Normal",
+        legendAvoid: "■ Avoid (<40) Peak Congestion",
+        timelineTitle: "📅 24-Hour Visual Schedule Timeline (Gantt)",
+        timelineSubtitle: "Sequenced by Fuzzy Suitability & Concurrency Breaker Limit",
+        engineTitle: "🧠 Interactive Stage 1 & Stage 2 Fuzzy Inference Engine",
+        engineSubtitle: "Adjust raw inputs or load dynamic presets to watch the 19 Mamdani Rules fire in real-time with Centroid Defuzzification",
+        presetNight: "🌙 Night Valley (02:00)",
+        presetSolar: "☀️ Midday Solar (13:30)",
+        presetPeak: "🚨 Winter Peak (18:30)",
+        engineInputTitle: "1. Stage 1 Fuzzy Inputs (P, A, G, T)",
+        lblSliderP: "Price Percentile <b>P</b> (Daily rank)",
+        pRangeCheap: "0% Cheap",
+        pRangeMed: "50% Med",
+        pRangeExp: "100% Expensive",
+        lblSliderA: "Absolute Price <b>A</b> (CHF/kWh)",
+        lblSliderG: "Grid Congestion <b>G</b> (Net load²)",
+        gRangeLow: "0.0 Low",
+        gRangeMed: "0.5 Moderate",
+        gRangeCrit: "1.0 Critical",
+        lblSliderT: "Price Trend <b>T</b> (Next hour slope)",
+        tRangeFall: "-1.0 Falling",
+        tRangeFlat: "0.0 Flat",
+        tRangeRise: "+1.0 Rising",
+        engineDefuzzTitle: "Centroid Defuzzification Result",
+        engineDefuzzNote: "Crisp score S ∈ [0, 100] calculated via COG (Center of Gravity) of aggregated Mamdani rule conclusions.",
+        engineRulesTitle: "2. Stage 1 Mamdani Linguistic Rules (19 Rules with Edge Cases)",
+        engineRulesSubtitle: "Green rows indicate rules currently firing",
+        thRuleId: "Rule ID",
+        thRuleP: "IF Price Percentile (P)",
+        thRuleG: "AND Grid Congestion (G)",
+        thRuleExtra: "AND Absolute / Trend",
+        thRuleS: "THEN Suitability (S)",
+        thRuleFired: "Fired",
+        repSec1H2: "<span class=\"num\">1</span> Problem and Proposed System",
+        repSec2H2: "<span class=\"num\">2</span> Data Collection",
+        repSec3H2: "<span class=\"num\">3</span> Cleaning and Normalising",
+        repSec4H2: "<span class=\"num\">4</span> Membership Functions and Fuzzification",
+        repSec5H2: "<span class=\"num\">5</span> Rulebase and Defuzzification",
+        repSec6H2: "<span class=\"num\">6</span> System Architecture and Output (Tentative)",
+        repSec7H2: "<span class=\"num\">7</span> Results and Next Steps",
+        footerBrand: "Swiss Dynamic Electricity Tariffs (StromVG 2026) • Two-Stage Mamdani Fuzzy Inference System",
+        footerReportLink: "Academic Report",
+        recFlexibleOvernight: "Flexible overnight",
+        recTotalRun: "total run",
+        recSuitability: "Suitability",
+        recAction: "Action",
+        recRules: "Rules",
+        recAvgTariff: "Avg Tariff",
+        recContinuous: "Continuous block cycle",
+        recFlexibleSlots: "Flexible optimal slots",
+        recSavesVsPeak: "Saves CHF {saved} vs Peak",
+        recNoDevices: "No appliances selected. Toggle an appliance above to generate schedules.",
+        hourMetrics: "Hour {h} Metrics:",
+        hourAllocated: "Scheduled Appliances:",
+        hourNone: "None (idle)",
+        hourOptWindow: "Optimal night/solar surplus window.",
+        hourAvoidWindow: "Peak congestion period avoided.",
+        hourStdWindow: "Standard operational window."
+      },
+      de: {
+        brandTitle: "Dynamische Schweizer Stromtarife • Fuzzy-Inferenzsystem",
+        brandSubtitle: "Zweistufiges Mamdani-FIS & Haushalts-Einsatzplaner für Großverbraucher (StromVG 2026)",
+        navTextScheduler: "⚡ 1. Smart-Haushaltsplaner",
+        navTextEngine: "🧠 2. Live Fuzzy-Inferenz-Engine (Mamdani-Regeln)",
+        navTextReport: "📑 3. Akademischer Modellbericht (7 Abschnitte)",
+        connTitle: "Exakter Bezug zum Fuzzy-Logik-Modell:",
+        connText: "Der Server liest automatisch die 96 15-Minuten-Intervalle des Schweizer Dynamischen Tarifs ein, berechnet die normalisierten Eingangsgrößen <b>(P, A, G, T)</b>, wertet die <b>19 Mamdani-Regeln</b> aus und defuzzifiziert sie zu stündlichen Eignungswerten <b>S ∈ [0, 100]</b>. Der Planer taktet Großverbraucher in ideale & günstige Stunden unter Einhaltung des Sicherungslimits.",
+        connBtn: "🔬 19 Mamdani-Regeln prüfen",
+        statSavingsLabel: "🎉 Gesamte Tagesersparnis",
+        statCostLabel: "⚡ Geplante Energiekosten",
+        statPeakLabel: "⚠️ Vermiedene Spitzenkosten",
+        statPercentLabel: "Ersparnis in Prozent",
+        peakBadgeText: "Keine Großgeräte im Abend-Peak von 17:30 bis 20:30 Uhr eingeplant!",
+        sec1Title: "🔌 1. Sicherungs-Gleichzeitigkeitslimit & Tarifperiode",
+        sec1Subtitle: "Staffelt Hochleistungsgeräte, um das Auslösen der Haussicherung (16A / 25A) zu verhindern und Netzentgelte zu minimieren",
+        tab_winter: "❄️ Winter 2025",
+        tab_summer: "☀️ Sommer PV",
+        tab_autumn_dst: "🕒 Übung: Herbst-Zeitumstellung",
+        tab_winter_cold_snap: "❄️ Übung: Kältewelle",
+        tab_january_spike: "⚡ Übung: Januar-Spitze",
+        tab_february_solar: "🔋 Übung: Februar-Solar",
+        tab_live_ekz: "🔴 Live EKZ API",
+        conc_1_title: "<span>🛡️</span> Nur 1 Gerät gleichzeitig (Empfohlen)",
+        conc_1_desc: "Strikt sequentielle Schaltung. Verhindert Überlastung vollständig. Am sichersten für Standard-Haussicherungen.",
+        conc_2_title: "<span>⚡</span> Max. 2 Geräte gleichzeitig",
+        conc_2_desc: "Ermöglicht das gemeinsame Laden von E-Auto und Wärmepumpe in günstigsten Nacht- oder PV-Überschussfenstern.",
+        conc_3_title: "<span>🔥</span> Max. 3 Geräte gleichzeitig",
+        conc_3_desc: "Für hochdimensionierte Netzanschlüsse (z.B. 40A / 25 kW Anschlusswert).",
+        conc_99_title: "<span>♾️</span> Unbegrenzte Gleichzeitigkeit",
+        conc_99_desc: "Mathematischer Benchmark (Orakel). Lässt jedes Gerät exakt zur absolut günstigsten Stunde laufen.",
+        sec2Title: "⚡ 2. Strom-Großverbraucher auswählen",
+        sec2Subtitle: "Geräte aktivieren, Energiebedarf anpassen und gewünschte Fertigstellungszeit festlegen",
+        devNames: {
+          ev: "Elektrofahrzeug (EV)",
+          heat_pump: "Wärmepumpen-Pufferspeicher",
+          washer: "Waschmaschine",
+          dryer: "Wäschetrockner",
+          dishwasher: "Geschirrspüler"
+        },
+        devTags: {
+          ev: "Großverbraucher • 7.4 kW",
+          heat_pump: "Großverbraucher • 2.5 kW",
+          washer: "Mittel • 2.0 kW",
+          dryer: "Großverbraucher • 2.5 kW",
+          dishwasher: "Mittel • 1.5 kW"
+        },
+        lbl_energy_ev: "Benötigte Energie (kWh)",
+        lbl_deadline_ev: "Fertig in (Stunden)",
+        lbl_energy_heat_pump: "Benötigte Energie (kWh)",
+        lbl_deadline_heat_pump: "Fertig in (Stunden)",
+        lbl_energy_washer: "Zyklus-Energie (kWh)",
+        lbl_deadline_washer: "Fertig in (Stunden)",
+        lbl_energy_dryer: "Trocknungs-Energie (kWh)",
+        lbl_deadline_dryer: "Fertig in (Stunden)",
+        lbl_energy_dishwasher: "Spül-Energie (kWh)",
+        lbl_deadline_dishwasher: "Fertig in (Stunden)",
+        sec3Title: "💡 3. Empfohlene günstigste Betriebsfenster (Mamdani-FIS)",
+        sec3Subtitle: "Jede Empfehlung zeigt den defuzzifizierten Eignungswert S, die Stufe-2-Aktion und die aktiven Mamdani-Regeln",
+        chartTitle: "🧠 24-Stunden Fuzzy-Eignungskurve S(t) ∈ [0, 100]",
+        chartSubtitle: "Berechnet aus 19 Mamdani-Regeln mit Schwerpunkt-Defuzzifizierung (COG). Balken anklicken für Details.",
+        selectedHourBadge: "Balken anklicken für Details",
+        hourDetailDefault: "Fahren Sie über einen Stundenbalken oder klicken Sie darauf, um Eignung, Regeln und Geräte anzuzeigen.",
+        legendIdeal: "■ Ideal (80–100) Beste Zeit",
+        legendGood: "■ Gut (60–80) Günstige Zeit",
+        legendOkay: "■ Okay (40–60) Normalbetrieb",
+        legendAvoid: "■ Meiden (<40) Spitzenlast",
+        timelineTitle: "📅 24-Stunden Zeitplan-Visualisierung (Gantt)",
+        timelineSubtitle: "Sequenziert nach Fuzzy-Eignung und Sicherungs-Gleichzeitigkeitslimit",
+        engineTitle: "🧠 Interaktives Stufe-1 & Stufe-2 Fuzzy-Inferenzsystem",
+        engineSubtitle: "Eingangsparameter anpassen oder dynamische Szenarien laden, um das Feuern der 19 Mamdani-Regeln zu beobachten",
+        presetNight: "🌙 Nachttal (02:00)",
+        presetSolar: "☀️ Mittags-PV (13:30)",
+        presetPeak: "🚨 Winter-Spitzenlast (18:30)",
+        engineInputTitle: "1. Stufe 1 Fuzzy-Eingaben (P, A, G, T)",
+        lblSliderP: "Preis-Perzentil <b>P</b> (Tagesrang)",
+        pRangeCheap: "0% Günstig",
+        pRangeMed: "50% Mittel",
+        pRangeExp: "100% Teuer",
+        lblSliderA: "Absoluter Preis <b>A</b> (CHF/kWh)",
+        lblSliderG: "Netzbelastung <b>G</b> (Netzlast²)",
+        gRangeLow: "0.0 Niedrig",
+        gRangeMed: "0.5 Mäßig",
+        gRangeCrit: "1.0 Kritisch",
+        lblSliderT: "Preistrend <b>T</b> (Steigung folg. Std.)",
+        tRangeFall: "-1.0 Fallend",
+        tRangeFlat: "0.0 Stabil",
+        tRangeRise: "+1.0 Steigend",
+        engineDefuzzTitle: "Ergebnis der Schwerpunkt-Defuzzifizierung",
+        engineDefuzzNote: "Exakter Score S ∈ [0, 100] berechnet über den Schwerpunkt (Center of Gravity, COG) der aggregierten Mamdani-Schlussfolgerungen.",
+        engineRulesTitle: "2. Stufe 1 Mamdani Linguistische Regeln (19 Regeln inkl. Sonderfälle)",
+        engineRulesSubtitle: "Grüne Zeilen kennzeichnen aktuell aktive Regeln",
+        thRuleId: "Regel-ID",
+        thRuleP: "WENN Preis-Perzentil (P)",
+        thRuleG: "UND Netzbelastung (G)",
+        thRuleExtra: "UND Absolutpreis / Trend",
+        thRuleS: "DANN Eignung (S)",
+        thRuleFired: "Aktiv",
+        repSec1H2: "<span class=\"num\">1</span> Problemstellung und vorgeschlagenes System",
+        repSec2H2: "<span class=\"num\">2</span> Datenerfassung und Schweizer Strommarkt",
+        repSec3H2: "<span class=\"num\">3</span> Datenbereinigung und statistische Normalisierung",
+        repSec4H2: "<span class=\"num\">4</span> Zugehörigkeitsfunktionen und Fuzzifizierung",
+        repSec5H2: "<span class=\"num\">5</span> Regelbasis und Schwerpunkt-Defuzzifizierung",
+        repSec6H2: "<span class=\"num\">6</span> Systemarchitektur und Steuerungslogik",
+        repSec7H2: "<span class=\"num\">7</span> Benchmark-Ergebnisse und Ausblick",
+        footerBrand: "Dynamische Schweizer Stromtarife (StromVG 2026) • Zweistufiges Mamdani-Fuzzy-Inferenzsystem",
+        footerReportLink: "Wissenschaftlicher Bericht",
+        recFlexibleOvernight: "Flexibel über Nacht",
+        recTotalRun: "Gesamtlaufzeit",
+        recSuitability: "Eignung",
+        recAction: "Aktion",
+        recRules: "Regeln",
+        recAvgTariff: "Ø Tarif",
+        recContinuous: "Durchgehender Zyklus",
+        recFlexibleSlots: "Flexible Bestzeit-Fenster",
+        recSavesVsPeak: "Spart CHF {saved} ggü. Spitze",
+        recNoDevices: "Keine Geräte ausgewählt. Aktivieren Sie oben ein Gerät, um Pläne zu generieren.",
+        hourMetrics: "Stunde {h} Metriken:",
+        hourAllocated: "Eingeplante Geräte:",
+        hourNone: "Keine (Leerlauf)",
+        hourOptWindow: "Optimales Nacht-/Solarüberschuss-Fenster.",
+        hourAvoidWindow: "Spitzenlastperiode erfolgreich vermieden.",
+        hourStdWindow: "Normales Betriebsfenster."
+      },
+      fr: {
+        brandTitle: "Tarifs Électriques Dynamiques Suisses • Système d'Inférence Floue",
+        brandSubtitle: "FIS Mamdani à Deux Niveaux & Planificateur d'Appareils Ménagers (StromVG 2026)",
+        navTextScheduler: "⚡ 1. Planificateur Domestique Intelligent",
+        navTextEngine: "🧠 2. Moteur d'Inférence Floue en Direct (Règles Mamdani)",
+        navTextReport: "📑 3. Modèle Académique & Rapport (7 Sections)",
+        connTitle: "Lien Exact avec le Modèle de Logique Floue :",
+        connText: "Le serveur ingère automatiquement les 96 pas de 15 minutes du tarif dynamique suisse, calcule les entrées normalisées <b>(P, A, G, T)</b>, évalue les <b>19 règles Mamdani</b> et les défuzzifie en scores horaires d'adéquation <b>S ∈ [0, 100]</b>. Le planificateur séquence ensuite les gros consommateurs aux heures idéales sans dépasser le disjoncteur.",
+        connBtn: "🔬 Inspecter les 19 Règles Mamdani",
+        statSavingsLabel: "🎉 Économies Totales du Jour",
+        statCostLabel: "⚡ Coût Énergétique Planifié",
+        statPeakLabel: "⚠️ Coût de Pointe Évité",
+        statPercentLabel: "Pourcentage d'Économie",
+        peakBadgeText: "Zéro appareil lourd programmé pendant la pointe de 17h30 à 20h30 !",
+        sec1Title: "🔌 1. Limite de Concurrence du Disjoncteur & Saison",
+        sec1Subtitle: "Échelonne les appareils puissants pour éviter de déclencher les fusibles (16A / 25A) et réduit les surtaxes réseau",
+        tab_winter: "❄️ Hiver 2025",
+        tab_summer: "☀️ Été Solaire",
+        tab_autumn_dst: "🕒 Pratique : Changement d'Heure",
+        tab_winter_cold_snap: "❄️ Pratique : Vague de Froid",
+        tab_january_spike: "⚡ Pratique : Pic de Janvier",
+        tab_february_solar: "🔋 Pratique : Février Solaire",
+        tab_live_ekz: "🔴 API EKZ en Direct",
+        conc_1_title: "<span>🛡️</span> 1 Seul Appareil (Recommandé)",
+        conc_1_desc: "Fonctionnement strictement séquentiel. Évite tout chevauchement. Idéal pour disjoncteurs domestiques standards.",
+        conc_2_title: "<span>⚡</span> Max 2 Appareils simultanés",
+        conc_2_desc: "Permet de faire tourner VE + Pompe à chaleur ensemble si les deux tombent dans le creux nocturne ou solaire.",
+        conc_3_title: "<span>🔥</span> Max 3 Appareils simultanés",
+        conc_3_desc: "Pour raccordements réseau à haute capacité (ex. 40A / 25 kW).",
+        conc_99_title: "<span>♾️</span> Concurrence Illimitée",
+        conc_99_desc: "Benchmark oracle sans contraintes. Démarre chaque appareil à son heure mathématiquement la moins chère.",
+        sec2Title: "⚡ 2. Sélectionner les Appareils Énergivores",
+        sec2Subtitle: "Activez les appareils, ajustez l'énergie du cycle et définissez l'heure limite souhaitée",
+        devNames: {
+          ev: "Véhicule Électrique (VE)",
+          heat_pump: "Ballon Pompe à Chaleur",
+          washer: "Lave-linge",
+          dryer: "Sèche-linge",
+          dishwasher: "Lave-vaisselle"
+        },
+        devTags: {
+          ev: "Forte Charge • 7.4 kW",
+          heat_pump: "Forte Charge • 2.5 kW",
+          washer: "Moyenne • 2.0 kW",
+          dryer: "Forte Charge • 2.5 kW",
+          dishwasher: "Moyenne • 1.5 kW"
+        },
+        lbl_energy_ev: "Énergie Requise (kWh)",
+        lbl_deadline_ev: "Prêt d'ici (Heures)",
+        lbl_energy_heat_pump: "Énergie Requise (kWh)",
+        lbl_deadline_heat_pump: "Prêt d'ici (Heures)",
+        lbl_energy_washer: "Énergie du Cycle (kWh)",
+        lbl_deadline_washer: "Prêt d'ici (Heures)",
+        lbl_energy_dryer: "Énergie de Séchage (kWh)",
+        lbl_deadline_dryer: "Prêt d'ici (Heures)",
+        lbl_energy_dishwasher: "Énergie du Cycle (kWh)",
+        lbl_deadline_dishwasher: "Prêt d'ici (Heures)",
+        sec3Title: "💡 3. Créneaux Optimaux Recommandés (Pilotés par Mamdani)",
+        sec3Subtitle: "Chaque recommandation affiche son score d'adéquation S, son action de niveau 2 et ses règles Mamdani actives",
+        chartTitle: "🧠 Courbe d'Adéquation Floue sur 24 Heures S(t) ∈ [0, 100]",
+        chartSubtitle: "Calculée par 19 règles Mamdani et défuzzification par centre de gravité. Cliquez sur une barre pour inspecter.",
+        selectedHourBadge: "Cliquez sur une barre pour les détails",
+        hourDetailDefault: "Survolez ou cliquez sur une barre d'heure pour inspecter le score flou, les règles et les appareils alloués.",
+        legendIdeal: "■ Idéal (80–100) Meilleur Moment",
+        legendGood: "■ Bon (60–80) Moment Économique",
+        legendOkay: "■ Moyen (40–60) Normal",
+        legendAvoid: "■ Éviter (<40) Congestion de Pointe",
+        timelineTitle: "📅 Chronologie Visuelle sur 24 Heures (Gantt)",
+        timelineSubtitle: "Ordonnancé par adéquation floue et limite de disjoncteur",
+        engineTitle: "🧠 Moteur d'Inférence Floue Interactif (Niveaux 1 & 2)",
+        engineSubtitle: "Ajustez les entrées ou chargez des scénarios pour observer l'activation en direct des 19 règles Mamdani",
+        presetNight: "🌙 Creux Nocturne (02h00)",
+        presetSolar: "☀️ Midi Solaire (13h30)",
+        presetPeak: "🚨 Pic d'Hiver (18h30)",
+        engineInputTitle: "1. Entrées Floues du Niveau 1 (P, A, G, T)",
+        lblSliderP: "Percentile de Prix <b>P</b> (Rang du jour)",
+        pRangeCheap: "0% Bon marché",
+        pRangeMed: "50% Moyen",
+        pRangeExp: "100% Cher",
+        lblSliderA: "Prix Absolu <b>A</b> (CHF/kWh)",
+        lblSliderG: "Congestion Réseau <b>G</b> (Charge nette²)",
+        gRangeLow: "0.0 Faible",
+        gRangeMed: "0.5 Modéré",
+        gRangeCrit: "1.0 Critique",
+        lblSliderT: "Tendance de Prix <b>T</b> (Pente heure suiv.)",
+        tRangeFall: "-1.0 Baisse",
+        tRangeFlat: "0.0 Stable",
+        tRangeRise: "+1.0 Hausse",
+        engineDefuzzTitle: "Résultat de Défuzzification par Centre de Gravité",
+        engineDefuzzNote: "Score net S ∈ [0, 100] calculé via le centre de gravité (COG) des conclusions agrégées des règles Mamdani.",
+        engineRulesTitle: "2. Règles Linguistiques Mamdani du Niveau 1 (19 Règles)",
+        engineRulesSubtitle: "Les lignes vertes indiquent les règles actuellement déclenchées",
+        thRuleId: "ID Règle",
+        thRuleP: "SI Percentile de Prix (P)",
+        thRuleG: "ET Congestion Réseau (G)",
+        thRuleExtra: "ET Prix Absolu / Tendance",
+        thRuleS: "ALORS Adéquation (S)",
+        thRuleFired: "Activée",
+        repSec1H2: "<span class=\"num\">1</span> Problématique et Système Proposé",
+        repSec2H2: "<span class=\"num\">2</span> Collecte des Données",
+        repSec3H2: "<span class=\"num\">3</span> Nettoyage et Normalisation",
+        repSec4H2: "<span class=\"num\">4</span> Fonctions d'Appartenance et Fuzzification",
+        repSec5H2: "<span class=\"num\">5</span> Base de Règles et Défuzzification",
+        repSec6H2: "<span class=\"num\">6</span> Architecture Système et Résultats (Prévision)",
+        repSec7H2: "<span class=\"num\">7</span> Résultats et Perspectives",
+        footerBrand: "Tarifs Électriques Dynamiques Suisses (StromVG 2026) • Système d'Inférence Floue Mamdani",
+        footerReportLink: "Rapport Académique",
+        recFlexibleOvernight: "Flexible pendant la nuit",
+        recTotalRun: "de fonctionnement",
+        recSuitability: "Adéquation",
+        recAction: "Action",
+        recRules: "Règles",
+        recAvgTariff: "Tarif moyen",
+        recContinuous: "Cycle en bloc continu",
+        recFlexibleSlots: "Créneaux optimaux flexibles",
+        recSavesVsPeak: "Économise CHF {saved} vs Pic",
+        recNoDevices: "Aucun appareil sélectionné. Activez un appareil ci-dessus pour générer des calendriers.",
+        hourMetrics: "Métriques Heure {h} :",
+        hourAllocated: "Appareils alloués :",
+        hourNone: "Aucun (inactif)",
+        hourOptWindow: "Fenêtre optimale de nuit / surplus solaire.",
+        hourAvoidWindow: "Période de congestion de pointe évitée.",
+        hourStdWindow: "Fenêtre de fonctionnement standard."
+      },
+      it: {
+        brandTitle: "Tariffe Elettriche Dinamiche Svizzere • Sistema di Inferenza Fuzzy",
+        brandSubtitle: "FIS Mamdani a Due Stadi & Pianificatore Domestico Multi-Dispositivo (StromVG 2026)",
+        navTextScheduler: "⚡ 1. Pianificatore Domestico Intelligente",
+        navTextEngine: "🧠 2. Motore di Inferenza Fuzzy in Tempo Reale (Regole Mamdani)",
+        navTextReport: "📑 3. Modello Accademico & Relazione (7 Sezioni)",
+        connTitle: "Relazione Esatta con il Modello di Logica Fuzzy:",
+        connText: "Il server acquisisce automaticamente i 96 intervalli a 15 minuti della tariffa dinamica svizzera, calcola gli ingressi normalizzati <b>(P, A, G, T)</b>, valuta le <b>19 regole Mamdani</b> e le defuzzifica in punteggi orari di idoneità <b>S ∈ [0, 100]</b>. Il pianificatore sequenzia i grandi carichi nelle ore ideali senza superare il limite dell'interruttore.",
+        connBtn: "🔬 Ispeziona le 19 Regole Mamdani",
+        statSavingsLabel: "🎉 Risparmi Giornalieri Totali",
+        statCostLabel: "⚡ Costo Energetico Pianificato",
+        statPeakLabel: "⚠️ Costo di Picco Evitato",
+        statPercentLabel: "Percentuale di Risparmio",
+        peakBadgeText: "Nessun dispositivo ad alto consumo programmato durante il picco 17:30 – 20:30!",
+        sec1Title: "🔌 1. Limite di Concorrenza dell'Interruttore & Stagione",
+        sec1Subtitle: "Scagliona i carichi pesanti per evitare l'intervento dei fusibili domestici (16A / 25A) e riduce i sovraccosti di rete",
+        tab_winter: "❄️ Inverno 2025",
+        tab_summer: "☀️ Estate PV",
+        tab_autumn_dst: "🕒 Esercizio: Ora Legale Autunno",
+        tab_winter_cold_snap: "❄️ Esercizio: Ondata di Freddo",
+        tab_january_spike: "⚡ Esercizio: Picco di Gennaio",
+        tab_february_solar: "🔋 Esercizio: Solare di Febbraio",
+        tab_live_ekz: "🔴 API EKZ in Tempo Reale",
+        conc_1_title: "<span>🛡️</span> 1 Solo Dispositivo (Consigliato)",
+        conc_1_desc: "Esecuzione strettamente sequenziale. Previene ogni sovrapposizione. La scelta più sicura per i quadri domestici.",
+        conc_2_title: "<span>⚡</span> Max 2 Dispositivi contemporanei",
+        conc_2_desc: "Permette di avviare auto elettrica e pompa di calore insieme nelle fasce notturne o di surplus solare più economiche.",
+        conc_3_title: "<span>🔥</span> Max 3 Dispositivi contemporanei",
+        conc_3_desc: "Per allacciamenti alla rete di alta capacità (es. 40A / 25 kW).",
+        conc_99_title: "<span>♾️</span> Concorrenza Illimitata",
+        conc_99_desc: "Benchmark teorico non vincolato (oracolo). Esegue ogni dispositivo nel punto matematicamente più economico.",
+        sec2Title: "⚡ 2. Seleziona Grandi Elettrodomestici da Avviare",
+        sec2Subtitle: "Attiva i carichi, regola il fabbisogno energetico del ciclo e imposta la scadenza desiderata",
+        devNames: {
+          ev: "Veicolo Elettrico (EV)",
+          heat_pump: "Pompa di Calore",
+          washer: "Lavatrice",
+          dryer: "Asciugatrice",
+          dishwasher: "Lavastoviglie"
+        },
+        devTags: {
+          ev: "Carico Pesante • 7.4 kW",
+          heat_pump: "Carico Pesante • 2.5 kW",
+          washer: "Medio • 2.0 kW",
+          dryer: "Carico Pesante • 2.5 kW",
+          dishwasher: "Medio • 1.5 kW"
+        },
+        lbl_energy_ev: "Energia Richiesta (kWh)",
+        lbl_deadline_ev: "Pronto Entro (Ore)",
+        lbl_energy_heat_pump: "Energia Richiesta (kWh)",
+        lbl_deadline_heat_pump: "Pronto Entro (Ore)",
+        lbl_energy_washer: "Energia Ciclo (kWh)",
+        lbl_deadline_washer: "Pronto Entro (Ore)",
+        lbl_energy_dryer: "Energia Asciugatura (kWh)",
+        lbl_deadline_dryer: "Pronto Entro (Ore)",
+        lbl_energy_dishwasher: "Energia Ciclo (kWh)",
+        lbl_deadline_dishwasher: "Pronto Entro (Ore)",
+        sec3Title: "💡 3. Finestre Orarie Più Economiche Consigliate (Mamdani FIS)",
+        sec3Subtitle: "Ogni raccomandazione mostra il punteggio di idoneità S, l'azione di stadio 2 e le regole Mamdani attivate",
+        chartTitle: "🧠 Curva di Idoneità Fuzzy su 24 Ore S(t) ∈ [0, 100]",
+        chartSubtitle: "Calcolata tramite 19 regole Mamdani e defuzzificazione col baricentro (COG). Fai clic su una barra per dettagli.",
+        selectedHourBadge: "Fai clic su una barra per dettagli",
+        hourDetailDefault: "Passa il mouse o clicca su una barra per visualizzare punteggio fuzzy, regole attive ed elettrodomestici.",
+        legendIdeal: "■ Ideale (80–100) Momento Migliore",
+        legendGood: "■ Buono (60–80) Momento Economico",
+        legendOkay: "■ Accettabile (40–60) Normale",
+        legendAvoid: "■ Evita (<40) Congestione di Picco",
+        timelineTitle: "📅 Cronologia Visiva Programmata su 24 Ore (Gantt)",
+        timelineSubtitle: "Sequenziato in base all'idoneità fuzzy e al limite di concorrenza dell'interruttore",
+        engineTitle: "🧠 Motore di Inferenza Fuzzy Interattivo (Stadio 1 & 2)",
+        engineSubtitle: "Regola gli ingressi o carica scenari preimpostati per osservare in tempo reale l'attivazione delle 19 regole",
+        presetNight: "🌙 Minimo Notturno (02:00)",
+        presetSolar: "☀️ Solare Mezzogiorno (13:30)",
+        presetPeak: "🚨 Picco Invernale (18:30)",
+        engineInputTitle: "1. Ingressi Fuzzy di Stadio 1 (P, A, G, T)",
+        lblSliderP: "Percentile di Prezzo <b>P</b> (Rango giornaliero)",
+        pRangeCheap: "0% Economico",
+        pRangeMed: "50% Medio",
+        pRangeExp: "100% Costoso",
+        lblSliderA: "Prezzo Assoluto <b>A</b> (CHF/kWh)",
+        lblSliderG: "Congestione di Rete <b>G</b> (Carico netto²)",
+        gRangeLow: "0.0 Basso",
+        gRangeMed: "0.5 Moderato",
+        gRangeCrit: "1.0 Critico",
+        lblSliderT: "Tendenza di Prezzo <b>T</b> (Pendenza ora succ.)",
+        tRangeFall: "-1.0 In Discesa",
+        tRangeFlat: "0.0 Piatto",
+        tRangeRise: "+1.0 In Salita",
+        engineDefuzzTitle: "Risultato della Defuzzificazione con Baricentro (COG)",
+        engineDefuzzNote: "Punteggio netto S ∈ [0, 100] calcolato tramite baricentro (Center of Gravity, COG) delle conclusioni aggregate.",
+        engineRulesTitle: "2. Regole Linguistiche Mamdani di Stadio 1 (19 Regole)",
+        engineRulesSubtitle: "Le righe verdi indicano le regole attualmente attivate",
+        thRuleId: "ID Regola",
+        thRuleP: "SE Percentile di Prezzo (P)",
+        thRuleG: "E Congestione di Rete (G)",
+        thRuleExtra: "E Prezzo Assoluto / Trend",
+        thRuleS: "ALLORA Idoneità (S)",
+        thRuleFired: "Attivata",
+        repSec1H2: "<span class=\"num\">1</span> Problema e Sistema Proposto",
+        repSec2H2: "<span class=\"num\">2</span> Raccolta Dati",
+        repSec3H2: "<span class=\"num\">3</span> Pulizia e Normalizzazione",
+        repSec4H2: "<span class=\"num\">4</span> Funzioni di Appartenenza e Fuzzificazione",
+        repSec5H2: "<span class=\"num\">5</span> Base di Regole e Defuzzificazione",
+        repSec6H2: "<span class=\"num\">6</span> Architettura di Sistema e Output",
+        repSec7H2: "<span class=\"num\">7</span> Risultati e Sviluppi Futuri",
+        footerBrand: "Tariffe Elettriche Dinamiche Svizzere (StromVG 2026) • Sistema di Inferenza Fuzzy Mamdani",
+        footerReportLink: "Relazione Accademica",
+        recFlexibleOvernight: "Flessibile di notte",
+        recTotalRun: "durata totale",
+        recSuitability: "Idoneità",
+        recAction: "Azione",
+        recRules: "Regole",
+        recAvgTariff: "Tariffa media",
+        recContinuous: "Ciclo a blocco continuo",
+        recFlexibleSlots: "Fasce orarie ottimali flessibili",
+        recSavesVsPeak: "Risparmia CHF {saved} rispetto al picco",
+        recNoDevices: "Nessun elettrodomestico selezionato. Attiva un dispositivo sopra per calcolare i piani.",
+        hourMetrics: "Metriche Ora {h}:",
+        hourAllocated: "Dispositivi programmati:",
+        hourNone: "Nessuno (inattivo)",
+        hourOptWindow: "Finestra ottimale notturna / surplus solare.",
+        hourAvoidWindow: "Periodo di picco e congestione evitato.",
+        hourStdWindow: "Finestra operativa standard."
+      }
+    };
+
     window.addEventListener('DOMContentLoaded', () => {
+      applyLanguage('en');
       runScheduler();
       renderRulesTable();
       evaluateFuzzyEngine();
     });
+
+    function applyLanguage(lang) {
+      currentLanguage = lang;
+      const dict = I18N[lang] || I18N.en;
+
+      const simpleElements = [
+        'brandTitle', 'brandSubtitle', 'navTextScheduler', 'navTextEngine', 'navTextReport',
+        'connTitle', 'connText', 'connBtn', 'statSavingsLabel', 'statCostLabel',
+        'statPeakLabel', 'statPercentLabel', 'peakBadgeText', 'sec1Title', 'sec1Subtitle',
+        'tab_winter', 'tab_summer', 'tab_autumn_dst', 'tab_winter_cold_snap',
+        'tab_january_spike', 'tab_february_solar', 'tab_live_ekz',
+        'conc_1_title', 'conc_1_desc', 'conc_2_title', 'conc_2_desc',
+        'conc_3_title', 'conc_3_desc', 'conc_99_title', 'conc_99_desc',
+        'sec2Title', 'sec2Subtitle',
+        'lbl_energy_ev', 'lbl_deadline_ev', 'lbl_energy_heat_pump', 'lbl_deadline_heat_pump',
+        'lbl_energy_washer', 'lbl_deadline_washer', 'lbl_energy_dryer', 'lbl_deadline_dryer',
+        'lbl_energy_dishwasher', 'lbl_deadline_dishwasher',
+        'sec3Title', 'sec3Subtitle', 'chartTitle', 'chartSubtitle', 'selectedHourBadge',
+        'legendIdeal', 'legendGood', 'legendOkay', 'legendAvoid', 'timelineTitle', 'timelineSubtitle',
+        'engineTitle', 'engineSubtitle', 'presetNight', 'presetSolar', 'presetPeak',
+        'engineInputTitle', 'lblSliderP', 'pRangeCheap', 'pRangeMed', 'pRangeExp',
+        'lblSliderA', 'lblSliderG', 'gRangeLow', 'gRangeMed', 'gRangeCrit',
+        'lblSliderT', 'tRangeFall', 'tRangeFlat', 'tRangeRise',
+        'engineDefuzzTitle', 'engineDefuzzNote', 'engineRulesTitle', 'engineRulesSubtitle',
+        'thRuleId', 'thRuleP', 'thRuleG', 'thRuleExtra', 'thRuleS', 'thRuleFired',
+        'repSec1H2', 'repSec2H2', 'repSec3H2', 'repSec4H2', 'repSec5H2', 'repSec6H2', 'repSec7H2',
+        'footerBrand', 'footerReportLink'
+      ];
+
+      simpleElements.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && dict[id] !== undefined) {
+          el.innerHTML = dict[id];
+        }
+      });
+
+      if (dict.devNames) {
+        for (const [devId, name] of Object.entries(dict.devNames)) {
+          const titleEl = document.getElementById(`title_${devId}`);
+          if (titleEl) titleEl.innerText = name;
+          if (deviceProfiles[devId]) deviceProfiles[devId].name = name;
+        }
+      }
+      if (dict.devTags) {
+        for (const [devId, tag] of Object.entries(dict.devTags)) {
+          const tagEl = document.getElementById(`tag_${devId}`);
+          if (tagEl) tagEl.innerText = tag;
+        }
+      }
+
+      const hourDetailText = document.getElementById('hourDetailText');
+      if (hourDetailText && dict.hourDetailDefault) {
+        hourDetailText.innerHTML = dict.hourDetailDefault;
+      }
+    }
 
     function switchMainView(viewName) {
       document.getElementById('viewScheduler').style.display = viewName === 'scheduler' ? 'block' : 'none';
@@ -1619,8 +2173,10 @@
         }
       }
 
+      const dict = I18N[currentLanguage] || I18N.en;
+
       if (activeDevices.length === 0) {
-        document.getElementById('recommendationsList').innerHTML = '<div style="color: var(--text-muted); padding: 10px;">No appliances selected. Toggle an appliance above to generate schedules.</div>';
+        document.getElementById('recommendationsList').innerHTML = `<div style="color: var(--text-muted); padding: 10px;">${dict.recNoDevices}</div>`;
         return;
       }
 
@@ -1649,6 +2205,8 @@
     }
 
     function renderScheduleResults(data) {
+      const dict = I18N[currentLanguage] || I18N.en;
+
       // 1. Stats Banner
       document.getElementById('statSavings').innerText = `CHF ${data.total_savings_chf.toFixed(2)}`;
       document.getElementById('statCost').innerText = `CHF ${data.total_cost_chf.toFixed(2)}`;
@@ -1659,19 +2217,22 @@
       const recList = document.getElementById('recommendationsList');
       recList.innerHTML = data.devices.map(dev => {
         const prof = deviceProfiles[dev.id] || { emoji: '🔌' };
-        const windowsText = dev.time_windows.length > 0 ? dev.time_windows.join(', ') : 'Flexible overnight';
+        const devName = (dict.devNames && dict.devNames[dev.id]) || dev.name;
+        const windowsText = dev.time_windows.length > 0 ? dev.time_windows.join(', ') : dict.recFlexibleOvernight;
         const fuzzyScore = dev.avg_fuzzy_score !== undefined ? dev.avg_fuzzy_score : 85.0;
         const fuzzyLabel = dev.fuzzy_label || (fuzzyScore >= 80 ? 'ideal' : (fuzzyScore >= 60 ? 'good' : 'okay'));
         const action = dev.stage2_action || 'start_now';
         const rulesText = dev.fired_rules && dev.fired_rules.length > 0 ? dev.fired_rules.join(', ') : 'R01, R04, D01';
+        const cycleMode = dev.contiguous ? dict.recContinuous : dict.recFlexibleSlots;
+        const savesText = dict.recSavesVsPeak.replace('{saved}', dev.saved_chf.toFixed(2));
 
         return `
           <div class="rec-card">
             <div class="rec-left">
               <span class="rec-emoji">${prof.emoji}</span>
               <div>
-                <div class="rec-name">${dev.name}</div>
-                <div class="rec-meta">${dev.power_kw} kW • ${dev.energy_kwh} kWh (${dev.duration_hours}h total run)</div>
+                <div class="rec-name">${devName}</div>
+                <div class="rec-meta">${dev.power_kw} kW • ${dev.energy_kwh} kWh (${dev.duration_hours}h ${dict.recTotalRun})</div>
               </div>
             </div>
 
@@ -1681,18 +2242,18 @@
                 <span>${windowsText}</span>
               </div>
               <div class="rec-fuzzy-badges">
-                <span class="fuzzy-pill ${fuzzyLabel}">🧠 Suitability: ${fuzzyScore.toFixed(1)}/100 (${fuzzyLabel.toUpperCase()})</span>
-                <span class="action-pill">⚡ Action: ${action.replace('_', ' ').toUpperCase()}</span>
-                <span class="rules-pill">📜 Rules: ${rulesText}</span>
+                <span class="fuzzy-pill ${fuzzyLabel}">🧠 ${dict.recSuitability}: ${fuzzyScore.toFixed(1)}/100 (${fuzzyLabel.toUpperCase()})</span>
+                <span class="action-pill">⚡ ${dict.recAction}: ${action.replace('_', ' ').toUpperCase()}</span>
+                <span class="rules-pill">📜 ${dict.recRules}: ${rulesText}</span>
               </div>
               <div class="rec-note">
-                Avg Tariff: <b>${dev.avg_price_rp.toFixed(1)} Rp./kWh</b> • ${dev.contiguous ? 'Continuous block cycle' : 'Flexible optimal slots'}
+                ${dict.recAvgTariff}: <b>${dev.avg_price_rp.toFixed(1)} Rp./kWh</b> • ${cycleMode}
               </div>
             </div>
 
             <div class="rec-right">
               <div class="rec-cost">CHF ${dev.cost_chf.toFixed(2)}</div>
-              <div class="rec-saved">Saves CHF ${dev.saved_chf.toFixed(2)} vs Peak</div>
+              <div class="rec-saved">${savesText}</div>
             </div>
           </div>
         `;
@@ -1705,6 +2266,7 @@
       const tracksContainer = document.getElementById('timelineTracks');
       tracksContainer.innerHTML = data.devices.map(dev => {
         const prof = deviceProfiles[dev.id] || { emoji: '🔌' };
+        const devName = (dict.devNames && dict.devNames[dev.id]) || dev.name;
         const activeHours = new Set();
         dev.slots.forEach(s => activeHours.add(Math.floor(s / 4)));
 
@@ -1712,13 +2274,13 @@
         for (let h = 0; h < 24; h++) {
           const isActive = activeHours.has(h);
           const cellClass = isActive ? `slot-cell active-${dev.id}` : 'slot-cell';
-          const title = `${h < 10 ? '0' + h : h}:00 - ${dev.name} ${isActive ? 'Active' : 'Off'}`;
+          const title = `${h < 10 ? '0' + h : h}:00 - ${devName} ${isActive ? 'Active' : 'Off'}`;
           slotsHtml += `<div class="${cellClass}" title="${title}"></div>`;
         }
 
         return `
           <div class="timeline-device-track">
-            <div class="track-name" title="${dev.name}">${prof.emoji} ${dev.name}</div>
+            <div class="track-name" title="${devName}">${prof.emoji} ${devName}</div>
             <div class="track-slots">
               ${slotsHtml}
             </div>
@@ -1751,21 +2313,29 @@
 
     function inspectFuzzyHour(h) {
       if (!cachedScheduleData) return;
+      const dict = I18N[currentLanguage] || I18N.en;
       const score = cachedScheduleData.hourly_fuzzy_scores[h];
       const label = cachedScheduleData.hourly_fuzzy_labels[h];
       const allocated = cachedScheduleData.hourly_allocations[h];
       const hourStr = (h < 10 ? '0' + h : '' + h) + ':00';
 
       const badge = document.getElementById('selectedHourBadge');
-      badge.innerText = `Selected: ${hourStr} (${label.toUpperCase()} • ${score.toFixed(1)}/100)`;
+      badge.innerText = `${hourStr} (${label.toUpperCase()} • ${score.toFixed(1)}/100)`;
       badge.style.color = score >= 80 ? '#34d399' : (score >= 60 ? '#38bdf8' : (score >= 40 ? '#fbbf24' : '#f87171'));
 
-      const runningDevs = allocated && allocated.length > 0 ? allocated.join(', ') : 'None (idle)';
+      let runningDevNames = dict.hourNone;
+      if (allocated && allocated.length > 0) {
+        runningDevNames = allocated.map(id => (dict.devNames && dict.devNames[id]) || id).join(', ');
+      }
+
+      const note = score >= 80 ? dict.hourOptWindow : (score < 40 ? dict.hourAvoidWindow : dict.hourStdWindow);
+      const metricsH = dict.hourMetrics.replace('{h}', hourStr);
+
       const detailText = document.getElementById('hourDetailText');
       detailText.innerHTML = `
-        <b>Hour ${hourStr} Metrics:</b> Fuzzy Suitability Score: <b>${score.toFixed(1)}/100</b> [${label.toUpperCase()}] • 
-        Scheduled Appliances: <span style="color: #38bdf8; font-weight: 700;">${runningDevs}</span> • 
-        ${score >= 80 ? 'Optimal night/solar surplus window.' : (score < 40 ? 'Peak congestion period avoided.' : 'Standard operational window.')}
+        <b>${metricsH}</b> ${dict.recSuitability}: <b>${score.toFixed(1)}/100</b> [${label.toUpperCase()}] • 
+        ${dict.hourAllocated} <span style="color: #38bdf8; font-weight: 700;">${runningDevNames}</span> • 
+        ${note}
       `;
     }
 
@@ -1852,7 +2422,7 @@
               if (row) {
                 row.classList.add('fired');
                 const td = row.querySelector('td:last-child');
-                if (td) td.innerText = `Yes (wt=${fr.weight.toFixed(2)})`;
+                td.innerText = `Yes (wt=${fr.weight.toFixed(2)})`;
               }
             });
           }
@@ -1864,6 +2434,7 @@
 
     function onLanguageChange(lang) {
       currentLanguage = lang;
+      applyLanguage(lang);
       runScheduler();
       evaluateFuzzyEngine();
     }
