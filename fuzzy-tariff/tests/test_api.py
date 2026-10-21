@@ -143,4 +143,56 @@ def test_smart_schedule_multilingual_support():
         assert len(device_res["advice_text"]) > 0
 
 
+def test_summarize_daily_endpoint():
+    r = client.get("/v1/summarize/daily?season=winter&lang=en")
+    assert r.status_code == 200
+    data = r.json()
+    assert "headline" in data
+    assert len(data["headline"]) > 0
+    assert len(data["narrative"]) == 4
+    assert len(data["top_protoforms"]) > 0
+    assert len(data["quantifiers"]) == 7
+    assert len(data["qualifiers"]) == 8
+    assert len(data["summarizers"]) == 9
+
+    # Multilingual check
+    r_de = client.get("/v1/summarize/daily?season=summer&lang=de")
+    assert r_de.status_code == 200
+    data_de = r_de.json()
+    stmt = data_de["top_protoforms"][0]["statement"].lower()
+    assert "intervalle" in stmt or "stunden" in stmt
+
+
+def test_evaluate_protoform_endpoint_and_error():
+    # Valid evaluation
+    r = client.post(
+        "/v1/summarize/evaluate",
+        json={
+            "season": "winter",
+            "quantifier": "most",
+            "qualifier": "night_hours",
+            "summarizer": "ideal",
+            "lang": "en",
+        },
+    )
+    assert r.status_code == 200
+    res = r.json()
+    assert "truth_degree" in res
+    assert 0.0 <= res["truth_degree"] <= 1.0
+    assert res["status"] in ("valid", "moderate", "false")
+    assert "Almost all" in res["statement"] or "Most" in res["statement"]
+
+    # Invalid quantifier error path (422)
+    bad = client.post(
+        "/v1/summarize/evaluate",
+        json={
+            "season": "winter",
+            "quantifier": "nonexistent_quantifier",
+            "qualifier": "night_hours",
+            "summarizer": "ideal",
+        },
+    )
+    assert bad.status_code == 422
+
+
 

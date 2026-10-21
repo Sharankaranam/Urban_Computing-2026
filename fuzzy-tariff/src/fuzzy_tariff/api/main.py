@@ -18,7 +18,12 @@ from fuzzy_tariff.api.schemas import (
     AdviceRequest,
     AdviceResponse,
     DeviceScheduleItem,
+    EvaluateProtoformRequest,
+    EvaluateProtoformResponse,
     FiredRuleOut,
+    LinguisticOptionItem,
+    LinguisticSummaryItem,
+    LinguisticSummaryResponse,
     PlanRequest,
     PlanResponse,
     ScheduledDeviceResult,
@@ -30,6 +35,15 @@ from fuzzy_tariff.api.schemas import (
     TariffStepOut,
     TranslateRequest,
     TranslateResponse,
+)
+from fuzzy_tariff.fuzzy.summarizer import (
+    QUALIFIER_LABELS,
+    QUANTIFIER_LABELS,
+    SUMMARIZER_LABELS,
+    StepTimeSeriesData,
+    discover_best_protoforms,
+    evaluate_protoform,
+    generate_executive_narrative,
 )
 from fuzzy_tariff.ingest.ekz import EkzTariffSource
 from fuzzy_tariff.labels import Lang, action_text, label_text
@@ -168,6 +182,67 @@ def _group_slot_intervals(slots: list[int]) -> list[str]:
             start = prev = s
     intervals.append((start, prev + 1))
     return [f"{_format_time_step(s)} – {_format_time_step(e)}" for s, e in intervals]
+
+
+def _extract_step_timeseries_data(season: str, svc: Services) -> tuple[str, StepTimeSeriesData]:
+    import numpy as np
+
+    date_str, day_df = _load_day_df(season)
+    n_slots = len(day_df)
+    p_min = float(day_df["total_rp"].min())
+    p_max = float(day_df["total_rp"].max())
+    has_pgat = {"P", "A", "G", "T"}.issubset(day_df.columns)
+
+    hours = np.zeros(n_slots, dtype=float)
+    scores = np.zeros(n_slots, dtype=float)
+    g_stress = np.zeros(n_slots, dtype=float)
+    t_trend = np.zeros(n_slots, dtype=float)
+    total_rp = np.zeros(n_slots, dtype=float)
+
+    memberships: dict[str, list[float]] = {
+        "avoid": [],
+        "wait": [],
+        "okay": [],
+        "good": [],
+        "ideal": [],
+    }
+
+    for s in range(n_slots):
+        hours[s] = s * 0.25
+        t_rp = float(day_df.loc[s, "total_rp"])
+        total_rp[s] = t_rp
+
+        if has_pgat and pd.notna(day_df.loc[s, "P"]):
+            p = float(day_df.loc[s, "P"])
+            a = float(day_df.loc[s, "A"])
+            g = float(day_df.loc[s, "G"])
+            t = float(day_df.loc[s, "T"])
+        else:
+            p = float(100.0 * (t_rp - p_min) / (p_max - p_min)) if p_max > p_min else 50.0
+            a = float(t_rp / 100.0)
+            net_load = float(day_df.loc[s, "net_load_mw"]) if "net_load_mw" in day_df.columns else 150.0
+            g = float(max(0.0, min(1.0, (net_load - 100.0) / 100.0)))
+            next_s = min(n_slots - 1, s + 8)
+            diff = (float(day_df.loc[next_s, "total_rp"]) - t_rp) / 100.0
+            t = float(max(-1.0, min(1.0, diff / 0.10)))
+
+        g_stress[s] = g
+        t_trend[s] = t
+
+        res = svc.stage1.infer(P=p, A=a, G=g, T=t)
+        scores[s] = res.score
+        for k in ("avoid", "wait", "okay", "good", "ideal"):
+            memberships[k].append(float(res.output_memberships.get(k, 0.0)))
+
+    ts_data = StepTimeSeriesData(
+        hours=hours,
+        scores=scores,
+        memberships={k: np.array(v, dtype=float) for k, v in memberships.items()},
+        g_stress=g_stress,
+        t_trend=t_trend,
+        total_rp=total_rp,
+    )
+    return date_str, ts_data
 
 
 def _run_smart_schedule(
@@ -563,6 +638,85 @@ def create_app() -> FastAPI:
             source_lang=s_lang,
             target_lang=t_lang,
             provider="fallback",
+        )
+
+    @app.get("/v1/summarize/daily", response_model=LinguisticSummaryResponse)
+    def summarize_daily(
+        season: str = "winter",
+        lang: Lang = "en",
+        svc: Services = Depends(get_services),
+    ) -> LinguisticSummaryResponse:
+        date_str, ts_data = _extract_step_timeseries_data(season, svc)
+        headline, bullets = generate_executive_narrative(ts_data, lang=lang)
+        protoforms = discover_best_protoforms(ts_data, lang=lang)
+
+        q_labels = QUANTIFIER_LABELS.get(lang, QUANTIFIER_LABELS["en"])
+        b_labels = QUALIFIER_LABELS.get(lang, QUALIFIER_LABELS["en"])
+        s_labels = SUMMARIZER_LABELS.get(lang, SUMMARIZER_LABELS["en"])
+
+        items = [
+            LinguisticSummaryItem(
+                protoform_type=p.protoform_type,
+                quantifier=p.quantifier,
+                quantifier_label=p.quantifier_label,
+                qualifier=p.qualifier,
+                qualifier_label=p.qualifier_label,
+                summarizer=p.summarizer,
+                summarizer_label=p.summarizer_label,
+                cardinality_ratio=p.cardinality_ratio,
+                truth_degree=p.truth_degree,
+                coverage_degree=p.coverage_degree,
+                validity_score=p.validity_score,
+                statement=p.statement,
+            )
+            for p in protoforms
+        ]
+
+        return LinguisticSummaryResponse(
+            season=season,
+            date=date_str,
+            lang=lang,
+            headline=headline,
+            narrative=bullets,
+            top_protoforms=items,
+            quantifiers=[LinguisticOptionItem(id=k, label=v) for k, v in q_labels.items()],
+            qualifiers=[LinguisticOptionItem(id=k, label=v) for k, v in b_labels.items()],
+            summarizers=[LinguisticOptionItem(id=k, label=v) for k, v in s_labels.items()],
+        )
+
+    @app.post("/v1/summarize/evaluate", response_model=EvaluateProtoformResponse)
+    def evaluate_summary(
+        req: EvaluateProtoformRequest,
+        svc: Services = Depends(get_services),
+    ) -> EvaluateProtoformResponse:
+        _, ts_data = _extract_step_timeseries_data(req.season, svc)
+        try:
+            ev = evaluate_protoform(
+                quantifier=req.quantifier,
+                qualifier=req.qualifier,
+                summarizer=req.summarizer,
+                data=ts_data,
+                lang=req.lang,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+        status = "valid" if ev.truth_degree >= 0.70 else ("moderate" if ev.truth_degree >= 0.40 else "false")
+
+        return EvaluateProtoformResponse(
+            protoform_type=ev.protoform_type,
+            quantifier=ev.quantifier,
+            quantifier_label=ev.quantifier_label,
+            qualifier=ev.qualifier,
+            qualifier_label=ev.qualifier_label,
+            summarizer=ev.summarizer,
+            summarizer_label=ev.summarizer_label,
+            cardinality_ratio=ev.cardinality_ratio,
+            truth_degree=ev.truth_degree,
+            coverage_degree=ev.coverage_degree,
+            validity_score=ev.validity_score,
+            statement=ev.statement,
+            status=status,
         )
 
     return app

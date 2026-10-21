@@ -92,6 +92,29 @@ def _cmd_serve(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_summarize(args: argparse.Namespace) -> int:
+    from fuzzy_tariff.api.main import _extract_step_timeseries_data
+    from fuzzy_tariff.fuzzy.summarizer import discover_best_protoforms, generate_executive_narrative
+    from fuzzy_tariff.services import get_services
+
+    svc = get_services()
+    date_str, ts_data = _extract_step_timeseries_data(args.scenario, svc)
+    headline, bullets = generate_executive_narrative(ts_data, lang=args.lang)
+    protoforms = discover_best_protoforms(ts_data, lang=args.lang)
+
+    print(f"\n📢 {headline}\n")
+    print(f"Date: {date_str} (Scenario: {args.scenario})\n")
+    print("Executive Narrative:")
+    for b in bullets:
+        clean = b.replace("**", "")
+        print(f"  • {clean}")
+    print("\nVerified Fuzzy Protoforms (Yager / Kacprzyk):")
+    for p in protoforms:
+        print(f"  [{p.truth_degree:.2f} Truth, {p.coverage_degree:.2f} Cov] {p.statement}")
+    print()
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="fuzzy-tariff", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -137,6 +160,11 @@ def main(argv: list[str] | None = None) -> int:
     serve.add_argument("--port", type=int, default=8000)
     serve.add_argument("--reload", action="store_true")
     serve.set_defaults(func=_cmd_serve)
+
+    summ = sub.add_parser("summarize", help="linguistic summarization of a tariff day")
+    summ.add_argument("--scenario", default="winter", help="winter|summer|autumn_dst|winter_cold_snap|january_spike|february_solar")
+    summ.add_argument("--lang", choices=["en", "de", "fr", "it"], default="en")
+    summ.set_defaults(func=_cmd_summarize)
 
     args = parser.parse_args(argv)
     logging.basicConfig(level=Settings.from_env().log_level, format="%(levelname)s %(message)s")

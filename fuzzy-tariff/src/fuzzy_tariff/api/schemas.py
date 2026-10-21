@@ -142,3 +142,59 @@ class TranslateResponse(BaseModel):
     source_lang: str
     target_lang: str
     provider: str
+
+
+class LinguisticSummaryItem(BaseModel):
+    protoform_type: str
+    quantifier: str
+    quantifier_label: str
+    qualifier: str | None = None
+    qualifier_label: str | None = None
+    summarizer: str
+    summarizer_label: str
+    cardinality_ratio: float
+    truth_degree: float
+    coverage_degree: float
+    validity_score: float
+    statement: str
+
+
+class LinguisticOptionItem(BaseModel):
+    id: str
+    label: str
+
+
+class LinguisticSummaryResponse(BaseModel):
+    season: str
+    date: str
+    lang: Lang
+    headline: str
+    narrative: list[str]
+    top_protoforms: list[LinguisticSummaryItem]
+    quantifiers: list[LinguisticOptionItem]
+    qualifiers: list[LinguisticOptionItem]
+    summarizers: list[LinguisticOptionItem]
+
+
+class EvaluateProtoformRequest(BaseModel):
+    season: str = "winter"
+    quantifier: str = "most"
+    qualifier: str = "all_day"
+    summarizer: str = "ideal"
+    lang: Lang = "en"
+
+
+class EvaluateProtoformResponse(BaseModel):
+    protoform_type: str
+    quantifier: str
+    quantifier_label: str
+    qualifier: str | None
+    qualifier_label: str | None
+    summarizer: str
+    summarizer_label: str
+    cardinality_ratio: float
+    truth_degree: float
+    coverage_degree: float
+    validity_score: float
+    statement: str
+    status: str

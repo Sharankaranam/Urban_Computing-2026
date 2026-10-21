@@ -1079,6 +1079,105 @@
       font-weight: 700;
     }
 
+    /* VIEW 4: LINGUISTIC SUMMARIZER STYLES */
+    .protoform-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .proto-card {
+      background: rgba(10, 16, 28, 0.75);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .proto-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    }
+
+    .proto-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .proto-statement {
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.5;
+      color: #f1f5f9;
+    }
+
+    .truth-meter-wrap {
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 999px;
+      height: 8px;
+      overflow: hidden;
+      margin-top: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .truth-meter-bar {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.4s ease, background-color 0.4s ease;
+    }
+
+    .truth-meter-bar.valid {
+      background: linear-gradient(90deg, #10b981, #34d399);
+    }
+
+    .truth-meter-bar.moderate {
+      background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    }
+
+    .truth-meter-bar.false {
+      background: linear-gradient(90deg, #ef4444, #f87171);
+    }
+
+    .proto-select-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .proto-select-group label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .proto-select {
+      background: #060a14;
+      border: 1px solid var(--border-subtle);
+      color: #f8fafc;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-family: inherit;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .proto-select:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+    }
+
     /* FOOTER */
     footer {
       margin-top: 48px;
@@ -1140,6 +1239,9 @@
       </button>
       <button id="navBtnReport" class="main-nav-btn" onclick="switchMainView('report')">
         <span id="navTextReport">📑 3. Academic Model & Report (7 Sections)</span>
+      </button>
+      <button id="navBtnSummarizer" class="main-nav-btn" onclick="switchMainView('summarizer')">
+        <span id="navTextSummarizer">💬 4. Linguistic Summarizer & Protoforms</span>
       </button>
     </div>
 
@@ -1762,6 +1864,158 @@
       </div>
     </div>
 
+    <!-- ============================================================ -->
+    <!-- VIEW 4: LINGUISTIC SUMMARIZER & PROTOFORM INSPECTOR VIEW      -->
+    <!-- ============================================================ -->
+    <div id="viewSummarizer" style="display: none;">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div id="summTitle" class="card-title">💬 4. Fuzzy Linguistic Data Summarizer (Yager &amp; Kacprzyk Protoforms)</div>
+            <div id="summSubtitle" class="card-subtitle">
+              Translates complex 96-step dynamic tariffs and household schedules into explainable natural-language propositions with quantified fuzzy truth degrees T ∈ [0, 1].
+            </div>
+          </div>
+          <div class="engine-presets">
+            <button class="preset-pill active" onclick="setSummarizerSeason('winter', this)">❄️ Winter 2025</button>
+            <button class="preset-pill" onclick="setSummarizerSeason('summer', this)">☀️ Summer PV</button>
+            <button class="preset-pill" onclick="setSummarizerSeason('autumn_dst', this)">🕒 Autumn DST</button>
+            <button class="preset-pill" onclick="setSummarizerSeason('winter_cold_snap', this)">❄️ Cold Snap</button>
+            <button class="preset-pill" onclick="setSummarizerSeason('january_spike', this)">⚡ Jan Peak</button>
+            <button class="preset-pill" onclick="setSummarizerSeason('february_solar', this)">🔋 Feb Solar</button>
+            <button class="preset-pill" onclick="setSummarizerSeason('live_ekz', this)">🔴 Live EKZ API</button>
+          </div>
+        </div>
+
+        <!-- 1. EXECUTIVE NARRATIVE CARD -->
+        <div style="background: rgba(10, 16, 28, 0.7); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: var(--radius-sm); padding: 20px; margin-bottom: 22px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+            <span id="summExecBadge" style="font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.12); padding: 4px 10px; border-radius: 20px;">
+              📢 Executive Natural-Language Tariff Narrative
+            </span>
+            <span id="summDateBadge" style="font-size: 0.78rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
+              Date: 2025-01-15 (Winter 2025)
+            </span>
+          </div>
+
+          <h3 id="summHeadline" style="font-size: 1.15rem; font-weight: 800; color: #f8fafc; margin-bottom: 14px; line-height: 1.4;">
+            Loading linguistic summary...
+          </h3>
+
+          <div id="summNarrativeList" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- 2. VERIFIED PROTOFORMS GRID -->
+        <div style="margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <span id="summProtoTitle" style="font-size: 0.95rem; font-weight: 700; color: #38bdf8;">
+                📜 Top Verified Linguistic Protoforms (Yager / Kacprzyk)
+              </span>
+              <span id="summProtoSubtitle" style="font-size: 0.78rem; color: var(--text-muted); display: block;">
+                Propositions automatically evaluated using Relative Fuzzy Quantifiers Q and truth degrees T = μ_Q(r) ≥ 0.50.
+              </span>
+            </div>
+            <span style="font-size: 0.74rem; color: #34d399; font-weight: 600;">
+              ✓ High Academic Validity
+            </span>
+          </div>
+
+          <div id="protoformGrid" class="protoform-grid">
+            <!-- Dynamically populated protoform cards -->
+          </div>
+        </div>
+
+        <!-- 3. INTERACTIVE PROTOFORM BUILDER & CALCULATOR -->
+        <div style="background: rgba(10, 16, 28, 0.7); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 22px; margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <span id="summCalcTitle" style="font-size: 0.95rem; font-weight: 700; color: #38bdf8;">
+                🔬 Interactive Protoform Inspector &amp; Truth Calculator
+              </span>
+              <span id="summCalcSubtitle" style="font-size: 0.78rem; color: var(--text-muted); display: block;">
+                Select any custom combination of Fuzzy Quantifier (Q), Qualifier Condition (B), and Summarizer (S) to compute its exact degree of truth T.
+              </span>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 20px;">
+            <div class="proto-select-group">
+              <label id="lblProtoQ">1. Fuzzy Quantifier (Q)</label>
+              <select id="protoSelQ" class="proto-select" onchange="evaluateInteractiveProtoform()"></select>
+            </div>
+            <div class="proto-select-group">
+              <label id="lblProtoB">2. Subject / Qualifier (B)</label>
+              <select id="protoSelB" class="proto-select" onchange="evaluateInteractiveProtoform()"></select>
+            </div>
+            <div class="proto-select-group">
+              <label id="lblProtoS">3. Fuzzy Summarizer (S)</label>
+              <select id="protoSelS" class="proto-select" onchange="evaluateInteractiveProtoform()"></select>
+            </div>
+          </div>
+
+          <!-- EVALUATION RESULT BOX -->
+          <div style="background: #060a14; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: var(--radius-sm); padding: 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; flex-wrap: wrap;">
+              <div style="flex: 1; min-width: 260px;">
+                <div style="font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em; margin-bottom: 6px;">
+                  Composed Proposition:
+                </div>
+                <div id="calcStatement" style="font-size: 1.05rem; font-weight: 700; color: #f8fafc; line-height: 1.5;">
+                  Select options above to evaluate
+                </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                <span id="calcStatusBadge" class="fuzzy-pill ideal" style="font-size: 0.8rem; padding: 4px 12px;">
+                  VALID
+                </span>
+                <span id="calcTruthValue" style="font-size: 1.7rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: #34d399;">
+                  1.00
+                </span>
+              </div>
+            </div>
+
+            <div style="margin-top: 14px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.74rem; color: var(--text-muted); margin-bottom: 4px;">
+                <span>Degree of Truth T = μ_Q(r)</span>
+                <span id="calcTruthPercent">100%</span>
+              </div>
+              <div class="truth-meter-wrap">
+                <div id="calcTruthBar" class="truth-meter-bar valid" style="width: 100%;"></div>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-subtle); font-size: 0.8rem;">
+              <div>
+                <span style="color: var(--text-muted); display: block;">Fuzzy Cardinality Ratio (r):</span>
+                <b id="calcRatioVal" style="color: #38bdf8; font-family: 'JetBrains Mono', monospace;">84.2%</b>
+              </div>
+              <div>
+                <span style="color: var(--text-muted); display: block;">Degree of Coverage (T₃):</span>
+                <b id="calcCoverageVal" style="color: #cbd5e1; font-family: 'JetBrains Mono', monospace;">24.5%</b>
+              </div>
+              <div>
+                <span style="color: var(--text-muted); display: block;">Protoform Structure:</span>
+                <b id="calcProtoType" style="color: #a78bfa;">Type II (Conditional)</b>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. ACADEMIC FORMALISM & THEORY -->
+        <div class="math-card" style="margin-top: 10px;">
+          <b>Theoretical Foundation (Zadeh 1983, Yager 1982, Kacprzyk &amp; Zadrożny 2001):</b><br><br>
+          • <b>Type I Protoform:</b> <code>Q y are S</code> with proportion <code>r = (1/N) · Σ μ_S(x_i)</code> and truth <code>T = μ_Q(r)</code>.<br>
+          • <b>Type II Protoform:</b> <code>Q B y are S</code> with proportion <code>r = (Σ min(μ_B(x_i), μ_S(x_i))) / (Σ μ_B(x_i))</code> and truth <code>T = μ_Q(r)</code>.<br>
+          • <b>Quality Metrics:</b> Evaluated across truth degree (T₁), degree of fuzziness (T₂), degree of coverage (T₃), and overall validity score.<br>
+          • <b>StromVG 2026 Relevance:</b> Eliminates the cognitive barrier for households by converting 96 volatile 15-minute price steps into concise, auditable linguistic statements.
+        </div>
+      </div>
+    </div>
+
     <!-- FOOTER -->
     <footer>
       <div id="footerBrand">
@@ -1769,6 +2023,7 @@
       </div>
       <div>
         <a id="footerReportLink" href="javascript:void(0)" onclick="switchMainView('report')">Academic Report</a> •
+        <a href="javascript:void(0)" onclick="switchMainView('summarizer')">Linguistic Summarizer</a> •
         <a href="/docs" target="_blank">Swagger API</a> •
         <a href="/v1/config" target="_blank">Fuzzy Config JSON</a>
       </div>
@@ -1819,6 +2074,17 @@
         navTextScheduler: "⚡ 1. Smart Household Scheduler",
         navTextEngine: "🧠 2. Live Fuzzy Inference Engine (Mamdani Rules)",
         navTextReport: "📑 3. Academic Model & Report (7 Sections)",
+        navTextSummarizer: "💬 4. Linguistic Summarizer & Protoforms",
+        summTitle: "💬 4. Fuzzy Linguistic Data Summarizer (Yager & Kacprzyk Protoforms)",
+        summSubtitle: "Translates complex 96-step dynamic tariffs and household schedules into explainable natural-language propositions with quantified fuzzy truth degrees T ∈ [0, 1].",
+        summExecBadge: "📢 Executive Natural-Language Tariff Narrative",
+        summProtoTitle: "📜 Top Verified Linguistic Protoforms (Yager / Kacprzyk)",
+        summProtoSubtitle: "Propositions automatically evaluated using Relative Fuzzy Quantifiers Q and truth degrees T = μ_Q(r) ≥ 0.50.",
+        summCalcTitle: "🔬 Interactive Protoform Inspector & Truth Calculator",
+        summCalcSubtitle: "Select any custom combination of Fuzzy Quantifier (Q), Qualifier Condition (B), and Summarizer (S) to compute its exact degree of truth T.",
+        lblProtoQ: "1. Fuzzy Quantifier (Q)",
+        lblProtoB: "2. Subject / Qualifier (B)",
+        lblProtoS: "3. Fuzzy Summarizer (S)",
         connTitle: "Exact Relation to the Fuzzy Logic Model:",
         connText: "The server automatically ingests the 96 15-minute Swiss Dynamic Tariff steps for the day, cleans and computes the normalized inputs <b>(P, A, G, T)</b>, evaluates the <b>19 Mamdani Rules</b>, and defuzzifies them into hourly Suitability Scores <b>S ∈ [0, 100]</b>. The scheduler then sequences heavy appliances into Ideal & Good hours under your household breaker concurrency limit.",
         connBtn: "🔬 Inspect 19 Mamdani Rules",
@@ -1943,6 +2209,17 @@
         navTextScheduler: "⚡ 1. Smart-Haushaltsplaner",
         navTextEngine: "🧠 2. Live Fuzzy-Inferenz-Engine (Mamdani-Regeln)",
         navTextReport: "📑 3. Akademischer Modellbericht (7 Abschnitte)",
+        navTextSummarizer: "💬 4. Linguistischer Summarizer & Protoformen",
+        summTitle: "💬 4. Linguistischer Fuzzy-Datenzusammenfasser (Yager & Kacprzyk Protoformen)",
+        summSubtitle: "Übersetzt komplexe 96-Schritt-Dynamiktarife und Haushaltspläne in erklärbare natürlichsprachige Aussagen mit quantifizierten Wahrheitsgraden T ∈ [0, 1].",
+        summExecBadge: "📢 Exekutive Natürlichsprachige Tarif-Zusammenfassung",
+        summProtoTitle: "📜 Top-Verifizierte Linguistische Protoformen (Yager / Kacprzyk)",
+        summProtoSubtitle: "Automatisch ausgewertete Aussagen mittels relativer Fuzzy-Quantoren Q und Wahrheitsgraden T = μ_Q(r) ≥ 0.50.",
+        summCalcTitle: "🔬 Interaktiver Protoform-Inspektor & Wahrheitsrechner",
+        summCalcSubtitle: "Wählen Sie eine beliebige Kombination aus Fuzzy-Quantor (Q), Bedingung (B) und Summarizer (S) zur Live-Berechnung des Wahrheitsgrades T.",
+        lblProtoQ: "1. Fuzzy-Quantor (Q)",
+        lblProtoB: "2. Bedingung / Qualifier (B)",
+        lblProtoS: "3. Fuzzy-Summarizer (S)",
         connTitle: "Exakter Bezug zum Fuzzy-Logik-Modell:",
         connText: "Der Server liest automatisch die 96 15-Minuten-Intervalle des Schweizer Dynamischen Tarifs ein, berechnet die normalisierten Eingangsgrößen <b>(P, A, G, T)</b>, wertet die <b>19 Mamdani-Regeln</b> aus und defuzzifiziert sie zu stündlichen Eignungswerten <b>S ∈ [0, 100]</b>. Der Planer taktet Großverbraucher in ideale & günstige Stunden unter Einhaltung des Sicherungslimits.",
         connBtn: "🔬 19 Mamdani-Regeln prüfen",
@@ -2067,6 +2344,17 @@
         navTextScheduler: "⚡ 1. Planificateur Domestique Intelligent",
         navTextEngine: "🧠 2. Moteur d'Inférence Floue en Direct (Règles Mamdani)",
         navTextReport: "📑 3. Modèle Académique & Rapport (7 Sections)",
+        navTextSummarizer: "💬 4. Résumeur Linguistique & Protoformes",
+        summTitle: "💬 4. Résumeur Linguistique Flou de Données (Protoformes de Yager & Kacprzyk)",
+        summSubtitle: "Traduit les tarifs dynamiques complexes en 96 pas et les plannings domestiques en propositions en langage naturel avec degrés de vérité flous quantifiés T ∈ [0, 1].",
+        summExecBadge: "📢 Synthèse Tarifaire Exécutive en Langage Naturel",
+        summProtoTitle: "📜 Principales Protoformes Linguistiques Vérifiées (Yager / Kacprzyk)",
+        summProtoSubtitle: "Propositions évaluées automatiquement à l'aide de quantificateurs flous relatifs Q et de degrés de vérité T = μ_Q(r) ≥ 0.50.",
+        summCalcTitle: "🔬 Inspecteur Interactif de Protoformes & Calculateur de Vérité",
+        summCalcSubtitle: "Sélectionnez une combinaison personnalisée de quantificateur flou (Q), condition (B) et résumeur (S) pour calculer son degré de vérité T.",
+        lblProtoQ: "1. Quantificateur Flou (Q)",
+        lblProtoB: "2. Sujet / Qualificateur (B)",
+        lblProtoS: "3. Résumeur Flou (S)",
         connTitle: "Lien Exact avec le Modèle de Logique Floue :",
         connText: "Le serveur ingère automatiquement les 96 pas de 15 minutes du tarif dynamique suisse, calcule les entrées normalisées <b>(P, A, G, T)</b>, évalue les <b>19 règles Mamdani</b> et les défuzzifie en scores horaires d'adéquation <b>S ∈ [0, 100]</b>. Le planificateur séquence ensuite les gros consommateurs aux heures idéales sans dépasser le disjoncteur.",
         connBtn: "🔬 Inspecter les 19 Règles Mamdani",
@@ -2191,6 +2479,17 @@
         navTextScheduler: "⚡ 1. Pianificatore Domestico Intelligente",
         navTextEngine: "🧠 2. Motore di Inferenza Fuzzy in Tempo Reale (Regole Mamdani)",
         navTextReport: "📑 3. Modello Accademico & Relazione (7 Sezioni)",
+        navTextSummarizer: "💬 4. Riassuntore Linguistico & Protoforme",
+        summTitle: "💬 4. Riassuntore Linguistico Fuzzy dei Dati (Protoforme di Yager & Kacprzyk)",
+        summSubtitle: "Traduce le tariffe dinamiche complesse a 96 intervalli e i piani domestici in proposizioni in linguaggio naturale con gradi di verità fuzzy quantificati T ∈ [0, 1].",
+        summExecBadge: "📢 Sintesi Tariffaria Esecutiva in Linguaggio Naturale",
+        summProtoTitle: "📜 Principali Protoforme Linguistiche Verificate (Yager / Kacprzyk)",
+        summProtoSubtitle: "Proposizioni valutate automaticamente mediante quantificatori fuzzy relativi Q e gradi di verità T = μ_Q(r) ≥ 0.50.",
+        summCalcTitle: "🔬 Ispettore Interattivo di Protoforme & Calcolatore di Verità",
+        summCalcSubtitle: "Seleziona qualsiasi combinazione personalizzata di quantificatore fuzzy (Q), condizione (B) e riassuntore (S) per calcolarne il grado di verità T.",
+        lblProtoQ: "1. Quantificatore Fuzzy (Q)",
+        lblProtoB: "2. Soggetto / Qualificatore (B)",
+        lblProtoS: "3. Riassuntore Fuzzy (S)",
         connTitle: "Relazione Esatta con il Modello di Logica Fuzzy:",
         connText: "Il server acquisisce automaticamente i 96 intervalli a 15 minuti della tariffa dinamica svizzera, calcola gli ingressi normalizzati <b>(P, A, G, T)</b>, valuta le <b>19 regole Mamdani</b> e le defuzzifica in punteggi orari di idoneità <b>S ∈ [0, 100]</b>. Il pianificatore sequenzia i grandi carichi nelle ore ideali senza superare il limite dell'interruttore.",
         connBtn: "🔬 Ispeziona le 19 Regole Mamdani",
@@ -2323,7 +2622,9 @@
       const dict = I18N[lang] || I18N.en;
 
       const simpleElements = [
-        'brandTitle', 'brandSubtitle', 'navTextScheduler', 'navTextEngine', 'navTextReport',
+        'brandTitle', 'brandSubtitle', 'navTextScheduler', 'navTextEngine', 'navTextReport', 'navTextSummarizer',
+        'summTitle', 'summSubtitle', 'summExecBadge', 'summProtoTitle', 'summProtoSubtitle',
+        'summCalcTitle', 'summCalcSubtitle', 'lblProtoQ', 'lblProtoB', 'lblProtoS',
         'connTitle', 'connText', 'connBtn', 'statSavingsLabel', 'statCostLabel',
         'statPeakLabel', 'statPercentLabel', 'peakBadgeText', 'sec1Title', 'sec1Subtitle',
         'tab_winter', 'tab_summer', 'tab_autumn_dst', 'tab_winter_cold_snap',
@@ -2371,18 +2672,214 @@
       if (hourDetailText && dict.hourDetailDefault) {
         hourDetailText.innerHTML = dict.hourDetailDefault;
       }
+
+      const viewSumm = document.getElementById('viewSummarizer');
+      if (viewSumm && viewSumm.style.display !== 'none') {
+        loadLinguisticSummary();
+      }
     }
 
     function switchMainView(viewName) {
       document.getElementById('viewScheduler').style.display = viewName === 'scheduler' ? 'block' : 'none';
       document.getElementById('viewFuzzyEngine').style.display = viewName === 'engine' ? 'block' : 'none';
       document.getElementById('viewReport').style.display = viewName === 'report' ? 'block' : 'none';
+      document.getElementById('viewSummarizer').style.display = viewName === 'summarizer' ? 'block' : 'none';
 
       document.getElementById('navBtnScheduler').classList.toggle('active', viewName === 'scheduler');
       document.getElementById('navBtnEngine').classList.toggle('active', viewName === 'engine');
       document.getElementById('navBtnReport').classList.toggle('active', viewName === 'report');
+      document.getElementById('navBtnSummarizer').classList.toggle('active', viewName === 'summarizer');
+
+      if (viewName === 'summarizer') {
+        loadLinguisticSummary();
+      }
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    let cachedLinguisticData = null;
+
+    async function loadLinguisticSummary() {
+      try {
+        const res = await fetch(`/v1/summarize/daily?season=${currentSeason}&lang=${currentLanguage}`);
+        if (res.ok) {
+          const data = await res.json();
+          cachedLinguisticData = data;
+          renderLinguisticSummary(data);
+        }
+      } catch (err) {
+        console.error("Failed to load linguistic summary:", err);
+      }
+    }
+
+    function setSummarizerSeason(season, btn) {
+      currentSeason = season;
+      // Also update scheduler view season tabs for consistency
+      document.querySelectorAll('.tabs-wrap .tab-btn').forEach(b => {
+        if (b.id === `tab_${season}`) b.classList.add('active');
+        else b.classList.remove('active');
+      });
+      document.querySelectorAll('#viewSummarizer .preset-pill').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      loadLinguisticSummary();
+    }
+
+    function renderLinguisticSummary(data) {
+      const dateBadge = document.getElementById('summDateBadge');
+      if (dateBadge) dateBadge.innerText = `Date: ${data.date} (${data.season})`;
+
+      const headlineEl = document.getElementById('summHeadline');
+      if (headlineEl) headlineEl.innerText = data.headline;
+
+      const listEl = document.getElementById('summNarrativeList');
+      if (listEl) {
+        listEl.innerHTML = data.narrative.map(bullet => {
+          const formatted = bullet.replace(/\*\*(.*?)\*\*/g, '<b style="color: #38bdf8;">$1</b>');
+          return `
+            <div style="display: flex; align-items: flex-start; gap: 10px; font-size: 0.88rem; line-height: 1.6; color: #cbd5e1;">
+              <span style="color: #34d399; font-size: 1rem; line-height: 1.4;">•</span>
+              <div>${formatted}</div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      const gridEl = document.getElementById('protoformGrid');
+      if (gridEl) {
+        gridEl.innerHTML = data.top_protoforms.map(p => {
+          const truthPercent = Math.round(p.truth_degree * 100);
+          const covPercent = Math.round(p.coverage_degree * 100);
+          const badgeClass = p.truth_degree >= 0.70 ? 'ideal' : (p.truth_degree >= 0.40 ? 'good' : 'avoid');
+          const badgeText = p.truth_degree >= 0.70 ? 'STRONGLY VALID' : (p.truth_degree >= 0.40 ? 'MODERATE' : 'WEAK');
+          const meterClass = p.truth_degree >= 0.70 ? 'valid' : (p.truth_degree >= 0.40 ? 'moderate' : 'false');
+
+          return `
+            <div class="proto-card">
+              <div>
+                <div class="proto-card-top">
+                  <span class="fuzzy-pill ${badgeClass}" style="font-size: 0.72rem; padding: 2px 8px;">
+                    ${badgeText} (T = ${p.truth_degree.toFixed(2)})
+                  </span>
+                  <span style="font-size: 0.74rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
+                    Coverage: ${covPercent}%
+                  </span>
+                </div>
+                <div class="proto-statement" style="margin-top: 10px;">
+                  "${p.statement}"
+                </div>
+              </div>
+
+              <div style="margin-top: 8px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 2px;">
+                  <span>Truth Degree T = μ_Q(r)</span>
+                  <span style="font-weight: 700; color: #f8fafc;">${p.truth_degree.toFixed(2)} (${truthPercent}%)</span>
+                </div>
+                <div class="truth-meter-wrap">
+                  <div class="truth-meter-bar ${meterClass}" style="width: ${truthPercent}%;"></div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Populate selects
+      const selQ = document.getElementById('protoSelQ');
+      const selB = document.getElementById('protoSelB');
+      const selS = document.getElementById('protoSelS');
+
+      if (selQ && selB && selS) {
+        const prevQ = selQ.value;
+        const prevB = selB.value;
+        const prevS = selS.value;
+
+        selQ.innerHTML = data.quantifiers.map(q => `<option value="${q.id}">${q.label} [${q.id}]</option>`).join('');
+        selB.innerHTML = data.qualifiers.map(b => `<option value="${b.id}">${b.label}</option>`).join('');
+        selS.innerHTML = data.summarizers.map(s => `<option value="${s.id}">${s.label}</option>`).join('');
+
+        if (prevQ && data.quantifiers.some(q => q.id === prevQ)) selQ.value = prevQ;
+        else selQ.value = 'almost_all';
+
+        if (prevB && data.qualifiers.some(b => b.id === prevB)) selB.value = prevB;
+        else selB.value = 'night_hours';
+
+        if (prevS && data.summarizers.some(s => s.id === prevS)) selS.value = prevS;
+        else selS.value = 'ideal';
+
+        evaluateInteractiveProtoform();
+      }
+    }
+
+    async function evaluateInteractiveProtoform() {
+      const selQ = document.getElementById('protoSelQ');
+      const selB = document.getElementById('protoSelB');
+      const selS = document.getElementById('protoSelS');
+      if (!selQ || !selB || !selS) return;
+
+      const q = selQ.value;
+      const b = selB.value;
+      const s = selS.value;
+
+      try {
+        const res = await fetch('/v1/summarize/evaluate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            season: currentSeason,
+            quantifier: q,
+            qualifier: b,
+            summarizer: s,
+            lang: currentLanguage,
+          }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          renderCalculatedProtoform(data);
+        }
+      } catch (err) {
+        console.error("Evaluation failed:", err);
+      }
+    }
+
+    function renderCalculatedProtoform(data) {
+      const stmtEl = document.getElementById('calcStatement');
+      if (stmtEl) stmtEl.innerText = `"${data.statement}"`;
+
+      const truthValEl = document.getElementById('calcTruthValue');
+      if (truthValEl) truthValEl.innerText = data.truth_degree.toFixed(2);
+
+      const truthPercent = Math.round(data.truth_degree * 100);
+      const truthPctEl = document.getElementById('calcTruthPercent');
+      if (truthPctEl) truthPctEl.innerText = `${truthPercent}%`;
+
+      const bar = document.getElementById('calcTruthBar');
+      if (bar) {
+        bar.style.width = `${truthPercent}%`;
+        bar.className = `truth-meter-bar ${data.status}`;
+      }
+
+      const badge = document.getElementById('calcStatusBadge');
+      if (badge) {
+        if (data.status === 'valid') {
+          badge.className = 'fuzzy-pill ideal';
+          badge.innerText = 'STRONGLY VALID (T ≥ 0.70)';
+        } else if (data.status === 'moderate') {
+          badge.className = 'fuzzy-pill okay';
+          badge.innerText = 'MODERATELY VALID (0.40 ≤ T < 0.70)';
+        } else {
+          badge.className = 'fuzzy-pill avoid';
+          badge.innerText = 'WEAK / FALSE (T < 0.40)';
+        }
+      }
+
+      const ratioEl = document.getElementById('calcRatioVal');
+      if (ratioEl) ratioEl.innerText = `${(data.cardinality_ratio * 100).toFixed(1)}%`;
+
+      const covEl = document.getElementById('calcCoverageVal');
+      if (covEl) covEl.innerText = `${(data.coverage_degree * 100).toFixed(1)}%`;
+
+      const typeEl = document.getElementById('calcProtoType');
+      if (typeEl) typeEl.innerText = data.protoform_type === 'type_2' ? 'Type II (Conditional B)' : 'Type I (Unconditional)';
     }
 
     function setSeason(season, btn) {
