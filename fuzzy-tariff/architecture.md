@@ -175,7 +175,7 @@ reports/         generated outputs (backtests, figures), git-ignored
 Raw API responses are stored unmodified; parsing happens in `ingest/`. The EKZ tariff logger (`scripts/log_ekz_tariff.py`, to implement) builds our own real dynamic-tariff history from now on. Source notes: `docs/data-sources.md`.
 
 ### Dynamic tariff simulator
-`tariff_sim.py` generates EKZ-style tariffs (see `docs/dynamic-tariff-model.md`, ADR-0007). It takes a spot-price series and a net-load series (real or synthetic) and returns energy, grid and total tariffs in Rp./kWh per 15-minute step. `to_pipeline_frame` selects the component and converts to CHF/kWh for the fuzzy pipeline.
+`tariff_sim.py` generates EKZ-style tariffs (see `../dynamic-tariff-model.md`, ADR-0007). It takes a spot-price series and a net-load series (real or synthetic) and returns energy, grid and total tariffs in Rp./kWh per 15-minute step. `to_pipeline_frame` selects the component and converts to CHF/kWh for the fuzzy pipeline.
 
 ## 12. Deployment
 

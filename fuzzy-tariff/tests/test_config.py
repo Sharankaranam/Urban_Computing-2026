@@ -8,7 +8,7 @@ from fuzzy_tariff.fuzzy.config import DEFAULT_CONFIG_PATH
 
 def test_default_config_loads_and_builds(cfg):
     assert cfg.version == 1
-    assert len(cfg.stage1.rules) == 15
+    assert len(cfg.stage1.rules) == 19
     assert len(cfg.stage2.rules) == 6
     build_fis(cfg.stage1)
     build_fis(cfg.stage2)

@@ -28,29 +28,120 @@ from fuzzy_tariff.api.schemas import (
     TariffPreviewResponse,
     TariffStepOut,
 )
+from fuzzy_tariff.ingest.ekz import EkzTariffSource
 from fuzzy_tariff.labels import Lang, action_text, label_text
 from fuzzy_tariff.services import Services, get_services
 
 _STATIC_DIR = Path(__file__).resolve().parent / "static"
-_CSV_CACHE: pd.DataFrame | None = None
+_BENCHMARK_CACHE: pd.DataFrame | None = None
+_PRACTISING_CACHE: pd.DataFrame | None = None
+
+PRACTISING_SCENARIOS: dict[str, str] = {
+    "autumn_dst": "2026-10-25",
+    "november_wind": "2026-11-13",
+    "winter_cold_snap": "2026-12-15",
+    "holiday_flat": "2026-12-25",
+    "january_spike": "2027-01-18",
+    "february_solar": "2027-02-18",
+}
+
+BENCHMARK_SCENARIOS: dict[str, str] = {
+    "winter": "2025-01-15",
+    "spring": "2025-04-12",
+    "summer": "2025-06-21",
+    "autumn": "2025-10-15",
+}
 
 
-def _get_tariff_df() -> pd.DataFrame:
-    global _CSV_CACHE
-    if _CSV_CACHE is not None:
-        return _CSV_CACHE
-
+def _find_csv(filename: str) -> Path | None:
     candidates = [
-        Path(__file__).resolve().parents[4] / "dynamic_tariff_2025_15min.csv",
-        Path(__file__).resolve().parents[3] / "dynamic_tariff_2025_15min.csv",
-        Path("dynamic_tariff_2025_15min.csv"),
-        Path("../dynamic_tariff_2025_15min.csv"),
+        Path(__file__).resolve().parents[4] / filename,
+        Path(__file__).resolve().parents[3] / filename,
+        Path(filename),
+        Path("..") / filename,
+        Path(__file__).resolve().parents[1] / "data" / "synthetic" / filename,
     ]
-    p = next((c for c in candidates if c.exists()), None)
+    return next((c for c in candidates if c.exists()), None)
+
+
+def _get_tariff_df(use_practising: bool = False) -> pd.DataFrame:
+    global _BENCHMARK_CACHE, _PRACTISING_CACHE
+    if use_practising:
+        if _PRACTISING_CACHE is not None:
+            return _PRACTISING_CACHE
+        p = _find_csv("practising_tariff_4months_15min.csv")
+        if p is not None:
+            _PRACTISING_CACHE = pd.read_csv(p)
+            return _PRACTISING_CACHE
+
+    if _BENCHMARK_CACHE is not None:
+        return _BENCHMARK_CACHE
+    p = _find_csv("dynamic_tariff_2025_15min.csv")
     if p is not None:
-        _CSV_CACHE = pd.read_csv(p)
-        return _CSV_CACHE
-    raise FileNotFoundError("dynamic_tariff_2025_15min.csv not found")
+        _BENCHMARK_CACHE = pd.read_csv(p)
+        return _BENCHMARK_CACHE
+
+    # Fallback to practicing file if benchmark is missing
+    p_prac = _find_csv("practising_tariff_4months_15min.csv")
+    if p_prac is not None:
+        _BENCHMARK_CACHE = pd.read_csv(p_prac)
+        return _BENCHMARK_CACHE
+
+    raise FileNotFoundError("Dynamic tariff dataset CSV not found")
+
+
+def _load_day_df(season_or_date: str) -> tuple[str, pd.DataFrame]:
+    """Retrieve day slice from live EKZ API, 4-month practicing dataset, or 2025 benchmark."""
+    key = season_or_date.lower().strip()
+
+    # 1. Live EKZ API on-demand option
+    if key in ("live_ekz", "live", "today"):
+        try:
+            source = EkzTariffSource()
+            live_df = source.fetch_latest_day()
+            if not live_df.empty:
+                today_str = pd.Timestamp.now(tz="Europe/Zurich").strftime("%Y-%m-%d")
+                live_reset = live_df.reset_index()
+                live_reset["timestamp_utc"] = live_reset["timestamp_utc"].astype(str)
+                day_slice = live_reset[live_reset["timestamp_utc"].str.startswith(today_str)].copy()
+                if day_slice.empty:
+                    day_slice = live_reset.iloc[:96].copy()
+                if "net_load_mw" not in day_slice.columns:
+                    day_slice["net_load_mw"] = 150.0
+                if "spot_eur_mwh" not in day_slice.columns:
+                    day_slice["spot_eur_mwh"] = 80.0
+                return f"{today_str} (Live EKZ API)", day_slice.reset_index(drop=True)
+        except Exception as exc:
+            print(f"Warning: live EKZ API query fell back to practicing dataset ({exc})")
+
+    # 2. Check practicing scenarios
+    if key in PRACTISING_SCENARIOS:
+        date_str = PRACTISING_SCENARIOS[key]
+        prac_df = _get_tariff_df(use_practising=True)
+        day_df = prac_df[prac_df["timestamp_utc"].str.startswith(date_str)].copy()
+        if not day_df.empty:
+            return date_str, day_df.reset_index(drop=True)
+
+    # 3. Check direct date string in practicing range (2026 or 2027)
+    if key.startswith("2026") or key.startswith("2027"):
+        date_str = key[:10]
+        prac_df = _get_tariff_df(use_practising=True)
+        day_df = prac_df[prac_df["timestamp_utc"].str.startswith(date_str)].copy()
+        if not day_df.empty:
+            return date_str, day_df.reset_index(drop=True)
+
+    # 4. Check benchmark scenarios
+    date_str = BENCHMARK_SCENARIOS.get(key, key[:10] if len(key) >= 10 else "2025-01-15")
+    bench_df = _get_tariff_df(use_practising=False)
+    day_df = bench_df[bench_df["timestamp_utc"].str.startswith(date_str)].copy()
+    if day_df.empty:
+        # Try finding in practicing dataset as fallback
+        prac_df = _get_tariff_df(use_practising=True)
+        day_df = prac_df[prac_df["timestamp_utc"].str.startswith(date_str)].copy()
+    if day_df.empty:
+        day_df = bench_df.iloc[:96].copy()
+
+    return date_str, day_df.reset_index(drop=True)
 
 
 def _format_time_step(step: int) -> str:
@@ -78,38 +169,36 @@ def _group_slot_intervals(slots: list[int]) -> list[str]:
 def _run_smart_schedule(
     req: SmartScheduleRequest, svc: Services
 ) -> SmartScheduleResponse:
-    dates = {
-        "winter": "2025-01-15",
-        "spring": "2025-04-12",
-        "summer": "2025-06-21",
-        "autumn": "2025-10-15",
-    }
-    date_str = dates.get(req.season.lower(), "2025-01-15")
-    df = _get_tariff_df()
-    day_df = df[df["timestamp_utc"].str.startswith(date_str)].copy().reset_index(drop=True)
-    if day_df.empty:
-        day_df = df.iloc[:96].copy().reset_index(drop=True)
-
+    date_str, day_df = _load_day_df(req.season)
     prices = day_df["total_rp"].astype(float).tolist()
     step_hours = 0.25
+    n_slots = len(day_df)
 
     p_min = float(day_df["total_rp"].min())
     p_max = float(day_df["total_rp"].max())
 
-    # 1. Compute Stage 1 Fuzzy Inference for all 96 slots
+    # 1. Compute Stage 1 Fuzzy Inference for all slots
     fuzzy_scores: list[float] = []
     fuzzy_labels: list[str] = []
     slot_rules: list[list[str]] = []
 
-    for s in range(96):
+    has_pgat = {"P", "A", "G", "T"}.issubset(day_df.columns)
+
+    for s in range(n_slots):
         total_rp = float(day_df.loc[s, "total_rp"])
-        p = float(100.0 * (total_rp - p_min) / (p_max - p_min)) if p_max > p_min else 50.0
-        a = float(total_rp / 100.0)
-        net_load = float(day_df.loc[s, "net_load_mw"])
-        g = float(max(0.0, min(1.0, (net_load - 100.0) / 100.0)))
-        next_s = min(95, s + 8)
-        diff = (float(day_df.loc[next_s, "total_rp"]) - total_rp) / 100.0
-        t = float(max(-1.0, min(1.0, diff / 0.10)))
+        if has_pgat and pd.notna(day_df.loc[s, "P"]):
+            p = float(day_df.loc[s, "P"])
+            a = float(day_df.loc[s, "A"])
+            g = float(day_df.loc[s, "G"])
+            t = float(day_df.loc[s, "T"])
+        else:
+            p = float(100.0 * (total_rp - p_min) / (p_max - p_min)) if p_max > p_min else 50.0
+            a = float(total_rp / 100.0)
+            net_load = float(day_df.loc[s, "net_load_mw"]) if "net_load_mw" in day_df.columns else 150.0
+            g = float(max(0.0, min(1.0, (net_load - 100.0) / 100.0)))
+            next_s = min(n_slots - 1, s + 8)
+            diff = (float(day_df.loc[next_s, "total_rp"]) - total_rp) / 100.0
+            t = float(max(-1.0, min(1.0, diff / 0.10)))
 
         res = svc.stage1.infer(P=p, A=a, G=g, T=t)
         fuzzy_scores.append(res.score)
@@ -117,11 +206,13 @@ def _run_smart_schedule(
         slot_rules.append([f.id for f in res.fired])
 
     # 2. Multi-device constraint allocator
-    slot_counts = [0] * 96
-    slot_kw = [0.0] * 96
-    slot_allocations: list[list[str]] = [[] for _ in range(96)]
+    slot_counts = [0] * n_slots
+    slot_kw = [0.0] * n_slots
+    slot_allocations: list[list[str]] = [[] for _ in range(n_slots)]
 
-    peak_steps = list(range(70, 82))
+    peak_start = int(17.5 / step_hours)
+    peak_end = min(n_slots, int(20.5 / step_hours))
+    peak_steps = list(range(peak_start, peak_end))
     peak_avg_rp = sum(prices[s] for s in peak_steps) / len(peak_steps) if peak_steps else 34.0
 
     scheduled_devices: list[ScheduledDeviceResult] = []
@@ -135,7 +226,7 @@ def _run_smart_schedule(
 
     for dev in sorted_devs:
         req_steps = max(1, round(dev.energy_kwh / dev.power_kw / step_hours))
-        deadline_step = min(96, max(req_steps, int(dev.deadline_hours / step_hours)))
+        deadline_step = min(n_slots, max(req_steps, int(dev.deadline_hours / step_hours)))
 
         def can_use_slot(s: int) -> bool:
             if slot_counts[s] >= req.max_concurrent_devices:
@@ -242,15 +333,19 @@ def _run_smart_schedule(
     hourly_fuzzy_scores: list[float] = []
     hourly_fuzzy_labels: list[str] = []
 
-    for h in range(24):
+    n_hours = max(24, (n_slots + 3) // 4)
+    for h in range(n_hours):
         devs_in_hour: set[str] = set()
         h_score_sum = 0.0
+        count_in_hour = 0
         for q in range(4):
             idx = h * 4 + q
-            devs_in_hour.update(slot_allocations[idx])
-            h_score_sum += fuzzy_scores[idx]
+            if idx < n_slots:
+                devs_in_hour.update(slot_allocations[idx])
+                h_score_sum += fuzzy_scores[idx]
+                count_in_hour += 1
         hourly_allocations.append(sorted(list(devs_in_hour)))
-        avg_h_score = h_score_sum / 4.0
+        avg_h_score = (h_score_sum / count_in_hour) if count_in_hour > 0 else 50.0
         hourly_fuzzy_scores.append(round(avg_h_score, 1))
         h_label = (
             "ideal" if avg_h_score >= 80
@@ -288,38 +383,44 @@ def _run_smart_schedule(
 def _load_preview_steps(
     season: str, lang: Lang, svc: Services
 ) -> tuple[str, list[TariffStepOut]]:
-    dates = {
-        "winter": "2025-01-15",
-        "spring": "2025-04-12",
-        "summer": "2025-06-21",
-        "autumn": "2025-10-15",
-    }
-    date_str = dates.get(season.lower(), "2025-01-15")
-    df = _get_tariff_df()
-    day_df = df[df["timestamp_utc"].str.startswith(date_str)].copy()
-    if day_df.empty:
-        day_df = df.iloc[:96].copy()
-
+    date_str, day_df = _load_day_df(season)
     p_min = float(day_df["total_rp"].min())
     p_max = float(day_df["total_rp"].max())
+    n_slots = len(day_df)
+
+    has_pgat = {"P", "A", "G", "T"}.issubset(day_df.columns)
 
     steps: list[TariffStepOut] = []
-    for _, row in day_df.iterrows():
+    for s in range(n_slots):
+        row = day_df.iloc[s]
         total_rp = float(row["total_rp"])
-        p = float(100.0 * (total_rp - p_min) / (p_max - p_min)) if p_max > p_min else 50.0
-        a = float(total_rp / 100.0)
-        net_load = float(row["net_load_mw"])
-        g = float(max(0.0, min(1.0, (net_load - 100.0) / 100.0)))
-        res = svc.stage1.infer(P=p, A=a, G=g, T=0.0)
+        if has_pgat and pd.notna(row.get("P")):
+            p = float(row["P"])
+            a = float(row["A"])
+            g = float(row["G"])
+            t = float(row["T"])
+        else:
+            p = float(100.0 * (total_rp - p_min) / (p_max - p_min)) if p_max > p_min else 50.0
+            a = float(total_rp / 100.0)
+            net_load = float(row["net_load_mw"]) if "net_load_mw" in day_df.columns else 150.0
+            g = float(max(0.0, min(1.0, (net_load - 100.0) / 100.0)))
+            next_s = min(n_slots - 1, s + 8)
+            diff = (float(day_df.iloc[next_s]["total_rp"]) - total_rp) / 100.0
+            t = float(max(-1.0, min(1.0, diff / 0.10)))
+
+        res = svc.stage1.infer(P=p, A=a, G=g, T=t)
         time_str = str(row["timestamp_utc"])[11:16]
+        spot_val = float(row["spot_eur_mwh"]) if "spot_eur_mwh" in day_df.columns else 75.0
+        load_val = float(row["net_load_mw"]) if "net_load_mw" in day_df.columns else 150.0
+
         steps.append(
             TariffStepOut(
                 time=time_str,
-                spot_eur_mwh=round(float(row["spot_eur_mwh"]), 2),
-                net_load_mw=round(net_load, 2),
-                energy_rp=round(float(row["energy_rp"]), 2),
-                grid_rp=round(float(row["grid_rp"]), 2),
-                sdl_rp=round(float(row["sdl_rp"]), 2),
+                spot_eur_mwh=round(spot_val, 2),
+                net_load_mw=round(load_val, 2),
+                energy_rp=round(float(row.get("energy_rp", total_rp * 0.5)), 2),
+                grid_rp=round(float(row.get("grid_rp", total_rp * 0.5)), 2),
+                sdl_rp=round(float(row.get("sdl_rp", 0.27)), 2),
                 total_rp=round(total_rp, 2),
                 score=round(float(res.score), 1),
                 label=res.top_set,

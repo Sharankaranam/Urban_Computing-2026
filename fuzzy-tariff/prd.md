@@ -137,7 +137,7 @@ Stage-1 labels + stage-2 advice behind the API, a simple web UI with 24-48 h tim
 
 ## 10. Assumptions and dependencies
 
-- A partner utility (e.g. EKZ, which publishes its dynamic tariff through an API) or equivalent data is reachable. Without it we rely on ENTSO-E prices and the EKZ-style simulated dynamic tariff (`docs/dynamic-tariff-model.md`).
+- A partner utility (e.g. EKZ, which publishes its dynamic tariff through an API) or equivalent data is reachable. Without it we rely on ENTSO-E prices and the EKZ-style simulated dynamic tariff (`../dynamic-tariff-model.md`).
 - Standard tariff levels and the standard load profile used by the simulator are illustrative until replaced with the values on the real tariff sheet.
 - ENTSO-E token is granted (free but manual approval).
 - Membership parameters are starting values; the project must calibrate and justify them.

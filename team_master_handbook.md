@@ -105,9 +105,10 @@ A homeowner does **NOT** enter prices or solve formulas daily:
                             │
                             ▼
 ┌────────────────────────────────────────────────────────┐
-│ 3. 15 Mamdani Linguistic Rules (R01 – R15)             │
+│ 3. 19 Mamdani Linguistic Rules (R01 – R19)             │
 │    • Implication: Minimum operator (Mamdani min)       │
 │    • Aggregation: Maximum operator                     │
+│    • 4 Power Engineering Edge Cases (R16 – R19)        │
 └───────────────────────────┬────────────────────────────┘
                             │
                             ▼
@@ -125,25 +126,29 @@ A homeowner does **NOT** enter prices or solve formulas daily:
 └────────────────────────────────────────────────────────┘
 ```
 
-### The 15 Stage 1 Mamdani Rules Matrix
+### The 19 Stage 1 Mamdani Rules Matrix
 
 | Rule ID | Price Percentile ($P$) | Grid Congestion ($G$) | Modifier / Extra | Output Suitability ($S$) | Power Engineering Intent |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **R01** | Cheap | Low | — | **Ideal** (80–100) | Best possible charging/running window |
-| **R02** | Cheap | Medium | — | **Good** (60–80) | Cheap energy, moderate grid load |
-| **R03** | Cheap | High | — | **Okay** (40–60) | Cheap energy balanced by high grid fee |
-| **R04** | Medium | Low | — | **Good** (60–80) | Acceptable price with low grid stress |
-| **R05** | Medium | Medium | — | **Okay** (40–60) | Average market and grid conditions |
-| **R06** | Medium | High | — | **Wait** (20–40) | Avoid adding load to stressed grid |
-| **R07** | Expensive | Low | — | **Wait** (20–40) | Grid is clear, but price is unappealing |
-| **R08** | Expensive | Medium | — | **Avoid** (0–20) | High price and moderate grid load |
-| **R09** | Expensive | High | — | **Avoid** (0–20) | Worst conditions: expensive & congested |
-| **R10** | Cheap | Any | Absolute Very Cheap | **Ideal** (80–100) | Absolute global bargain overrides percentile |
-| **R11** | Any | Any | Absolute Very High | **Avoid** (0–20) | Absolute ceiling protection |
-| **R12** | Medium | Low | Trend Falling | **Wait** (20–40) | Postpone: even cheaper slot is approaching |
-| **R13** | Medium | Low | Trend Rising | **Good** (60–80) | Act now before price climbs higher |
-| **R14** | Cheap | Low | Trend Rising | **Ideal** (80–100) | Seize immediate cheap window |
-| **R15** | Any | High | Critical Grid Strain | **Avoid** (0–20) | Transformer overload protection |
+| **R01** | Cheap (very_low) | — | Absolute low | **Ideal** (80–100) | Best possible charging/running window |
+| **R02** | Cheap (very_low) | — | Absolute medium | **Good** (60–80) | Cheap relative, moderate absolute |
+| **R03** | Cheap (very_low) | — | Absolute high | **Okay** (40–60) | Relatively cheap but absolutely high guardrail |
+| **R04** | Cheap (very_low) | — | Trend rising | **Ideal** (80–100) | Cheap and about to get expensive: use now |
+| **R05** | Low | Low | — | **Good** (60–80) | Cheap energy, relaxed grid |
+| **R06** | Low | Medium | — | **Good** (60–80) | Cheap energy, moderate grid load |
+| **R07** | Low | High | — | **Okay** (40–60) | Cheap energy balanced by grid stress |
+| **R08** | Medium | — | — | **Okay** (40–60) | Typical market conditions |
+| **R09** | Medium | — | Trend falling | **Wait** (20–40) | Typical price but cheaper soon |
+| **R10** | Medium | — | Absolute high | **Wait** (20–40) | Typical percentile but high absolute tariff |
+| **R11** | High | — | Trend falling | **Wait** (20–40) | Expensive now, cheaper soon |
+| **R12** | High | Low | — | **Wait** (20–40) | Expensive, grid relaxed |
+| **R13** | High | High | — | **Avoid** (0–20) | Expensive and grid congested |
+| **R14** | Very High | — | — | **Avoid** (0–20) | Most expensive hours |
+| **R15** | High | Medium | — | **Wait** (20–40) | Expensive, grid moderately loaded |
+| **R16** | Low | — | Trend rising | **Ideal** (80–100) | **Pre-spike edge case:** lock in cheap slot before peak |
+| **R17** | — | High | Absolute high | **Avoid** (0–20) | **Critical guardrail:** congested transformer + absolute peak ceiling |
+| **R18** | Low | — | Trend falling | **Okay** (40–60) | **Trough anticipation:** low price but deeper trough within 2 hours |
+| **R19** | High | — | Absolute high | **Avoid** (0–20) | **Double peak edge case:** high relative percentile + high absolute tariff |
 
 ---
 

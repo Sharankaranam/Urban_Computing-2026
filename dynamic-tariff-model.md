@@ -53,9 +53,39 @@ tariff = simulate_dynamic_tariff(spot, load.reindex(spot.index).interpolate())
 
 Candidate real inputs: ENTSO-E day-ahead prices; ewz gross load curve of the City of Zurich (15 min, since 2019) or Swissgrid load. See `docs/data-sources.md`.
 
+## Live EKZ API Ingestion & 4-Month Practicing Dataset
+
+### 1. Live EKZ API Client (`fuzzy_tariff.ingest.ekz`)
+The package includes a production-grade live client for EKZ's official dynamic tariff endpoint (`https://api.tariffs.ekz.ch/v1/tariffs`):
+* **Class:** `EkzTariffSource` in `src/fuzzy_tariff/ingest/ekz.py`
+* **Features:** Automatic chunking into 30-day windows, ISO-8601 parsing, conversion between Rp./kWh and CHF/kWh, and robust fallbacks.
+* **On-Demand Fetching:** `python scripts/fetch_ekz_data.py --start 2026-07-01 --end 2026-10-21 --out data/ekz_real_stage1.csv` fetches live intervals, computes $P, A, G, T$, and defuzzifies with Mamdani FIS.
+* **Daily Cron Ingestion:** `python scripts/log_ekz_tariff.py` archives tomorrow's published dynamic tariff at 18:00 CET into `data/raw/ekz/YYYY-MM-DD.json`.
+
+### 2. 4-Month Practicing Dataset (`practising_tariff_4months_15min.csv`)
+For forward practicing through winter 2026–2027 (when future spot auctions have not yet occurred):
+* **Span:** `2026-10-21 00:00` to `2027-02-28 23:45` (131 days, 12,580 intervals).
+* **Generator:** `scripts/generate_practising_data.py`
+* **6 Embedded Edge Cases:**
+  1. *Autumn DST Transition (2026-10-25):* 100 intervals (25 hours) in Europe/Zurich local time.
+  2. *November Wind Surplus (2026-11-12 to 2026-11-14):* Negative spot prices (-15 to -25 EUR/MWh) during night gale.
+  3. *December Winter Cold Snap (2026-12-08 to 2026-12-18):* -8°C heating load surge (+22% net load, +45 EUR/MWh).
+  4. *Holiday Flat Tariff (2026-12-24 to 2026-12-26):* Low price spread (neutral label guardrail).
+  5. *January Generator Tripping Peak (2027-01-18):* Scarcity spike to 250 EUR/MWh at 17:30–20:30.
+  6. *February Late-Winter Solar Surge (2027-02-18 to 2027-02-22):* Strong midday PV surplus (-8 EUR/MWh, net load 25 MW).
+
+### 3. Stage 1 Mamdani FIS Rules (19 Rules)
+The Stage 1 Mamdani FIS operates with 19 rules (expanded from 15):
+* Standard base: R01–R15 covering price percentiles ($P$), absolute prices ($A$), grid congestion ($G$), and trends ($T$).
+* 4 Power-Engineering Edge Cases:
+  * `R16`: `{P: low, T: rising} -> ideal` (Pre-spike lock-in before peak).
+  * `R17`: `{G: high, A: high} -> avoid` (Critical emergency transformer overload & price ceiling).
+  * `R18`: `{P: low, T: falling} -> okay` (Trough anticipation within 2 hours).
+  * `R19`: `{P: high, A: high} -> avoid` (Double peak avoidance).
+
 ## Validation done (tests)
 
-`tests/test_tariff_sim.py`: bands respected, daily parity with the standard tariff to 1e-3 Rp., at most 8 clipped steps (2 h) per side, grid tariff correlates with net load, DST days (92/100 steps), determinism, 35040 steps for a year.
+`tests/`: 90 automated tests across 14 test suites covering tariff simulation, live EKZ ingestion, Stage 1 Mamdani FIS (all 19 rules), stability hysteresis, multi-device constraint scheduling, and FastAPI endpoints.
 
 ## Honest limitations
 
@@ -64,3 +94,4 @@ Candidate real inputs: ENTSO-E day-ahead prices; ewz gross load curve of the Cit
 - Synthetic spot and load are plausible shapes, not forecasts of the real market.
 - Parity is on a standard profile, not on any real household.
 - Findings from simulated tariffs are method checks, not evidence about real households.
+

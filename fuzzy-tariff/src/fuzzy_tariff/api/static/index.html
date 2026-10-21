@@ -1019,11 +1019,14 @@
             <div class="card-subtitle">Staggers high-power appliances to prevent tripping home fuses (16A / 25A) and avoids Swiss grid demand surcharges</div>
           </div>
 
-          <div class="tabs-wrap">
-            <button class="tab-btn active" onclick="setSeason('winter', this)">❄️ Winter Peak Day</button>
-            <button class="tab-btn" onclick="setSeason('summer', this)">☀️ Summer PV Surplus</button>
-            <button class="tab-btn" onclick="setSeason('spring', this)">🌸 Spring Day</button>
-            <button class="tab-btn" onclick="setSeason('autumn', this)">🍂 Autumn Day</button>
+          <div class="tabs-wrap" style="flex-wrap: wrap; gap: 6px;">
+            <button class="tab-btn active" onclick="setSeason('winter', this)">❄️ Winter 2025</button>
+            <button class="tab-btn" onclick="setSeason('summer', this)">☀️ Summer PV</button>
+            <button class="tab-btn" onclick="setSeason('autumn_dst', this)">🕒 Practising: Autumn DST</button>
+            <button class="tab-btn" onclick="setSeason('winter_cold_snap', this)">❄️ Practising: Cold Snap</button>
+            <button class="tab-btn" onclick="setSeason('january_spike', this)">⚡ Practising: Jan Peak</button>
+            <button class="tab-btn" onclick="setSeason('february_solar', this)">🔋 Practising: Feb Solar</button>
+            <button class="tab-btn" onclick="setSeason('live_ekz', this)">🔴 Live EKZ API</button>
           </div>
         </div>
 
@@ -1344,7 +1347,7 @@
           <!-- MAMDANI RULES ACTIVATION TABLE -->
           <div style="background: rgba(10, 16, 28, 0.7); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 18px; overflow-x: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span style="font-size: 0.9rem; font-weight: 700; color: #38bdf8;">2. The 15 Stage 1 Mamdani Linguistic Rules</span>
+              <span style="font-size: 0.9rem; font-weight: 700; color: #38bdf8;">2. Stage 1 Mamdani Linguistic Rules (19 Rules with Edge Cases)</span>
               <span style="font-size: 0.74rem; color: var(--text-muted);">Green rows indicate rules currently firing</span>
             </div>
 
@@ -1532,21 +1535,25 @@
     };
 
     const rulesDefinitions = [
-      { id: "R01", p: "cheap", g: "low", extra: "normal", s: "ideal", text: "IF P is cheap AND G is low THEN S is ideal" },
-      { id: "R02", p: "cheap", g: "med", extra: "normal", s: "good", text: "IF P is cheap AND G is med THEN S is good" },
-      { id: "R03", p: "cheap", g: "high", extra: "normal", s: "okay", text: "IF P is cheap AND G is high THEN S is okay" },
-      { id: "R04", p: "med", g: "low", extra: "normal", s: "good", text: "IF P is med AND G is low THEN S is good" },
-      { id: "R05", p: "med", g: "med", extra: "normal", s: "okay", text: "IF P is med AND G is med THEN S is okay" },
-      { id: "R06", p: "med", g: "high", extra: "normal", s: "wait", text: "IF P is med AND G is high THEN S is wait" },
-      { id: "R07", p: "exp", g: "low", extra: "normal", s: "wait", text: "IF P is exp AND G is low THEN S is wait" },
-      { id: "R08", p: "exp", g: "med", extra: "normal", s: "avoid", text: "IF P is exp AND G is med THEN S is avoid" },
-      { id: "R09", p: "exp", g: "high", extra: "normal", s: "avoid", text: "IF P is exp AND G is high THEN S is avoid" },
-      { id: "R10", p: "cheap", g: "any", extra: "A very_cheap", s: "ideal", text: "IF P is cheap AND A is very_cheap THEN S is ideal" },
-      { id: "R11", p: "any", g: "any", extra: "A very_exp", s: "avoid", text: "IF A is very_expensive THEN S is avoid" },
-      { id: "R12", p: "med", g: "low", extra: "T falling", s: "wait", text: "IF P is med AND T is falling THEN S is wait" },
-      { id: "R13", p: "med", g: "low", extra: "T rising", s: "good", text: "IF P is med AND T is rising THEN S is good" },
-      { id: "R14", p: "cheap", g: "low", extra: "T rising", s: "ideal", text: "IF P is cheap AND T is rising THEN S is ideal" },
-      { id: "R15", p: "any", g: "high", extra: "critical_grid", s: "avoid", text: "IF G is critical_grid THEN S is avoid" },
+      { id: "R01", p: "very_low", g: "any", extra: "A low", s: "ideal", text: "IF P is very_low AND A is low THEN S is ideal (Absolute & relative bargain)" },
+      { id: "R02", p: "very_low", g: "any", extra: "A medium", s: "good", text: "IF P is very_low AND A is medium THEN S is good (Relative cheap)" },
+      { id: "R03", p: "very_low", g: "any", extra: "A high", s: "okay", text: "IF P is very_low AND A is high THEN S is okay (High price guardrail)" },
+      { id: "R04", p: "very_low", g: "any", extra: "T rising", s: "ideal", text: "IF P is very_low AND T is rising THEN S is ideal (Immediate window)" },
+      { id: "R05", p: "low", g: "low", extra: "T stable", s: "good", text: "IF P is low AND G is low THEN S is good (Relaxed grid, cheap)" },
+      { id: "R06", p: "low", g: "medium", extra: "normal", s: "good", text: "IF P is low AND G is medium THEN S is good (Cheap, moderate load)" },
+      { id: "R07", p: "low", g: "high", extra: "normal", s: "okay", text: "IF P is low AND G is high THEN S is okay (Cheap but grid stressed)" },
+      { id: "R08", p: "medium", g: "any", extra: "normal", s: "okay", text: "IF P is medium THEN S is okay (Typical market price)" },
+      { id: "R09", p: "medium", g: "any", extra: "T falling", s: "wait", text: "IF P is medium AND T is falling THEN S is wait (Cheaper soon)" },
+      { id: "R10", p: "medium", g: "any", extra: "A high", s: "wait", text: "IF P is medium AND A is high THEN S is wait (High absolute cost)" },
+      { id: "R11", p: "high", g: "any", extra: "T falling", s: "wait", text: "IF P is high AND T is falling THEN S is wait (Expensive now, wait for drop)" },
+      { id: "R12", p: "high", g: "low", extra: "normal", s: "wait", text: "IF P is high AND G is low THEN S is wait (High tariff)" },
+      { id: "R13", p: "high", g: "high", extra: "normal", s: "avoid", text: "IF P is high AND G is high THEN S is avoid (Peak price & congested grid)" },
+      { id: "R14", p: "very_high", g: "any", extra: "normal", s: "avoid", text: "IF P is very_high THEN S is avoid (Highest daily tariff band)" },
+      { id: "R15", p: "high", g: "medium", extra: "normal", s: "wait", text: "IF P is high AND G is medium THEN S is wait (Expensive, moderate load)" },
+      { id: "R16", p: "low", g: "any", extra: "T rising", s: "ideal", text: "EDGE CASE: IF P is low AND T is rising THEN S is ideal (Pre-spike lock-in)" },
+      { id: "R17", p: "any", g: "high", extra: "A high", s: "avoid", text: "EDGE CASE: IF G is high AND A is high THEN S is avoid (Transformer overload & price ceiling)" },
+      { id: "R18", p: "low", g: "any", extra: "T falling", s: "okay", text: "EDGE CASE: IF P is low AND T is falling THEN S is okay (Trough anticipation within 2h)" },
+      { id: "R19", p: "high", g: "any", extra: "A high", s: "avoid", text: "EDGE CASE: IF P is high AND A is high THEN S is avoid (Double peak avoidance)" },
     ];
 
     window.addEventListener('DOMContentLoaded', () => {

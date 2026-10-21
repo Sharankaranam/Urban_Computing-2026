@@ -55,7 +55,7 @@ Writing hardcoded rules like `IF price < 18 Rp. THEN turn on, ELSE turn off` cau
 │  STAGE 1: MAMDANI ENGINE     │                │   USER URGENCY CALCULATION   │
 │  Inputs: P, A, G, T          │                │   U = Duration / Deadline    │
 │  Fuzzification: Tri & Trap   │                └──────────────┬───────────────┘
-│  Rules: 15 Linguistic Rules  │                               │
+│  Rules: 19 Linguistic Rules  │                               │
 │  Defuzzification: Centroid   │                               │
 └──────────────┬───────────────┘                               │
                │                                               │
@@ -81,7 +81,7 @@ Writing hardcoded rules like `IF price < 18 Rp. THEN turn on, ELSE turn off` cau
 ```
 
 1. **Stage 1 FIS (The Grid Brain):**
-   * Computes continuous Suitability Scores $S(t) \in [0, 100]$ using **15 Mamdani Rules** and **Centroid Defuzzification**.
+   * Computes continuous Suitability Scores $S(t) \in [0, 100]$ using **19 Mamdani Rules** and **Centroid Defuzzification** (covering all standard regimes plus 4 critical power-engineering edge cases).
    * Completely eliminates abrupt on/off flickers (**65% reduction in switching chatter**).
 2. **Stage 2 FIS (The Household Brain):**
    * Fuzzifies **User Urgency** $U = \frac{\text{Required Run Hours}}{\text{Deadline Hours}}$.
@@ -180,8 +180,8 @@ The web app at `http://localhost:8000/` features **3 fully synchronized tabs**:
 
 ### 2. `🧠 2. Live Fuzzy Inference Engine (Mamdani Rules)`
 * Real-time sliders for Price Percentile $P$, Absolute Price $A$, Grid Congestion $G$, and Trend $T$.
-* Instant scenario presets (*Night Valley*, *Midday Solar*, *Winter Peak*).
-* Live table of all 15 Mamdani rules lighting up in glowing green when fired.
+* Instant scenario presets (*Night Valley*, *Midday Solar*, *Winter Peak*, *Pre-Spike Lock-in*, *Transformer Overload Guardrail*).
+* Live table of all **19 Mamdani rules** (including 4 power-engineering edge cases) lighting up in glowing green when fired.
 * Live Centroid Defuzzification meter ($S \in [0, 100]$).
 
 ### 3. `📑 3. Academic Model & Report`
@@ -191,7 +191,7 @@ The web app at `http://localhost:8000/` features **3 fully synchronized tabs**:
 
 ## 📊 Benchmark Results
 
-Evaluated on **35,040 intervals** (full year 2025 Swiss dynamic tariff data):
+Evaluated on **35,040 intervals** (full year 2025 Swiss dynamic tariff data) and **12,580 intervals** (4-month 2026–2027 practicing dataset):
 
 | Evaluation Metric | Fixed-Threshold Baseline | 2-Stage Mamdani FIS | Improvement |
 | :--- | :--- | :--- | :--- |
@@ -210,6 +210,7 @@ Urban_Computing-2026/
 ├── README.md                                   # Master Project Documentation
 ├── dynamic-tariff-model.md                     # Swiss Dynamic Tariff Model Specification
 ├── dynamic_tariff_2025_15min.csv               # Full 2025 15-Minute Swiss Market Dataset (35,040 rows)
+├── practising_tariff_4months_15min.csv         # 4-Month Practicing Dataset (Oct 2026 - Feb 2027, 12,580 rows)
 ├── sample_tariff_24h_96intervals.csv           # Clean 24-Hour Sample Dataset (96 intervals)
 ├── sample_dataset_presentation_slide.md        # Sample Data Table Presentation Slide
 ├── team_presentation_slides.md                # 12-Slide Deck with Speaker Notes
@@ -218,9 +219,16 @@ Urban_Computing-2026/
 └── fuzzy-tariff/                               # Core Python Package
     ├── pyproject.toml                          # Package dependencies & build configuration
     ├── prd.md                                  # Product Requirements Document
+    ├── scripts/
+    │   ├── generate_practising_data.py         # 4-month practicing dataset generator with 6 edge cases
+    │   ├── fetch_ekz_data.py                   # On-demand live EKZ API fetcher & Stage 1 processor
+    │   └── log_ekz_tariff.py                   # Daily cron archiver for tomorrow's EKZ dynamic tariff
     ├── src/fuzzy_tariff/
+    │   ├── ingest/
+    │   │   ├── ekz.py                          # Live EKZ API client (https://api.tariffs.ekz.ch/v1/tariffs)
+    │   │   └── entsoe.py                       # ENTSO-E spot price ingestion
     │   ├── fuzzy/                              # STAGE 1 FUZZY INFERENCE SYSTEM
-    │   │   ├── default.yaml                    # Master Rule Base (15 Mamdani Rules + 6 Stage 2 Rules)
+    │   │   ├── default.yaml                    # Master Rule Base (19 Mamdani Rules + 6 Stage 2 Rules)
     │   │   ├── engine.py                       # Mamdani FIS Engine (NumPy min-AND, max-aggregation)
     │   │   ├── membership.py                   # Triangular & Trapezoidal Membership Functions
     │   │   ├── rules.py                        # Rule data structure & antecedent evaluation
@@ -232,11 +240,11 @@ Urban_Computing-2026/
     │   │   ├── planner.py                      # Concurrency slot allocation under breaker limits
     │   │   └── profiles.py                     # Appliance specifications (EV, Heat pump, Washer, etc.)
     │   └── api/                                # REST API & FRONTEND
-    │       ├── main.py                         # FastAPI server & route handlers
+    │       ├── main.py                         # FastAPI server (supports 2025, 4-month practicing, & live EKZ)
     │       ├── schemas.py                      # Pydantic v2 data models
     │       └── static/
     │           └── index.html                  # 3-View Single Page Application
-    └── tests/                                  # Pytest test suite (100% passing)
+    └── tests/                                  # Pytest test suite (90 tests across 14 suites, 100% passing)
 ```
 
 ---

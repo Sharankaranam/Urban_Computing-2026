@@ -69,7 +69,7 @@ scripts/ data/ reports/ notebooks/
 ```
 
 ## Dynamic tariff data
-Real Swiss dynamic tariffs only exist since 2026 and have no public history, so `tariff_sim.py` generates **EKZ-style** tariffs: 15-minute steps, energy part from the spot price, grid part from the squared net load, bands around the standard tariff, daily price parity, at most 2 h clipping per side. It accepts real spot prices and real grid load as drop-in inputs. Details and limitations: [`docs/dynamic-tariff-model.md`](docs/dynamic-tariff-model.md).
+Real Swiss dynamic tariffs only exist since 2026 and have no public history, so `tariff_sim.py` generates **EKZ-style** tariffs: 15-minute steps, energy part from the spot price, grid part from the squared net load, bands around the standard tariff, daily price parity, at most 2 h clipping per side. It accepts real spot prices and real grid load as drop-in inputs. Details and limitations: [`../dynamic-tariff-model.md`](../dynamic-tariff-model.md).
 
 ## Current evidence (simulated tariff only)
 `dynamic_baseline`, grid component, 2025, seed 0 (`make backtest`):
@@ -88,6 +88,6 @@ Read this as a plumbing check: the fuzzy labeller flips about 2.7x less often an
 3. PWA with timeline; usability tests; pilot.
 
 ## Docs
-[PRD](prd.md) | [Architecture](architecture.md) | [Agents guide](AGENTS.md) | [ADRs](docs/adr) | [Dynamic tariff model](docs/dynamic-tariff-model.md) | [Data sources](docs/data-sources.md) | [Glossary](docs/glossary.md) | [Project plan](docs/project.md) | [Flow diagrams](docs/flow.md)
+[PRD](prd.md) | [Architecture](architecture.md) | [Agents guide](AGENTS.md) | [ADRs](docs/adr) | [Dynamic tariff model](../dynamic-tariff-model.md) | [Data sources](docs/data-sources.md) | [Glossary](docs/glossary.md) | [Project plan](docs/project.md) | [Flow diagrams](docs/flow.md)
 
 License: to be chosen by the project owner.
