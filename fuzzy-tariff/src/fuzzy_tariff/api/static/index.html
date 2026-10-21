@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Swiss Dynamic Tariff • 2-Stage Fuzzy Inference System & Smart Scheduler</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --bg-dark: #070c16;
@@ -35,7 +38,11 @@
       --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -43,7 +50,7 @@
       color: var(--text-main);
       line-height: 1.5;
       min-height: 100vh;
-      background-image: 
+      background-image:
         radial-gradient(ellipse at 15% -10%, rgba(99, 102, 241, 0.16) 0%, transparent 60%),
         radial-gradient(ellipse at 85% 15%, rgba(16, 185, 129, 0.14) 0%, transparent 50%),
         radial-gradient(ellipse at 50% 90%, rgba(6, 182, 212, 0.10) 0%, transparent 60%);
@@ -85,14 +92,24 @@
       box-shadow: 0 4px 14px rgba(225, 29, 72, 0.4);
       position: relative;
     }
-    .flag-icon::before, .flag-icon::after {
+
+    .flag-icon::before,
+    .flag-icon::after {
       content: '';
       position: absolute;
       background: white;
       border-radius: 2px;
     }
-    .flag-icon::before { width: 22px; height: 6px; }
-    .flag-icon::after { width: 6px; height: 22px; }
+
+    .flag-icon::before {
+      width: 22px;
+      height: 6px;
+    }
+
+    .flag-icon::after {
+      width: 6px;
+      height: 22px;
+    }
 
     .brand-text h1 {
       font-size: 1.45rem;
@@ -128,6 +145,7 @@
       color: #34d399;
       border: 1px solid rgba(16, 185, 129, 0.3);
     }
+
     .badge.live-dot::before {
       content: '';
       width: 7px;
@@ -139,11 +157,21 @@
     }
 
     @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.85); }
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.4;
+        transform: scale(0.85);
+      }
     }
 
-    .lang-select, .btn-link {
+    .lang-select,
+    .btn-link {
       background: var(--bg-surface-elevated);
       color: var(--text-main);
       border: 1px solid var(--border-subtle);
@@ -159,7 +187,8 @@
       transition: all 0.2s ease;
     }
 
-    .lang-select:hover, .btn-link:hover {
+    .lang-select:hover,
+    .btn-link:hover {
       border-color: var(--border-bright);
       background: #1c2a47;
       color: white;
@@ -239,8 +268,17 @@
       color: var(--text-main);
       line-height: 1.45;
     }
-    .conn-text b { color: #38bdf8; }
-    .conn-text span { color: var(--text-muted); display: block; font-size: 0.78rem; margin-top: 2px; }
+
+    .conn-text b {
+      color: #38bdf8;
+    }
+
+    .conn-text span {
+      color: var(--text-muted);
+      display: block;
+      font-size: 0.78rem;
+      margin-top: 2px;
+    }
 
     .conn-btn {
       background: rgba(56, 189, 248, 0.18);
@@ -255,6 +293,7 @@
       white-space: nowrap;
       font-family: inherit;
     }
+
     .conn-btn:hover {
       background: #38bdf8;
       color: #070c16;
@@ -319,7 +358,11 @@
       transition: all 0.2s ease;
       font-family: inherit;
     }
-    .tab-btn:hover { color: var(--text-main); }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+    }
+
     .tab-btn.active {
       background: var(--bg-surface-elevated);
       color: #38bdf8;
@@ -352,6 +395,7 @@
       display: flex;
       flex-direction: column;
     }
+
     .stat-label {
       font-size: 0.74rem;
       color: var(--text-muted);
@@ -359,18 +403,28 @@
       letter-spacing: 0.05em;
       margin-bottom: 4px;
     }
+
     .stat-val {
       font-size: 1.7rem;
       font-weight: 800;
       font-family: 'JetBrains Mono', monospace;
       line-height: 1;
     }
+
     .stat-val.savings {
       color: #34d399;
       text-shadow: 0 0 20px rgba(52, 211, 153, 0.4);
     }
-    .stat-val.cost { color: #38bdf8; }
-    .stat-val.peak { color: #f87171; text-decoration: line-through; opacity: 0.75; }
+
+    .stat-val.cost {
+      color: #38bdf8;
+    }
+
+    .stat-val.peak {
+      color: #f87171;
+      text-decoration: line-through;
+      opacity: 0.75;
+    }
 
     .peak-avoid-badge {
       display: inline-flex;
@@ -477,8 +531,14 @@
       gap: 10px;
     }
 
-    .device-emoji { font-size: 1.6rem; }
-    .device-title { font-weight: 700; font-size: 0.95rem; }
+    .device-emoji {
+      font-size: 1.6rem;
+    }
+
+    .device-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
 
     .load-tag {
       font-size: 0.68rem;
@@ -488,8 +548,18 @@
       text-transform: uppercase;
       letter-spacing: 0.04em;
     }
-    .load-tag.heavy { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-    .load-tag.medium { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    .load-tag.heavy {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .load-tag.medium {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
 
     /* Switch toggle */
     .switch {
@@ -498,15 +568,25 @@
       width: 44px;
       height: 24px;
     }
-    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
     .slider-toggle {
       position: absolute;
       cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background-color: #334155;
       transition: .3s;
       border-radius: 24px;
     }
+
     .slider-toggle:before {
       position: absolute;
       content: "";
@@ -518,8 +598,14 @@
       transition: .3s;
       border-radius: 50%;
     }
-    input:checked + .slider-toggle { background-color: #10b981; }
-    input:checked + .slider-toggle:before { transform: translateX(20px); }
+
+    input:checked+.slider-toggle {
+      background-color: #10b981;
+    }
+
+    input:checked+.slider-toggle:before {
+      transform: translateX(20px);
+    }
 
     .device-controls {
       display: grid;
@@ -548,7 +634,10 @@
       font-size: 0.8rem;
       outline: none;
     }
-    .control-col input:focus { border-color: #38bdf8; }
+
+    .control-col input:focus {
+      border-color: #38bdf8;
+    }
 
     /* RECOMMENDATION CARDS */
     .recommendations-list {
@@ -588,9 +677,19 @@
       gap: 12px;
     }
 
-    .rec-emoji { font-size: 1.8rem; }
-    .rec-name { font-weight: 700; font-size: 1.05rem; }
-    .rec-meta { font-size: 0.75rem; color: var(--text-muted); }
+    .rec-emoji {
+      font-size: 1.8rem;
+    }
+
+    .rec-name {
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .rec-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
 
     .rec-middle {
       display: flex;
@@ -625,10 +724,30 @@
       border-radius: 4px;
       font-family: 'JetBrains Mono', monospace;
     }
-    .fuzzy-pill.ideal { background: var(--ideal-bg); color: var(--ideal); border: 1px solid rgba(16, 185, 129, 0.3); }
-    .fuzzy-pill.good { background: var(--good-bg); color: var(--good); border: 1px solid rgba(56, 189, 248, 0.3); }
-    .fuzzy-pill.okay { background: var(--okay-bg); color: var(--okay); border: 1px solid rgba(251, 191, 36, 0.3); }
-    .fuzzy-pill.avoid { background: var(--avoid-bg); color: var(--avoid); border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .fuzzy-pill.ideal {
+      background: var(--ideal-bg);
+      color: var(--ideal);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .fuzzy-pill.good {
+      background: var(--good-bg);
+      color: var(--good);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .fuzzy-pill.okay {
+      background: var(--okay-bg);
+      color: var(--okay);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+
+    .fuzzy-pill.avoid {
+      background: var(--avoid-bg);
+      color: var(--avoid);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
 
     .action-pill {
       display: inline-flex;
@@ -652,7 +771,10 @@
       font-family: 'JetBrains Mono', monospace;
     }
 
-    .rec-note { font-size: 0.8rem; color: var(--text-muted); }
+    .rec-note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
 
     .rec-right {
       text-align: right;
@@ -766,11 +888,30 @@
       transition: all 0.2s ease;
     }
 
-    .slot-cell.active-ev { background: #38bdf8; box-shadow: 0 0 8px rgba(56, 189, 248, 0.5); }
-    .slot-cell.active-heat_pump { background: #f97316; box-shadow: 0 0 8px rgba(249, 115, 22, 0.5); }
-    .slot-cell.active-washer { background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.5); }
-    .slot-cell.active-dryer { background: #ec4899; box-shadow: 0 0 8px rgba(236, 72, 153, 0.5); }
-    .slot-cell.active-dishwasher { background: #a855f7; box-shadow: 0 0 8px rgba(168, 85, 247, 0.5); }
+    .slot-cell.active-ev {
+      background: #38bdf8;
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+    }
+
+    .slot-cell.active-heat_pump {
+      background: #f97316;
+      box-shadow: 0 0 8px rgba(249, 115, 22, 0.5);
+    }
+
+    .slot-cell.active-washer {
+      background: #10b981;
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+    }
+
+    .slot-cell.active-dryer {
+      background: #ec4899;
+      box-shadow: 0 0 8px rgba(236, 72, 153, 0.5);
+    }
+
+    .slot-cell.active-dishwasher {
+      background: #a855f7;
+      box-shadow: 0 0 8px rgba(168, 85, 247, 0.5);
+    }
 
     /* VIEW 2: FUZZY ENGINE INSPECTOR STYLES */
     .engine-grid {
@@ -778,13 +919,17 @@
       grid-template-columns: 360px 1fr;
       gap: 24px;
     }
+
     @media (max-width: 980px) {
-      .engine-grid { grid-template-columns: 1fr; }
+      .engine-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .slider-group {
       margin-bottom: 18px;
     }
+
     .slider-header {
       display: flex;
       justify-content: space-between;
@@ -792,11 +937,13 @@
       margin-bottom: 6px;
       font-size: 0.82rem;
     }
+
     .slider-header span.val {
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
       color: #38bdf8;
     }
+
     .range-input {
       width: 100%;
       accent-color: #38bdf8;
@@ -809,6 +956,7 @@
       flex-wrap: wrap;
       margin-bottom: 20px;
     }
+
     .preset-pill {
       background: var(--bg-surface-elevated);
       color: var(--text-main);
@@ -820,13 +968,18 @@
       transition: all 0.2s ease;
       font-family: inherit;
     }
-    .preset-pill:hover { border-color: #38bdf8; background: rgba(56, 189, 248, 0.12); }
+
+    .preset-pill:hover {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.12);
+    }
 
     .rules-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 0.8rem;
     }
+
     .rules-table th {
       text-align: left;
       padding: 8px 10px;
@@ -837,17 +990,20 @@
       text-transform: uppercase;
       letter-spacing: 0.04em;
     }
+
     .rules-table td {
       padding: 7px 10px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.76rem;
     }
+
     .rule-row.fired {
       background: rgba(16, 185, 129, 0.12);
       color: #34d399;
       font-weight: 700;
     }
+
     .rule-row.fired td:first-child {
       border-left: 3px solid #10b981;
     }
@@ -857,12 +1013,17 @@
       line-height: 1.7;
       color: #cbd5e1;
     }
+
     .report-section {
       margin-bottom: 36px;
       padding-bottom: 28px;
       border-bottom: 1px solid var(--border-subtle);
     }
-    .report-section:last-child { border-bottom: none; }
+
+    .report-section:last-child {
+      border-bottom: none;
+    }
+
     .report-h2 {
       font-size: 1.3rem;
       font-weight: 800;
@@ -872,6 +1033,7 @@
       align-items: center;
       gap: 10px;
     }
+
     .report-h2 span.num {
       background: rgba(56, 189, 248, 0.15);
       color: #38bdf8;
@@ -880,6 +1042,7 @@
       font-size: 0.85rem;
       border: 1px solid rgba(56, 189, 248, 0.3);
     }
+
     .math-card {
       background: #070c16;
       border: 1px solid rgba(56, 189, 248, 0.25);
@@ -891,7 +1054,10 @@
       color: #e2e8f0;
       overflow-x: auto;
     }
-    .math-card b { color: #38bdf8; }
+
+    .math-card b {
+      color: #38bdf8;
+    }
 
     .report-table {
       width: 100%;
@@ -899,11 +1065,14 @@
       margin: 16px 0;
       font-size: 0.82rem;
     }
-    .report-table th, .report-table td {
+
+    .report-table th,
+    .report-table td {
       padding: 10px 14px;
       border: 1px solid var(--border-subtle);
       text-align: left;
     }
+
     .report-table th {
       background: #0c1424;
       color: #38bdf8;
@@ -923,10 +1092,18 @@
       font-size: 0.8rem;
       color: var(--text-subtle);
     }
-    footer a { color: #38bdf8; text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
+
+    footer a {
+      color: #38bdf8;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
+
 <body>
 
   <div class="container">
@@ -970,14 +1147,17 @@
     <!-- VIEW 1: SMART HOUSEHOLD SCHEDULER VIEW     -->
     <!-- ========================================== -->
     <div id="viewScheduler">
-      
+
       <!-- EXPLICIT BRIDGE BANNER -->
       <div class="conn-banner">
         <div class="conn-content">
           <div class="conn-icon">🧠</div>
           <div class="conn-text">
             <b id="connTitle">Exact Relation to the Fuzzy Logic Model:</b>
-            <span id="connText">The server automatically ingests the 96 15-minute Swiss Dynamic Tariff steps for the day, cleans and computes the normalized inputs <b>(P, A, G, T)</b>, evaluates the <b>19 Mamdani Rules</b>, and defuzzifies them into hourly Suitability Scores <b>S ∈ [0, 100]</b>. The scheduler then sequences heavy appliances into Ideal & Good hours under your household breaker concurrency limit.</span>
+            <span id="connText">The server automatically ingests the 96 15-minute Swiss Dynamic Tariff steps for the
+              day, cleans and computes the normalized inputs <b>(P, A, G, T)</b>, evaluates the <b>19 Mamdani Rules</b>,
+              and defuzzifies them into hourly Suitability Scores <b>S ∈ [0, 100]</b>. The scheduler then sequences
+              heavy appliances into Ideal & Good hours under your household breaker concurrency limit.</span>
           </div>
         </div>
         <button id="connBtn" class="conn-btn" onclick="switchMainView('engine')">🔬 Inspect 19 Mamdani Rules</button>
@@ -1015,16 +1195,21 @@
         <div class="card-header">
           <div>
             <div id="sec1Title" class="card-title">🔌 1. Concurrency Breaker Limit & Season</div>
-            <div id="sec1Subtitle" class="card-subtitle">Staggers high-power appliances to prevent tripping home fuses (16A / 25A) and avoids Swiss grid demand surcharges</div>
+            <div id="sec1Subtitle" class="card-subtitle">Staggers high-power appliances to prevent tripping home fuses
+              (16A / 25A) and avoids Swiss grid demand surcharges</div>
           </div>
 
           <div class="tabs-wrap" style="flex-wrap: wrap; gap: 6px;">
             <button id="tab_winter" class="tab-btn active" onclick="setSeason('winter', this)">❄️ Winter 2025</button>
             <button id="tab_summer" class="tab-btn" onclick="setSeason('summer', this)">☀️ Summer PV</button>
-            <button id="tab_autumn_dst" class="tab-btn" onclick="setSeason('autumn_dst', this)">🕒 Practising: Autumn DST</button>
-            <button id="tab_winter_cold_snap" class="tab-btn" onclick="setSeason('winter_cold_snap', this)">❄️ Practising: Cold Snap</button>
-            <button id="tab_january_spike" class="tab-btn" onclick="setSeason('january_spike', this)">⚡ Practising: Jan Peak</button>
-            <button id="tab_february_solar" class="tab-btn" onclick="setSeason('february_solar', this)">🔋 Practising: Feb Solar</button>
+            <button id="tab_autumn_dst" class="tab-btn" onclick="setSeason('autumn_dst', this)">🕒 Practising: Autumn
+              DST</button>
+            <button id="tab_winter_cold_snap" class="tab-btn" onclick="setSeason('winter_cold_snap', this)">❄️
+              Practising: Cold Snap</button>
+            <button id="tab_january_spike" class="tab-btn" onclick="setSeason('january_spike', this)">⚡ Practising: Jan
+              Peak</button>
+            <button id="tab_february_solar" class="tab-btn" onclick="setSeason('february_solar', this)">🔋 Practising:
+              Feb Solar</button>
             <button id="tab_live_ekz" class="tab-btn" onclick="setSeason('live_ekz', this)">🔴 Live EKZ API</button>
           </div>
         </div>
@@ -1032,22 +1217,26 @@
         <div class="concurrency-bar">
           <button class="choice-btn active" onclick="setConcurrency(1, this)">
             <div id="conc_1_title" class="choice-title"><span>🛡️</span> 1 Device Only (Recommended)</div>
-            <div id="conc_1_desc" class="choice-desc">Strict sequential running. Completely prevents high-load overlapping. Safest for standard home breakers.</div>
+            <div id="conc_1_desc" class="choice-desc">Strict sequential running. Completely prevents high-load
+              overlapping. Safest for standard home breakers.</div>
           </button>
 
           <button class="choice-btn" onclick="setConcurrency(2, this)">
             <div id="conc_2_title" class="choice-title"><span>⚡</span> Max 2 Devices at once</div>
-            <div id="conc_2_desc" class="choice-desc">Allows running EV + Heat Pump together if both fall into the cheapest night or solar surplus dip.</div>
+            <div id="conc_2_desc" class="choice-desc">Allows running EV + Heat Pump together if both fall into the
+              cheapest night or solar surplus dip.</div>
           </button>
 
           <button class="choice-btn" onclick="setConcurrency(3, this)">
             <div id="conc_3_title" class="choice-title"><span>🔥</span> Max 3 Devices at once</div>
-            <div id="conc_3_desc" class="choice-desc">For high-capacity grid connections (e.g. 40A / 25kW capacity).</div>
+            <div id="conc_3_desc" class="choice-desc">For high-capacity grid connections (e.g. 40A / 25kW capacity).
+            </div>
           </button>
 
           <button class="choice-btn" onclick="setConcurrency(99, this)">
             <div id="conc_99_title" class="choice-title"><span>♾️</span> Unlimited Concurrency</div>
-            <div id="conc_99_desc" class="choice-desc">Unconstrained oracle benchmark. Runs every device strictly at its mathematical cheapest point.</div>
+            <div id="conc_99_desc" class="choice-desc">Unconstrained oracle benchmark. Runs every device strictly at its
+              mathematical cheapest point.</div>
           </button>
         </div>
       </div>
@@ -1057,7 +1246,8 @@
         <div class="card-header">
           <div>
             <div id="sec2Title" class="card-title">⚡ 2. Select Heavy Electricity Devices to Run</div>
-            <div id="sec2Subtitle" class="card-subtitle">Toggle appliances, adjust cycle energy requirements, and set completion deadlines</div>
+            <div id="sec2Subtitle" class="card-subtitle">Toggle appliances, adjust cycle energy requirements, and set
+              completion deadlines</div>
           </div>
         </div>
 
@@ -1107,11 +1297,13 @@
             <div class="device-controls">
               <div class="control-col">
                 <label id="lbl_energy_heat_pump">Energy Needed (kWh)</label>
-                <input type="number" id="energy_heat_pump" value="7.5" step="0.5" min="2" max="25" onchange="runScheduler()">
+                <input type="number" id="energy_heat_pump" value="7.5" step="0.5" min="2" max="25"
+                  onchange="runScheduler()">
               </div>
               <div class="control-col">
                 <label id="lbl_deadline_heat_pump">Ready Within (Hours)</label>
-                <input type="number" id="deadline_heat_pump" value="24" step="1" min="1" max="24" onchange="runScheduler()">
+                <input type="number" id="deadline_heat_pump" value="24" step="1" min="1" max="24"
+                  onchange="runScheduler()">
               </div>
             </div>
           </div>
@@ -1134,11 +1326,13 @@
             <div class="device-controls">
               <div class="control-col">
                 <label id="lbl_energy_washer">Cycle Energy (kWh)</label>
-                <input type="number" id="energy_washer" value="3.0" step="0.5" min="1" max="5" onchange="runScheduler()">
+                <input type="number" id="energy_washer" value="3.0" step="0.5" min="1" max="5"
+                  onchange="runScheduler()">
               </div>
               <div class="control-col">
                 <label id="lbl_deadline_washer">Ready Within (Hours)</label>
-                <input type="number" id="deadline_washer" value="16" step="1" min="1" max="24" onchange="runScheduler()">
+                <input type="number" id="deadline_washer" value="16" step="1" min="1" max="24"
+                  onchange="runScheduler()">
               </div>
             </div>
           </div>
@@ -1188,11 +1382,13 @@
             <div class="device-controls">
               <div class="control-col">
                 <label id="lbl_energy_dishwasher">Cycle Energy (kWh)</label>
-                <input type="number" id="energy_dishwasher" value="1.8" step="0.2" min="1" max="4" onchange="runScheduler()">
+                <input type="number" id="energy_dishwasher" value="1.8" step="0.2" min="1" max="4"
+                  onchange="runScheduler()">
               </div>
               <div class="control-col">
                 <label id="lbl_deadline_dishwasher">Ready Within (Hours)</label>
-                <input type="number" id="deadline_dishwasher" value="20" step="1" min="1" max="24" onchange="runScheduler()">
+                <input type="number" id="deadline_dishwasher" value="20" step="1" min="1" max="24"
+                  onchange="runScheduler()">
               </div>
             </div>
           </div>
@@ -1203,8 +1399,10 @@
       <div class="card">
         <div class="card-header">
           <div>
-            <div id="sec3Title" class="card-title">💡 3. Recommended Cheapest Running Windows (Driven by Mamdani FIS)</div>
-            <div id="sec3Subtitle" class="card-subtitle">Every recommendation below displays its defuzzified Suitability Score S, Stage 2 Action, and Mamdani Rules fired</div>
+            <div id="sec3Title" class="card-title">💡 3. Recommended Cheapest Running Windows (Driven by Mamdani FIS)
+            </div>
+            <div id="sec3Subtitle" class="card-subtitle">Every recommendation below displays its defuzzified Suitability
+              Score S, Stage 2 Action, and Mamdani Rules fired</div>
           </div>
         </div>
 
@@ -1213,13 +1411,19 @@
         </div>
 
         <!-- 24-HOUR FUZZY SUITABILITY LIVE BAR CHART -->
-        <div style="background: rgba(10, 16, 28, 0.7); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: var(--radius-sm); padding: 18px; margin-bottom: 20px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+        <div
+          style="background: rgba(10, 16, 28, 0.7); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: var(--radius-sm); padding: 18px; margin-bottom: 20px;">
+          <div
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
             <div>
-              <span id="chartTitle" style="font-size: 0.92rem; font-weight: 700; color: #38bdf8;">🧠 24-Hour Fuzzy Suitability Curve S(t) ∈ [0, 100]</span>
-              <span id="chartSubtitle" style="font-size: 0.78rem; color: var(--text-muted); display: block;">Computed via the 19 Mamdani Rules & Centroid Defuzzification across Swiss dynamic tariff steps. Click any bar to inspect.</span>
+              <span id="chartTitle" style="font-size: 0.92rem; font-weight: 700; color: #38bdf8;">🧠 24-Hour Fuzzy
+                Suitability Curve S(t) ∈ [0, 100]</span>
+              <span id="chartSubtitle" style="font-size: 0.78rem; color: var(--text-muted); display: block;">Computed
+                via the 19 Mamdani Rules & Centroid Defuzzification across Swiss dynamic tariff steps. Click any bar to
+                inspect.</span>
             </div>
-            <span id="selectedHourBadge" style="font-size: 0.76rem; background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 4px 10px; border-radius: 20px; font-weight: 700;">
+            <span id="selectedHourBadge"
+              style="font-size: 0.76rem; background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 4px 10px; border-radius: 20px; font-weight: 700;">
               Click a bar for details
             </span>
           </div>
@@ -1228,11 +1432,14 @@
             <!-- Dynamically populated 24 bars -->
           </div>
 
-          <div id="hourDetailBox" style="margin-top: 10px; padding: 10px 14px; background: rgba(6, 10, 18, 0.85); border-radius: 6px; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: gap: 8px;">
-            <span id="hourDetailText" style="color: var(--text-muted);">Hover or click any hour bar above to inspect fuzzy score, active rules, and allocated appliances.</span>
+          <div id="hourDetailBox"
+            style="margin-top: 10px; padding: 10px 14px; background: rgba(6, 10, 18, 0.85); border-radius: 6px; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: gap: 8px;">
+            <span id="hourDetailText" style="color: var(--text-muted);">Hover or click any hour bar above to inspect
+              fuzzy score, active rules, and allocated appliances.</span>
           </div>
 
-          <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.74rem; color: var(--text-muted); flex-wrap: wrap; gap: 6px;">
+          <div
+            style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.74rem; color: var(--text-muted); flex-wrap: wrap; gap: 6px;">
             <span id="legendIdeal" style="color: #34d399;">■ Ideal (80–100) Best Time</span>
             <span id="legendGood" style="color: #38bdf8;">■ Good (60–80) Cheap Time</span>
             <span id="legendOkay" style="color: #fbbf24;">■ Okay (40–60) Normal</span>
@@ -1243,8 +1450,10 @@
         <!-- 24-HOUR MULTI-DEVICE SCHEDULE TIMELINE -->
         <div class="timeline-wrap">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span id="timelineTitle" style="font-size: 0.88rem; font-weight: 700; color: #e2e8f0;">📅 24-Hour Visual Schedule Timeline (Gantt)</span>
-            <span id="timelineSubtitle" style="font-size: 0.78rem; color: #34d399; font-weight: 600;">Sequenced by Fuzzy Suitability & Concurrency Breaker Limit</span>
+            <span id="timelineTitle" style="font-size: 0.88rem; font-weight: 700; color: #e2e8f0;">📅 24-Hour Visual
+              Schedule Timeline (Gantt)</span>
+            <span id="timelineSubtitle" style="font-size: 0.78rem; color: #34d399; font-weight: 600;">Sequenced by Fuzzy
+              Suitability & Concurrency Breaker Limit</span>
           </div>
 
           <div style="display: grid; grid-template-columns: 140px 1fr; gap: 12px; margin-bottom: 4px;">
@@ -1272,28 +1481,38 @@
         <div class="card-header">
           <div>
             <div id="engineTitle" class="card-title">🧠 Interactive Stage 1 & Stage 2 Fuzzy Inference Engine</div>
-            <div id="engineSubtitle" class="card-subtitle">Adjust raw inputs or load dynamic presets to watch the 19 Mamdani Rules fire in real-time with Centroid Defuzzification</div>
+            <div id="engineSubtitle" class="card-subtitle">Adjust raw inputs or load dynamic presets to watch the 19
+              Mamdani Rules fire in real-time with Centroid Defuzzification</div>
           </div>
           <div class="engine-presets">
-            <button id="presetNight" class="preset-pill" onclick="applyEnginePreset('night')">🌙 Night Valley (02:00)</button>
-            <button id="presetSolar" class="preset-pill" onclick="applyEnginePreset('solar')">☀️ Midday Solar (13:30)</button>
-            <button id="presetPeak" class="preset-pill" onclick="applyEnginePreset('peak')">🚨 Winter Peak (18:30)</button>
+            <button id="presetNight" class="preset-pill" onclick="applyEnginePreset('night')">🌙 Night Valley
+              (02:00)</button>
+            <button id="presetSolar" class="preset-pill" onclick="applyEnginePreset('solar')">☀️ Midday Solar
+              (13:30)</button>
+            <button id="presetPeak" class="preset-pill" onclick="applyEnginePreset('peak')">🚨 Winter Peak
+              (18:30)</button>
           </div>
         </div>
 
         <div class="engine-grid">
           <!-- INPUT CONTROLS -->
-          <div style="background: rgba(10, 16, 28, 0.7); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 18px;">
-            <div id="engineInputTitle" style="font-size: 0.9rem; font-weight: 700; color: #38bdf8; margin-bottom: 14px;">1. Stage 1 Fuzzy Inputs (P, A, G, T)</div>
+          <div
+            style="background: rgba(10, 16, 28, 0.7); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 18px;">
+            <div id="engineInputTitle"
+              style="font-size: 0.9rem; font-weight: 700; color: #38bdf8; margin-bottom: 14px;">1. Stage 1 Fuzzy Inputs
+              (P, A, G, T)</div>
 
             <div class="slider-group">
               <div class="slider-header">
                 <span id="lblSliderP">Price Percentile <b>P</b> (Daily rank)</span>
                 <span class="val" id="valP">10%</span>
               </div>
-              <input type="range" id="sliderP" class="range-input" min="0" max="100" value="10" oninput="onEngineSliderChange()">
-              <div style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-subtle);">
-                <span id="pRangeCheap">0% Cheap</span><span id="pRangeMed">50% Med</span><span id="pRangeExp">100% Expensive</span>
+              <input type="range" id="sliderP" class="range-input" min="0" max="100" value="10"
+                oninput="onEngineSliderChange()">
+              <div
+                style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-subtle);">
+                <span id="pRangeCheap">0% Cheap</span><span id="pRangeMed">50% Med</span><span id="pRangeExp">100%
+                  Expensive</span>
               </div>
             </div>
 
@@ -1302,8 +1521,10 @@
                 <span id="lblSliderA">Absolute Price <b>A</b> (CHF/kWh)</span>
                 <span class="val" id="valA">CHF 0.14</span>
               </div>
-              <input type="range" id="sliderA" class="range-input" min="0.05" max="0.50" step="0.01" value="0.14" oninput="onEngineSliderChange()">
-              <div style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-subtle);">
+              <input type="range" id="sliderA" class="range-input" min="0.05" max="0.50" step="0.01" value="0.14"
+                oninput="onEngineSliderChange()">
+              <div
+                style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-subtle);">
                 <span>0.05</span><span>0.25</span><span>0.50</span>
               </div>
             </div>
@@ -1313,9 +1534,12 @@
                 <span id="lblSliderG">Grid Congestion <b>G</b> (Net load²)</span>
                 <span class="val" id="valG">0.10</span>
               </div>
-              <input type="range" id="sliderG" class="range-input" min="0.0" max="1.0" step="0.05" value="0.10" oninput="onEngineSliderChange()">
-              <div style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-subtle);">
-                <span id="gRangeLow">0.0 Low</span><span id="gRangeMed">0.5 Moderate</span><span id="gRangeCrit">1.0 Critical</span>
+              <input type="range" id="sliderG" class="range-input" min="0.0" max="1.0" step="0.05" value="0.10"
+                oninput="onEngineSliderChange()">
+              <div
+                style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-subtle);">
+                <span id="gRangeLow">0.0 Low</span><span id="gRangeMed">0.5 Moderate</span><span id="gRangeCrit">1.0
+                  Critical</span>
               </div>
             </div>
 
@@ -1324,18 +1548,27 @@
                 <span id="lblSliderT">Price Trend <b>T</b> (Next hour slope)</span>
                 <span class="val" id="valT">0.00</span>
               </div>
-              <input type="range" id="sliderT" class="range-input" min="-1.0" max="1.0" step="0.1" value="0.0" oninput="onEngineSliderChange()">
-              <div style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-subtle);">
-                <span id="tRangeFall">-1.0 Falling</span><span id="tRangeFlat">0.0 Flat</span><span id="tRangeRise">+1.0 Rising</span>
+              <input type="range" id="sliderT" class="range-input" min="-1.0" max="1.0" step="0.1" value="0.0"
+                oninput="onEngineSliderChange()">
+              <div
+                style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-subtle);">
+                <span id="tRangeFall">-1.0 Falling</span><span id="tRangeFlat">0.0 Flat</span><span id="tRangeRise">+1.0
+                  Rising</span>
               </div>
             </div>
 
             <!-- DEFUZZIFIED OUTPUT CARD -->
-            <div style="margin-top: 20px; padding: 14px; background: #060a12; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.3);">
-              <div id="engineDefuzzTitle" style="font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em;">Centroid Defuzzification Result</div>
+            <div
+              style="margin-top: 20px; padding: 14px; background: #060a12; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.3);">
+              <div id="engineDefuzzTitle"
+                style="font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em;">
+                Centroid Defuzzification Result</div>
               <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 6px;">
-                <span style="font-size: 2rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: #34d399;" id="engineScoreVal">90.7</span>
-                <span id="engineLabelBadge" class="fuzzy-pill ideal" style="font-size: 0.85rem; padding: 4px 10px;">IDEAL (Best Time)</span>
+                <span
+                  style="font-size: 2rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: #34d399;"
+                  id="engineScoreVal">90.7</span>
+                <span id="engineLabelBadge" class="fuzzy-pill ideal"
+                  style="font-size: 0.85rem; padding: 4px 10px;">IDEAL (Best Time)</span>
               </div>
               <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 6px;" id="engineDefuzzNote">
                 Crisp score S ∈ [0, 100] calculated via COG (Center of Gravity) of aggregated Mamdani rule conclusions.
@@ -1344,10 +1577,13 @@
           </div>
 
           <!-- MAMDANI RULES ACTIVATION TABLE -->
-          <div style="background: rgba(10, 16, 28, 0.7); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 18px; overflow-x: auto;">
+          <div
+            style="background: rgba(10, 16, 28, 0.7); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 18px; overflow-x: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span id="engineRulesTitle" style="font-size: 0.9rem; font-weight: 700; color: #38bdf8;">2. Stage 1 Mamdani Linguistic Rules (19 Rules with Edge Cases)</span>
-              <span id="engineRulesSubtitle" style="font-size: 0.74rem; color: var(--text-muted);">Green rows indicate rules currently firing</span>
+              <span id="engineRulesTitle" style="font-size: 0.9rem; font-weight: 700; color: #38bdf8;">2. Stage 1
+                Mamdani Linguistic Rules (19 Rules with Edge Cases)</span>
+              <span id="engineRulesSubtitle" style="font-size: 0.74rem; color: var(--text-muted);">Green rows indicate
+                rules currently firing</span>
             </div>
 
             <table class="rules-table">
@@ -1375,19 +1611,28 @@
     <!-- ============================================================ -->
     <div id="viewReport" style="display: none;">
       <div class="card report-wrap">
-        
+
         <!-- SECTION 1 -->
         <div class="report-section">
           <div id="repSec1H2" class="report-h2"><span class="num">1</span> Problem and Proposed System</div>
           <p>
-            Under the Swiss Federal Electricity Act (StromVG revision, Jan 2026), smart meters roll out mandatory dynamic retail tariffs consisting of two components: 
-            (1) a 15-minute wholesale spot energy price (ENTSO-E), and (2) a non-linear grid-use tariff scaling with transformer net load squared ($load^2$).
+            Under the Swiss Federal Electricity Act (StromVG revision, Jan 2026), smart meters roll out mandatory
+            dynamic retail tariffs consisting of two components:
+            (1) a 15-minute wholesale spot energy price (ENTSO-E), and (2) a non-linear grid-use tariff scaling with
+            transformer net load squared ($load^2$).
           </p>
           <p style="margin-top: 8px;">
-            <b>The Problem:</b> Household end-users face high price volatility and lack time or expertise to interpret raw market equations. Standard fixed-threshold algorithms fail because prices fluctuate between seasons (e.g. €40/MWh is a summer peak but a winter bargain), leading to severe "label flickering" and excessive on/off switching. Furthermore, multiple heavy loads (EV, heat pump, dryer) turning on at once risks tripping home fuses (16A / 25A) and causing secondary grid congestion peaks.
+            <b>The Problem:</b> Household end-users face high price volatility and lack time or expertise to interpret
+            raw market equations. Standard fixed-threshold algorithms fail because prices fluctuate between seasons
+            (e.g. €40/MWh is a summer peak but a winter bargain), leading to severe "label flickering" and excessive
+            on/off switching. Furthermore, multiple heavy loads (EV, heat pump, dryer) turning on at once risks tripping
+            home fuses (16A / 25A) and causing secondary grid congestion peaks.
           </p>
           <p style="margin-top: 8px;">
-            <b>Proposed System:</b> A hierarchical <b>Two-Stage Mamdani Fuzzy Inference System</b> coupled with a <b>Constraint-Driven Concurrency Scheduler</b>. Stage 1 evaluates price percentiles and grid strain into a continuous suitability score $S \in [0, 100]$. Stage 2 models household urgency. The smart scheduler sequences heavy loads under home breaker limits without requiring manual market inputs from the user.
+            <b>Proposed System:</b> A hierarchical <b>Two-Stage Mamdani Fuzzy Inference System</b> coupled with a
+            <b>Constraint-Driven Concurrency Scheduler</b>. Stage 1 evaluates price percentiles and grid strain into a
+            continuous suitability score $S \in [0, 100]$. Stage 2 models household urgency. The smart scheduler
+            sequences heavy loads under home breaker limits without requiring manual market inputs from the user.
           </p>
         </div>
 
@@ -1395,10 +1640,12 @@
         <div class="report-section">
           <div id="repSec2H2" class="report-h2"><span class="num">2</span> Data Collection</div>
           <p>
-            The system operates on real 2025 Swiss electricity market data sampled at 15-minute intervals (35,040 intervals per year, 96 intervals per day):
+            The system operates on real 2025 Swiss electricity market data sampled at 15-minute intervals (35,040
+            intervals per year, 96 intervals per day):
           </p>
           <div class="math-card">
-            <b>1. Wholesale Spot Price (ENTSO-E):</b> Day-ahead auction prices in EUR/MWh converted to CHF Rappen/kWh.<br>
+            <b>1. Wholesale Spot Price (ENTSO-E):</b> Day-ahead auction prices in EUR/MWh converted to CHF
+            Rappen/kWh.<br>
             <b>2. Swissgrid Substation Net Load:</b> Transformer active power in MW measuring grid loading.<br>
             <b>3. Ancillary Services (SDL):</b> Swissgrid reserve power levy (~0.27 Rp./kWh).<br>
             <b>4. Total Retail Tariff:</b> T(t) = Energy(t) + GridTariff(net_load(t)²) + SDL
@@ -1412,7 +1659,8 @@
             Raw data is prepared through robust statistical normalization across each 24-hour cycle:
           </p>
           <div class="math-card">
-            <b>1. Price Percentile P ∈ [0, 100]:</b> P(t) = 100 × (TotalTariff(t) - MinDaily) / (MaxDaily - MinDaily)<br>
+            <b>1. Price Percentile P ∈ [0, 100]:</b> P(t) = 100 × (TotalTariff(t) - MinDaily) / (MaxDaily -
+            MinDaily)<br>
             <b>2. Absolute Price A ∈ [0, 1]:</b> A(t) = TotalTariff(t) in CHF/kWh (ensures global cost awareness).<br>
             <b>3. Grid Congestion G ∈ [0, 1]:</b> G(t) = max(0, min(1, (NetLoad(t) - 100) / 100))<br>
             <b>4. Price Trend T ∈ [-1, 1]:</b> T(t) = sign(ΔP) × min(1, |ΔP| / 10 Rp./kWh)
@@ -1423,12 +1671,14 @@
         <div class="report-section">
           <div id="repSec4H2" class="report-h2"><span class="num">4</span> Membership Functions and Fuzzification</div>
           <p>
-            Continuous inputs are mapped to fuzzy linguistic terms using triangular and trapezoidal membership functions:
+            Continuous inputs are mapped to fuzzy linguistic terms using triangular and trapezoidal membership
+            functions:
           </p>
           <div class="math-card">
             <b>Price Percentile P:</b> Cheap [0, 0, 20, 40], Average [25, 45, 60], Expensive [45, 70, 100, 100]<br>
             <b>Grid Congestion G:</b> Low [0, 0, 0.2, 0.4], Medium [0.25, 0.5, 0.7], High [0.55, 0.8, 1.0, 1.0]<br>
-            <b>Stage 1 Suitability Output S:</b> Avoid [0, 0, 15, 30], Wait [20, 35, 50], Okay [40, 52, 65], Good [58, 72, 85], Ideal [75, 88, 100, 100]
+            <b>Stage 1 Suitability Output S:</b> Avoid [0, 0, 15, 30], Wait [20, 35, 50], Okay [40, 52, 65], Good [58,
+            72, 85], Ideal [75, 88, 100, 100]
           </div>
         </div>
 
@@ -1436,10 +1686,13 @@
         <div class="report-section">
           <div id="repSec5H2" class="report-h2"><span class="num">5</span> Rulebase and Defuzzification</div>
           <p>
-            Stage 1 uses <b>19 Mamdani Linguistic Rules</b> defined by power engineering heuristics. When price is cheap and the grid is empty, suitability is <i>Ideal</i>. If the grid is overloaded, high grid tariffs override cheap spot prices to prevent blackouts.
+            Stage 1 uses <b>19 Mamdani Linguistic Rules</b> defined by power engineering heuristics. When price is cheap
+            and the grid is empty, suitability is <i>Ideal</i>. If the grid is overloaded, high grid tariffs override
+            cheap spot prices to prevent blackouts.
           </p>
           <p style="margin-top: 8px;">
-            <b>Defuzzification:</b> Aggregated fuzzy output is defuzzified to a crisp score $S \in [0, 100]$ using the <b>Centroid (Center of Gravity)</b> method:
+            <b>Defuzzification:</b> Aggregated fuzzy output is defuzzified to a crisp score $S \in [0, 100]$ using the
+            <b>Centroid (Center of Gravity)</b> method:
           </p>
           <div class="math-card">
             <b>Center of Gravity Formula:</b><br>
@@ -1449,15 +1702,18 @@
 
         <!-- SECTION 6 -->
         <div class="report-section">
-          <div id="repSec6H2" class="report-h2"><span class="num">6</span> System Architecture and Output (Tentative)</div>
+          <div id="repSec6H2" class="report-h2"><span class="num">6</span> System Architecture and Output (Tentative)
+          </div>
           <p>
             The live application running on this server is the exact production realization of this architecture:
           </p>
           <div class="math-card">
             <b>1. Data Ingestion:</b> 96 15-min intervals ingested automatically from Swiss dynamic curves.<br>
             <b>2. Stage 1 Mamdani FIS:</b> Calculates hourly Suitability Score S(t) ∈ [0, 100].<br>
-            <b>3. Stage 2 Appliance Advisor:</b> Fuzzifies Urgency U = (Duration / Deadline) to decide Start Now vs. Wait.<br>
-            <b>4. Concurrency Limit Scheduler:</b> Staggers heavy loads into the best S(t) slots without exceeding the user's breaker concurrency limit.
+            <b>3. Stage 2 Appliance Advisor:</b> Fuzzifies Urgency U = (Duration / Deadline) to decide Start Now vs.
+            Wait.<br>
+            <b>4. Concurrency Limit Scheduler:</b> Staggers heavy loads into the best S(t) slots without exceeding the
+            user's breaker concurrency limit.
           </div>
         </div>
 
@@ -1498,7 +1754,8 @@
             </tbody>
           </table>
           <p style="margin-top: 10px;">
-            <b>Next Steps:</b> Integrating home solar PV forecasting ($PV(t)$) into the Mamdani input vector, and adding automated OCPP / Matter smart appliance control.
+            <b>Next Steps:</b> Integrating home solar PV forecasting ($PV(t)$) into the Mamdani input vector, and adding
+            automated OCPP / Matter smart appliance control.
           </p>
         </div>
 
@@ -1511,8 +1768,8 @@
         Swiss Dynamic Electricity Tariffs (StromVG 2026) • Two-Stage Mamdani Fuzzy Inference System
       </div>
       <div>
-        <a id="footerReportLink" href="javascript:void(0)" onclick="switchMainView('report')">Academic Report</a> • 
-        <a href="/docs" target="_blank">Swagger API</a> • 
+        <a id="footerReportLink" href="javascript:void(0)" onclick="switchMainView('report')">Academic Report</a> •
+        <a href="/docs" target="_blank">Swagger API</a> •
         <a href="/v1/config" target="_blank">Fuzzy Config JSON</a>
       </div>
     </footer>
@@ -2440,4 +2697,5 @@
     }
   </script>
 </body>
+
 </html>
