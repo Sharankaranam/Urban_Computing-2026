@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Tokens. Neutrals carry a faint cool tint (hue 250): Swiss-poster white, not
+ * cream. One ink accent for interaction; the five suitability colours are the
+ * only other hues and always mean the same thing. Muted text (--ink-3) is
+ * tuned to clear 4.5:1 on every surface, light and dark.
+ */
+:root {
+  --paper: oklch(0.975 0.003 250);
+  --surface: oklch(0.995 0.0015 250);
+  --sunken: oklch(0.948 0.004 250);
+  --line: oklch(0.885 0.005 250);
+  --line-strong: oklch(0.78 0.007 250);
+  --ink: oklch(0.2 0.01 255);
+  --ink-2: oklch(0.38 0.01 255);
+  --ink-3: oklch(0.49 0.01 255);
+  --accent: oklch(0.2 0.01 255);
+  --accent-fg: oklch(0.985 0.003 250);
+  --signal: oklch(0.56 0.2 28);
+
+  --s-ideal: oklch(0.6 0.13 160);
+  --s-good: oklch(0.68 0.12 130);
+  --s-okay: oklch(0.78 0.13 85);
+  --s-wait: oklch(0.7 0.15 55);
+  --s-avoid: oklch(0.58 0.19 28);
+  --price: oklch(0.45 0.09 255);
+}
+
+.dark {
+  --paper: oklch(0.165 0.006 255);
+  --surface: oklch(0.2 0.007 255);
+  --sunken: oklch(0.145 0.006 255);
+  --line: oklch(0.29 0.008 255);
+  --line-strong: oklch(0.4 0.01 255);
+  --ink: oklch(0.96 0.004 250);
+  --ink-2: oklch(0.8 0.006 250);
+  --ink-3: oklch(0.7 0.006 250);
+  --accent: oklch(0.96 0.004 250);
+  --accent-fg: oklch(0.165 0.006 255);
+  --signal: oklch(0.66 0.19 28);
+
+  --s-ideal: oklch(0.7 0.13 160);
+  --s-good: oklch(0.76 0.12 130);
+  --s-okay: oklch(0.82 0.13 85);
+  --s-wait: oklch(0.74 0.15 55);
+  --s-avoid: oklch(0.66 0.18 28);
+  --price: oklch(0.72 0.09 255);
+}
+
+@theme inline {
+  --font-sans: "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-sunken: var(--sunken);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-signal: var(--signal);
+  --color-ideal: var(--s-ideal);
+  --color-good: var(--s-good);
+  --color-okay: var(--s-okay);
+  --color-wait: var(--s-wait);
+  --color-avoid: var(--s-avoid);
+  --color-price: var(--price);
+  /* Aliases so copied registry components (zinc/border) pick up the theme */
+  --color-border: var(--line);
+}
+
+html {
+  accent-color: var(--ink);
+  caret-color: var(--ink);
+  scrollbar-color: var(--line-strong) transparent;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "tnum" 0;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  min-height: 100dvh;
+}
+
+::selection {
+  background: color-mix(in oklch, var(--s-okay) 45%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Field / column label. Sentence case, not a tracked-uppercase kicker. */
+.eyebrow {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+p, li, dd {
+  text-wrap: pretty;
+}
+h1, h2, h3 {
+  text-wrap: balance;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse {
+    animation: none;
+  }
+}

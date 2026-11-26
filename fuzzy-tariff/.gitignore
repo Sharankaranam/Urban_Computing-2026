@@ -21,3 +21,7 @@ data/synthetic/*
 reports/*
 !reports/.gitkeep
 .hypothesis/
+
+# frontend (built output is committed to src/fuzzy_tariff/api/static)
+frontend/node_modules/
+frontend/dist/

@@ -169,23 +169,26 @@ pytest
 
 ## 💻 Live Interactive Web Dashboard
 
-The web app at `http://localhost:8000/` features **3 fully synchronized tabs**:
+The web app at `http://localhost:8000/` is a React + Vite dashboard (source in [`fuzzy-tariff/frontend`](fuzzy-tariff/frontend)), built into the API's static folder so the Python server serves it with no Node at runtime. It works in English, German, French and Italian, in light and dark themes, and has four views:
 
-### 1. `⚡ 1. Smart Household Scheduler`
-* **Concurrency Breaker Control:** Toggle between *1 Device Only (Recommended)*, *Max 2 Devices*, *Max 3 Devices*, or *Unlimited*.
-* **Appliance Toggles:** Customize energy needed (kWh) and completion deadlines for EV, Heat Pump, Washer, Dryer, and Dishwasher.
-* **Fuzzy Suitability Badges:** Every recommendation card displays its defuzzified Suitability Score (e.g. `🧠 Suitability: 90.7/100 [IDEAL]`), Stage 2 Action, and Fired Rules (`R01, R04, D01`).
-* **24-Hour Fuzzy Suitability Bar Chart:** Color-coded interactive curve $S(t) \in [0, 100]$. Click any bar to inspect hourly metrics.
-* **Visual Gantt Timeline:** Visualizes multi-device non-overlapping running slots.
+### 1. Scheduler
+* A one-line answer up top: what today's loads cost and how much less that is than running them in the evening peak.
+* A 96-slot ribbon of the day coloured by fuzzy suitability, with ticks where each appliance runs and the 17:30–20:30 peak bracketed.
+* Tariff day picker (2025 benchmark days, 2026–27 practice scenarios, live EKZ), breaker limit (1 / 2 / 3 / unlimited devices), and per-appliance energy and deadline.
+* Hourly suitability vs. price chart, a 15-minute appliance timeline, and a plan table with score, average tariff, fired rules and savings per appliance.
 
-### 2. `🧠 2. Live Fuzzy Inference Engine (Mamdani Rules)`
-* Real-time sliders for Price Percentile $P$, Absolute Price $A$, Grid Congestion $G$, and Trend $T$.
-* Instant scenario presets (*Night Valley*, *Midday Solar*, *Winter Peak*, *Pre-Spike Lock-in*, *Transformer Overload Guardrail*).
-* Live table of all **19 Mamdani rules** (including 4 power-engineering edge cases) lighting up in glowing green when fired.
-* Live Centroid Defuzzification meter ($S \in [0, 100]$).
+### 2. Engine
+* Scrub sliders for price percentile $P$, absolute price $A$, grid congestion $G$ and trend $T$, plus Night / Solar / Peak presets.
+* Live membership-function plots read from `/v1/config`, the clipped output sets with the centroid marked, and a gauge for the defuzzified score.
+* The full Stage 1 rule base with each rule's firing strength.
 
-### 3. `📑 3. Academic Model & Report`
-* Read all 7 sections of the technical academic report with LaTeX equations, parameter tables, and empirical benchmarks directly inside the UI.
+### 3. Summary
+* The linguistic summariser's headline and narrative for the selected day, the strongest protoforms with truth and coverage, and a builder to evaluate any Q / B / S combination.
+
+### 4. Report
+* The 7-section technical report with formulas and the benchmark comparison.
+
+To work on the UI: `cd fuzzy-tariff/frontend && npm install && npm run dev` (hot reload, proxies the API), then `npm run build` to update the served files. See [`fuzzy-tariff/frontend/README.md`](fuzzy-tariff/frontend/README.md).
 
 ---
 
@@ -223,27 +226,25 @@ Urban_Computing-2026/
     │   ├── generate_practising_data.py         # 4-month practicing dataset generator with 6 edge cases
     │   ├── fetch_ekz_data.py                   # On-demand live EKZ API fetcher & Stage 1 processor
     │   └── log_ekz_tariff.py                   # Daily cron archiver for tomorrow's EKZ dynamic tariff
+    ├── frontend/                               # React + Vite dashboard (builds into api/static)
+    │   └── src/                                # views/, components/, lib/ (API client, i18n, tokens)
     ├── src/fuzzy_tariff/
-    │   ├── ingest/
-    │   │   ├── ekz.py                          # Live EKZ API client (https://api.tariffs.ekz.ch/v1/tariffs)
-    │   │   └── entsoe.py                       # ENTSO-E spot price ingestion
-    │   ├── fuzzy/                              # STAGE 1 FUZZY INFERENCE SYSTEM
-    │   │   ├── default.yaml                    # Master Rule Base (19 Mamdani Rules + 6 Stage 2 Rules)
-    │   │   ├── engine.py                       # Mamdani FIS Engine (NumPy min-AND, max-aggregation)
-    │   │   ├── membership.py                   # Triangular & Trapezoidal Membership Functions
-    │   │   ├── rules.py                        # Rule data structure & antecedent evaluation
-    │   │   └── variables.py                    # Linguistic Variable abstraction
-    │   ├── stage2/                             # STAGE 2 APPLIANCE ADVISOR
-    │   │   ├── advisor.py                      # Action dispatcher (start_now, wait, must_start)
-    │   │   └── urgency.py                      # Urgency calculation U = duration / deadline
-    │   ├── scheduler/                          # MULTI-DEVICE CONSTRAINED SCHEDULER
-    │   │   ├── planner.py                      # Concurrency slot allocation under breaker limits
-    │   │   └── profiles.py                     # Appliance specifications (EV, Heat pump, Washer, etc.)
-    │   └── api/                                # REST API & FRONTEND
-    │       ├── main.py                         # FastAPI server (supports 2025, 4-month practicing, & live EKZ)
-    │       ├── schemas.py                      # Pydantic v2 data models
-    │       └── static/
-    │           └── index.html                  # 3-View Single Page Application
+    │   ├── ingest/                             # Ports + adapters: EKZ API, ENTSO-E, CSV loader
+    │   ├── features/                           # Normalised inputs P, A, G, T
+    │   ├── fuzzy/                              # STAGE 1 FIS + linguistic summariser
+    │   │   ├── default.yaml                    # Rule base (19 Stage 1 rules + 6 Stage 2 rules)
+    │   │   ├── engine.py                       # Mamdani engine (NumPy min-AND, max-aggregation, centroid)
+    │   │   ├── membership.py                   # Triangular & trapezoidal membership functions
+    │   │   ├── rules.py · variables.py · config.py
+    │   │   └── summarizer.py                   # Yager / Kacprzyk protoforms
+    │   ├── advisor/devices.py                  # STAGE 2 advisor: urgency, start-now vs. wait, slot planning
+    │   ├── evaluation/                         # Baselines, metrics, sensitivity, backtest
+    │   ├── labeler.py · stability.py · labels.py
+    │   ├── cli.py                              # `fuzzy-tariff` command
+    │   └── api/
+    │       ├── main.py                         # FastAPI server (2025 benchmark, practice data, live EKZ)
+    │       ├── schemas.py                      # Pydantic v2 models (public /v1 contract)
+    │       └── static/                         # Built dashboard (generated by `npm run build`)
     └── tests/                                  # Pytest test suite (90 tests across 14 suites, 100% passing)
 ```
 

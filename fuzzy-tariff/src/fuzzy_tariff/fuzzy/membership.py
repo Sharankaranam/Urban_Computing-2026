@@ -50,6 +50,3 @@ class MembershipFunction:
         if self.shape == "tri":
             return trimf(x, *self.params)
         return trapmf(x, *self.params)
-
-    def shifted(self, delta: float) -> MembershipFunction:
-        return MembershipFunction(self.shape, tuple(p + delta for p in self.params))

@@ -37,7 +37,7 @@ fuzzy-tariff = "fuzzy_tariff.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-fuzzy_tariff = ["py.typed", "fuzzy/*.yaml"]
+fuzzy_tariff = ["py.typed", "fuzzy/*.yaml", "api/static/*.html", "api/static/assets/*"]
 
 [tool.ruff]
 line-length = 100
