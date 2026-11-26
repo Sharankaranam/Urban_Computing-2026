@@ -2,7 +2,7 @@
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg)](https://fastapi.tiangolo.com)
-[![Fuzzy Logic](https://img.shields.io/badge/Fuzzy%20Logic-Two--Stage%20Mamdani%20FIS-purple.svg)](src/fuzzy_tariff/fuzzy/)
+[![Fuzzy Logic](https://img.shields.io/badge/Fuzzy%20Logic-Two--Stage%20Mamdani%20FIS-purple.svg)](fuzzy-tariff/src/fuzzy_tariff/fuzzy/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Framework](https://img.shields.io/badge/Framework-Swiss%20StromVG%202026-red.svg)](https://www.uvek.admin.ch/)
 
